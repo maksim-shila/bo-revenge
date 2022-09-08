@@ -50,13 +50,22 @@ export default class InputHandler {
         }
     }
 
-    public keyPressed(control: Control): boolean {
-        for (let i = 0; i < control.keys.length; ++i) {
-            if (this.keys.includes(control.keys[i])) {
-                return true;
+    public keyPressed(...control: Control[]): boolean {
+        return this.keyStateIs("pressed", control);
+    }
+
+    public keyReleased(...control: Control[]): boolean {
+        return this.keyStateIs("released", control);
+    }
+
+    private keyStateIs(state: "pressed" | "released", control: Control[]): boolean {
+        const keys = control.flatMap(c => c.keys);
+        for (let i = 0; i < keys.length; ++i) {
+            if (this.keys.includes(keys[i])) {
+                return state === "pressed";
             }
         }
-        return false;
+        return state === "released";
     }
 
     private keydown = (code: GameKey): void => {

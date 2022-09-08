@@ -1,10 +1,11 @@
-import Sprite, { SpriteConfig } from "./common/sprite.js";
+import Sprite, { SpriteConfig } from "./core/sprite.js";
 import Game from "./game.js";
-import InputHandler, { CONTROLS } from "./input.js";
+import InputHandler from "./input.js";
+import { PlayerStateManager, PlayerStateType, State } from "./player_states.js";
 
 const spriteConfig: SpriteConfig = {
     imageId: "playerImg",
-    width: 100,
+    width: 100.3,
     height: 91.3,
     x: 0,
     y: 0
@@ -12,50 +13,48 @@ const spriteConfig: SpriteConfig = {
 
 export default class Player extends Sprite {
 
-    private vx: number;
-    private vy: number;
+    public stateManager: PlayerStateManager;
+    public state: State;
 
-    private readonly maxVX: number = 10;
-    private readonly maxVY: number = 30;
-    private readonly weight: number = 2;
+    public readonly maxVX: number = 10;
+    public readonly maxVY: number = 30;
+    public readonly weight: number = 2;
 
     constructor(game: Game) {
         super(game, spriteConfig);
         this.y = this.game.height - this.height;
-        this.vx = 0;
-        this.vy = 0;
+        this.stateManager = new PlayerStateManager(this);
+        this.state = this.stateManager.get(PlayerStateType.STANDING);
+        this.state.init();
     }
 
-    public update(input: InputHandler): void {
-        this.moveX(input);
-        this.moveY(input);
+    public override update(input: InputHandler, deltaTime: number): void {
+        super.update(input, deltaTime);
+        this.state.update(input);
+        this.moveX();
+        this.moveY();
     }
 
-    private moveX(input: InputHandler): void {
-        if (input.keyPressed(CONTROLS.RIGHT)) {
-            this.vx = this.maxVX;
-        } else if (input.keyPressed(CONTROLS.LEFT)) {
-            this.vx = -this.maxVX;
-        } else {
-            this.vx = 0;
-        }
+    public setState(type: PlayerStateType): void {
+        this.state = this.stateManager.get(type);
+        this.state.init();
+    }
+
+    private moveX(): void {
         this.x += this.vx;
         this.disallowOffscreen("left");
         this.disallowOffscreen("right");
     }
 
-    private moveY(input: InputHandler): void {
-        if (input.keyPressed(CONTROLS.JUMP) && this.onGround()) {
-            this.vy -= this.maxVY;
-        }
+    private moveY(): void {
+        this.y += this.vy;
         if (!this.onGround()) {
             this.vy += this.weight;
         }
-        this.y += this.vy;
         this.disallowOffscreen("bottom");
     }
 
-    private onGround(): boolean {
+    public onGround(): boolean {
         return this.isTouching("bottom");
     }
 }

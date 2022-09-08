@@ -16,8 +16,8 @@ export default class Game {
         this.input = new InputHandler();
     }
 
-    public update(): void {
-        this.player.update(this.input);
+    public update(deltaTime: number): void {
+        this.player.update(this.input, deltaTime);
         this.input.update();
     }
 

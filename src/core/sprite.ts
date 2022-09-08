@@ -1,4 +1,5 @@
 import Game from "../game.js";
+import InputHandler from "../input.js";
 
 export interface SpriteConfig {
     imageId: string;
@@ -11,14 +12,21 @@ export interface SpriteConfig {
 type Direction = "right" | "left" | "top" | "bottom";
 
 export default abstract class Sprite {
-    protected readonly game: Game;
-    protected readonly image: CanvasImageSource;
-    protected readonly width: number;
-    protected readonly height: number;
-    protected x: number;
-    protected y: number;
-    protected frameX: number;
-    protected frameY: number;
+
+    public readonly game: Game;
+    public readonly image: CanvasImageSource;
+    public readonly width: number;
+    public readonly height: number;
+    public x: number;
+    public y: number;
+    public frameX: number;
+    public frameY: number;
+    public framesCount: number;
+    public vx: number;
+    public vy: number;
+    private _fps = 0;
+    private _frameInterval = 0;
+    private _frameTimer = 0;
 
     constructor(game: Game, config: SpriteConfig) {
         this.game = game;
@@ -29,6 +37,29 @@ export default abstract class Sprite {
         this.y = config.y;
         this.frameX = 0;
         this.frameY = 0;
+        this.framesCount = 0;
+        this.vx = 0;
+        this.vy = 0;
+        this.fps = 30;
+    }
+
+    public get fps(): number {
+        return this._fps;
+    }
+
+    public set fps(value: number) {
+        this._fps = value;
+        this._frameInterval = 1000 / this._fps;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public update(input: InputHandler, deltaTime: number): void {
+        if (this._frameTimer > this._frameInterval) {
+            this.frameX = ++this.frameX % this.framesCount;
+            this._frameTimer = 0;
+        } else {
+            this._frameTimer += deltaTime;
+        }
     }
 
     public draw(context: CanvasRenderingContext2D): void {
@@ -81,15 +112,19 @@ export default abstract class Sprite {
         switch (direction) {
             case "right":
                 this.x = this.game.width - this.width;
+                this.vx = 0;
                 break;
             case "left":
                 this.x = 0;
+                this.vx = 0;
                 break;
             case "bottom":
                 this.y = this.game.height - this.height;
+                this.vy = 0;
                 break;
             case "top":
                 this.y = 0;
+                this.vy = 0;
                 break;
         }
     }

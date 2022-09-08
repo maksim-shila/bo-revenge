@@ -8,13 +8,17 @@ window.addEventListener("load", () => {
     const context = canvas.getContext("2d")!;
 
     const game = new Game(canvas.width, canvas.height);
-    function animate(): void {
+
+    let lastTime = 0;
+    function animate(timeStamp: number): void {
+        const deltaTime = timeStamp - lastTime;
+        lastTime = timeStamp;
         context.clearRect(0, 0, canvas.width, canvas.height);
         game.draw(context);
-        game.update();
+        game.update(deltaTime);
 
         requestAnimationFrame(animate);
     }
 
-    animate();
+    animate(0);
 });
