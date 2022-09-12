@@ -22,9 +22,9 @@ export default class Player extends Sprite {
 
     constructor(game: Game) {
         super(game, spriteConfig);
-        this.y = this.game.height - this.height;
+        this.y = this.game.height - this.height - this.game.groundMargin;
         this.stateManager = new PlayerStateManager(this);
-        this.state = this.stateManager.get(PlayerStateType.STANDING);
+        this.state = this.stateManager.get(PlayerStateType.RUNNING);
         this.state.init();
     }
 

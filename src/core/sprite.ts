@@ -89,9 +89,9 @@ export default abstract class Sprite {
             case "left":
                 return this.x < 0 - (whole ? this.width : 0);
             case "bottom":
-                return this.y > this.game.height - (whole ? 0 : this.height);
+                return this.y > this.game.height - this.game.groundMargin - (whole ? 0 : this.height);
             case "top":
-                return this.y < 0 - (whole ? this.height : 0);
+                return this.y < 0 - this.game.groundMargin - (whole ? this.height : 0);
         }
     }
 
@@ -102,7 +102,7 @@ export default abstract class Sprite {
             case "left":
                 return this.x <= 0;
             case "bottom":
-                return this.y >= this.game.height - this.height;
+                return this.y >= this.game.height - this.height - this.game.groundMargin;
             case "top":
                 return this.y <= 0;
         }
@@ -119,7 +119,7 @@ export default abstract class Sprite {
                 this.vx = 0;
                 break;
             case "bottom":
-                this.y = this.game.height - this.height;
+                this.y = this.game.height - this.height - this.game.groundMargin;
                 this.vy = 0;
                 break;
             case "top":

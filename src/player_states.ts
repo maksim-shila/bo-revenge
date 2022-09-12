@@ -65,6 +65,7 @@ class Standing extends PlayerState {
     public override init(): void {
         super.init();
         this.player.vx = 0;
+        this.player.game.speed = 0;
     }
 
     public update(input: InputHandler): void {
@@ -84,6 +85,7 @@ class Standing extends PlayerState {
 class Jumping extends PlayerState {
     public override init(): void {
         super.init();
+        this.player.game.speed = this.player.game.maxSpeed;
         if (this.player.onGround()) {
             this.player.vy = -this.player.maxVY;
         }
@@ -101,12 +103,13 @@ class Falling extends PlayerState {
     public override init(): void {
         super.init();
         this.player.vx = -this.player.maxVX;
+        this.player.game.speed = this.player.game.maxSpeed;
     }
 
     public update(input: InputHandler): void {
         this.allowVerticalMovement(input);
         if (this.player.onGround()) {
-            this.player.setState(PlayerStateType.STANDING);
+            this.player.setState(PlayerStateType.RUNNING);
         }
     }
 }
@@ -114,6 +117,7 @@ class Falling extends PlayerState {
 class Running extends PlayerState {
     public override init(): void {
         super.init();
+        this.player.game.speed = this.player.game.maxSpeed;
     }
 
     public update(input: InputHandler): void {
@@ -122,8 +126,6 @@ class Running extends PlayerState {
             this.player.setState(PlayerStateType.SITTING);
         } else if (input.keyPressed(CONTROLS.JUMP)) {
             this.player.setState(PlayerStateType.JUMPING);
-        } else if (input.keyReleased(CONTROLS.LEFT, CONTROLS.RIGHT)) {
-            this.player.setState(PlayerStateType.STANDING);
         }
     }
 }
@@ -132,11 +134,12 @@ class Sitting extends PlayerState {
     public override init(): void {
         super.init();
         this.player.vx = 0;
+        this.player.game.speed = 0;
     }
 
     public update(input: InputHandler): void {
         if (input.keyReleased(CONTROLS.DOWN)) {
-            this.player.setState(PlayerStateType.STANDING);
+            this.player.setState(PlayerStateType.RUNNING);
         }
     }
 }
