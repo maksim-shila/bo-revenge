@@ -3,12 +3,10 @@ import Game from "./game.js";
 import InputHandler from "./input.js";
 import { PlayerStateManager, PlayerStateType, State } from "./player_states.js";
 
-const spriteConfig: SpriteConfig = {
+const playerConfig: SpriteConfig = {
     imageId: "playerImg",
     width: 100.3,
-    height: 91.3,
-    x: 0,
-    y: 0
+    height: 91.3
 };
 
 export default class Player extends Sprite {
@@ -21,15 +19,16 @@ export default class Player extends Sprite {
     public readonly weight: number = 2;
 
     constructor(game: Game) {
-        super(game, spriteConfig);
+        super(game, playerConfig);
+        this.x = 0;
         this.y = this.game.height - this.height - this.game.groundMargin;
         this.stateManager = new PlayerStateManager(this);
         this.state = this.stateManager.get("running");
         this.state.init();
     }
 
-    public override update(input: InputHandler, deltaTime: number): void {
-        super.update(input, deltaTime);
+    public update(input: InputHandler, deltaTime: number): void {
+        this.animate(deltaTime);
         this.state.update(input);
         this.moveX();
         this.moveY();

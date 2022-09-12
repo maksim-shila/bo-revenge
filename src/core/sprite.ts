@@ -5,8 +5,6 @@ export interface SpriteConfig {
     imageId: string;
     width: number;
     height: number;
-    x: number;
-    y: number;
 }
 
 type Direction = "right" | "left" | "top" | "bottom";
@@ -33,8 +31,8 @@ export default abstract class Sprite {
         this.image = document.getElementById(config.imageId) as CanvasImageSource;
         this.width = config.width;
         this.height = config.height;
-        this.x = config.x;
-        this.y = config.y;
+        this.x = 0;
+        this.y = 0;
         this.frameX = 0;
         this.frameY = 0;
         this.framesCount = 0;
@@ -52,8 +50,7 @@ export default abstract class Sprite {
         this._frameInterval = 1000 / this._fps;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public update(input: InputHandler, deltaTime: number): void {
+    public animate(deltaTime: number): void {
         if (this._frameTimer > this._frameInterval) {
             this.frameX = ++this.frameX % this.framesCount;
             this._frameTimer = 0;
@@ -76,39 +73,49 @@ export default abstract class Sprite {
         );
     }
 
-    /**
-     * Checks if sprite is offscreen
-     * @param direction direction to check
-     * @param whole flag to check if moved partially or whole sprite is offscreen
-     * @returns true if sprite is offscreen, otherwise false
-     */
-    protected isOffscreen(direction: Direction, whole = false): boolean {
-        switch (direction) {
-            case "right":
-                return this.x > this.game.width - (whole ? 0 : this.width);
-            case "left":
-                return this.x < 0 - (whole ? this.width : 0);
-            case "bottom":
-                return this.y > this.game.height - this.game.groundMargin - (whole ? 0 : this.height);
-            case "top":
-                return this.y < 0 - this.game.groundMargin - (whole ? this.height : 0);
+    public isOffscreen(...directions: Direction[]): boolean {
+        const _isOffscreen = (direction: Direction): boolean => {
+            switch (direction) {
+                case "right":
+                    return this.x > this.game.width;
+                case "left":
+                    return this.x < 0 - this.width;
+                case "bottom":
+                    return this.y > this.game.height - this.game.groundMargin;
+                case "top":
+                    return this.y < 0 - this.game.groundMargin - this.height;
+            }
+        };
+        for (let i = 0; i < directions.length; ++i) {
+            if (_isOffscreen(directions[i])) {
+                return true;
+            }
         }
+        return false;
     }
 
-    protected isTouching(direction: Direction): boolean {
-        switch (direction) {
-            case "right":
-                return this.x >= this.game.width - this.width;
-            case "left":
-                return this.x <= 0;
-            case "bottom":
-                return this.y >= this.game.height - this.height - this.game.groundMargin;
-            case "top":
-                return this.y <= 0;
+    public isTouching(...directions: Direction[]): boolean {
+        const _isTouching = (direction: Direction): boolean => {
+            switch (direction) {
+                case "right":
+                    return this.x >= this.game.width - this.width;
+                case "left":
+                    return this.x <= 0;
+                case "bottom":
+                    return this.y >= this.game.height - this.height - this.game.groundMargin;
+                case "top":
+                    return this.y <= 0;
+            }
+        };
+        for (let i = 0; i < directions.length; ++i) {
+            if (_isTouching(directions[i])) {
+                return true;
+            }
         }
+        return false;
     }
 
-    protected resetPosition(direction: Direction): void {
+    public resetPosition(direction: Direction): void {
         switch (direction) {
             case "right":
                 this.x = this.game.width - this.width;
@@ -129,8 +136,8 @@ export default abstract class Sprite {
         }
     }
 
-    protected disallowOffscreen(direction: Direction): void {
-        if (this.isOffscreen(direction)) {
+    public disallowOffscreen(direction: Direction): void {
+        if (this.isTouching(direction)) {
             this.resetPosition(direction);
         }
     }
