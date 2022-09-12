@@ -1,24 +1,19 @@
-import InputHandler, { CONTROLS } from "./input.js";
+import InputHandler from "./input.js";
 import Player from "./player.js";
 
-export enum PlayerStateType {
-    STANDING = 0,
-    JUMPING = 1,
-    FALLING = 2,
-    RUNNING = 3,
-    SITTING = 5,
-}
+export type PlayerStateType = "standing" | "jumping" | "falling" | "running" | "sitting";
+type States = { [key in PlayerStateType]: State };
 
 export class PlayerStateManager {
-    private readonly states: State[];
+    private readonly states: States;
 
     constructor(player: Player) {
-        this.states = [];
-        this.states[PlayerStateType.STANDING] = new Standing(player, PlayerStateType.STANDING, 7);
-        this.states[PlayerStateType.JUMPING] = new Jumping(player, PlayerStateType.JUMPING, 7);
-        this.states[PlayerStateType.FALLING] = new Falling(player, PlayerStateType.FALLING, 7);
-        this.states[PlayerStateType.RUNNING] = new Running(player, PlayerStateType.RUNNING, 9);
-        this.states[PlayerStateType.SITTING] = new Sitting(player, PlayerStateType.SITTING, 5);
+        this.states = {} as States;
+        this.states["standing"] = new Standing(player, 0, 7);
+        this.states["jumping"] = new Jumping(player, 1, 7);
+        this.states["falling"] = new Falling(player, 2, 7);
+        this.states["running"] = new Running(player, 3, 9);
+        this.states["sitting"] = new Sitting(player, 5, 5);
     }
 
     public get(type: PlayerStateType): State {
@@ -51,11 +46,11 @@ abstract class PlayerState implements State {
     public abstract update(input: InputHandler): void;
 
     protected allowVerticalMovement(input: InputHandler): void {
-        if (input.keyPressed(CONTROLS.LEFT)) {
+        if (input.keyPressed("left")) {
             this.player.vx = -this.player.maxVX;
-        } else if (input.keyPressed(CONTROLS.RIGHT)) {
+        } else if (input.keyPressed("right")) {
             this.player.vx = this.player.maxVX;
-        } else if (input.keyReleased(CONTROLS.LEFT, CONTROLS.RIGHT)) {
+        } else if (input.keyReleased("left", "right")) {
             this.player.vx = 0;
         }
     }
@@ -70,14 +65,14 @@ class Standing extends PlayerState {
 
     public update(input: InputHandler): void {
         this.allowVerticalMovement(input);
-        if (input.keyPressed(CONTROLS.RIGHT)) {
-            this.player.setState(PlayerStateType.RUNNING);
-        } else if (input.keyPressed(CONTROLS.LEFT)) {
-            this.player.setState(PlayerStateType.RUNNING);
-        } else if (input.keyPressed(CONTROLS.DOWN)) {
-            this.player.setState(PlayerStateType.SITTING);
-        } else if (input.keyPressed(CONTROLS.JUMP)) {
-            this.player.setState(PlayerStateType.JUMPING);
+        if (input.keyPressed("right")) {
+            this.player.setState("running");
+        } else if (input.keyPressed("left")) {
+            this.player.setState("running");
+        } else if (input.keyPressed("down")) {
+            this.player.setState("sitting");
+        } else if (input.keyPressed("jump")) {
+            this.player.setState("jumping");
         }
     }
 }
@@ -94,7 +89,7 @@ class Jumping extends PlayerState {
     public update(input: InputHandler): void {
         this.allowVerticalMovement(input);
         if (this.player.vy > this.player.weight) {
-            this.player.setState(PlayerStateType.FALLING);
+            this.player.setState("falling");
         }
     }
 }
@@ -109,7 +104,7 @@ class Falling extends PlayerState {
     public update(input: InputHandler): void {
         this.allowVerticalMovement(input);
         if (this.player.onGround()) {
-            this.player.setState(PlayerStateType.RUNNING);
+            this.player.setState("running");
         }
     }
 }
@@ -122,10 +117,10 @@ class Running extends PlayerState {
 
     public update(input: InputHandler): void {
         this.allowVerticalMovement(input);
-        if (input.keyPressed(CONTROLS.DOWN)) {
-            this.player.setState(PlayerStateType.SITTING);
-        } else if (input.keyPressed(CONTROLS.JUMP)) {
-            this.player.setState(PlayerStateType.JUMPING);
+        if (input.keyPressed("down")) {
+            this.player.setState("sitting");
+        } else if (input.keyPressed("jump")) {
+            this.player.setState("jumping");
         }
     }
 }
@@ -138,8 +133,8 @@ class Sitting extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        if (input.keyReleased(CONTROLS.DOWN)) {
-            this.player.setState(PlayerStateType.RUNNING);
+        if (input.keyReleased("down")) {
+            this.player.setState("running");
         }
     }
 }

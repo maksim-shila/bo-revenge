@@ -24,7 +24,7 @@ export default class Player extends Sprite {
         super(game, spriteConfig);
         this.y = this.game.height - this.height - this.game.groundMargin;
         this.stateManager = new PlayerStateManager(this);
-        this.state = this.stateManager.get(PlayerStateType.RUNNING);
+        this.state = this.stateManager.get("running");
         this.state.init();
     }
 

@@ -16,22 +16,15 @@ const ALLOWED_KEYS = [
 ] as const;
 
 type GameKey = typeof ALLOWED_KEYS[number];
-type Control = { keys: GameKey[] };
+type KeyAction = "jump" | "down" | "left" | "right";
+type Controls = { [key in KeyAction]: GameKey[] };
 type GameKeyListener = (code: GameKey) => unknown;
 
-interface Controls {
-    JUMP: Control,
-    DOWN: Control,
-    LEFT: Control;
-    RIGHT: Control
-}
-
-export const CONTROLS: Controls = {
-    JUMP: { keys: ["ArrowUp", "KeyW", "Space", "GamepadA", "GamepadUp"] },
-    DOWN: { keys: ["ArrowDown", "KeyS", "GamepadDown"] },
-    LEFT: { keys: ["ArrowLeft", "KeyA", "GamepadLeft"] },
-    RIGHT: { keys: ["ArrowRight", "KeyD", "GamepadRight"] },
-};
+const CONTROLS = {} as Controls;
+CONTROLS["jump"] = ["ArrowUp", "KeyW", "Space", "GamepadA", "GamepadUp"];
+CONTROLS["down"] = ["ArrowDown", "KeyS", "GamepadDown"];
+CONTROLS["left"] = ["ArrowLeft", "KeyA", "GamepadLeft"];
+CONTROLS["right"] = ["ArrowRight", "KeyD", "GamepadRight"];
 
 export default class InputHandler {
     private keys: string[];
@@ -50,16 +43,16 @@ export default class InputHandler {
         }
     }
 
-    public keyPressed(...control: Control[]): boolean {
-        return this.keyStateIs("pressed", control);
+    public keyPressed(...keyAction: KeyAction[]): boolean {
+        return this.keyStateIs("pressed", keyAction);
     }
 
-    public keyReleased(...control: Control[]): boolean {
-        return this.keyStateIs("released", control);
+    public keyReleased(...keyAction: KeyAction[]): boolean {
+        return this.keyStateIs("released", keyAction);
     }
 
-    private keyStateIs(state: "pressed" | "released", control: Control[]): boolean {
-        const keys = control.flatMap(c => c.keys);
+    private keyStateIs(state: "pressed" | "released", keyAction: KeyAction[]): boolean {
+        const keys = keyAction.flatMap(k => CONTROLS[k]);
         for (let i = 0; i < keys.length; ++i) {
             if (this.keys.includes(keys[i])) {
                 return state === "pressed";
@@ -82,12 +75,12 @@ export default class InputHandler {
     };
 }
 
-const GAMEPAD_CONTROL: Control = { keys: [] };
-GAMEPAD_CONTROL.keys[0] = "GamepadA";
-GAMEPAD_CONTROL.keys[12] = "GamepadUp";
-GAMEPAD_CONTROL.keys[13] = "GamepadDown";
-GAMEPAD_CONTROL.keys[14] = "GamepadLeft";
-GAMEPAD_CONTROL.keys[15] = "GamepadRight";
+const GAMEPAD_CONTROLS: GameKey[] = [];
+GAMEPAD_CONTROLS[0] = "GamepadA";
+GAMEPAD_CONTROLS[12] = "GamepadUp";
+GAMEPAD_CONTROLS[13] = "GamepadDown";
+GAMEPAD_CONTROLS[14] = "GamepadLeft";
+GAMEPAD_CONTROLS[15] = "GamepadRight";
 
 class Gamepad {
     private readonly onKeyDown: GameKeyListener;
@@ -117,7 +110,7 @@ class Gamepad {
         }
         for (let i = 0; i < gamepad.buttons.length; ++i) {
             const gamepadBtn = gamepad.buttons[i];
-            const key = GAMEPAD_CONTROL.keys[i];
+            const key = GAMEPAD_CONTROLS[i];
             if (!key) {
                 return;
             }
