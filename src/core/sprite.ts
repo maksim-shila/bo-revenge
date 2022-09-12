@@ -1,5 +1,4 @@
 import Game from "../game.js";
-import InputHandler from "../input.js";
 
 export interface SpriteConfig {
     imageId: string;
