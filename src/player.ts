@@ -2,7 +2,7 @@ import { Hitbox, RectHitbox } from "./core/hitbox.js";
 import Sprite, { SpriteConfig } from "./core/sprite.js";
 import Game from "./game.js";
 import InputHandler from "./input.js";
-import { PlayerStateManager, PlayerStateType, State } from "./player_states.js";
+import { PlayerStateManager, PlayerStateType, State } from "./playerStates.js";
 
 const playerConfig: SpriteConfig = {
     imageId: "playerImg",
@@ -13,7 +13,7 @@ const playerConfig: SpriteConfig = {
 export default class Player extends Sprite {
 
     public stateManager: PlayerStateManager;
-    public state: State;
+    public state!: State; // Initialized on Game class constructor
 
     public readonly hitbox: Hitbox = new RectHitbox({ parent: this.rect });
     public readonly maxVX: number;
@@ -28,9 +28,7 @@ export default class Player extends Sprite {
         this.maxVX = 10;
         this.maxVY = 30;
         this.weight = 2;
-        this.stateManager = new PlayerStateManager(this);
-        this.state = this.stateManager.get("running");
-        this.state.init();
+        this.stateManager = new PlayerStateManager(this.game);
     }
 
     public update(input: InputHandler, deltaTime: number): void {
@@ -47,10 +45,17 @@ export default class Player extends Sprite {
             this.hitbox.draw(context);
         }
     }
-    public setState(type: PlayerStateType, speedMultiplier: number): void {
+
+    public setState(type: PlayerStateType, speedMultiplier = 0): void {
         this.state = this.stateManager.get(type);
         this.game.speed = this.game.maxSpeed * speedMultiplier;
         this.state.init();
+    }
+
+    public jump(): void {
+        if (this.onGround()) {
+            this.vy = -this.maxVY;
+        }
     }
 
     public onGround(): boolean {

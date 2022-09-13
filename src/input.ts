@@ -12,6 +12,7 @@ const ALLOWED_KEYS = [
     "KeyJ",
     "Space",
     "ShiftLeft",
+    "ShiftRight",
     "GamepadUp",
     "GamepadDown",
     "GamepadLeft",
@@ -19,7 +20,11 @@ const ALLOWED_KEYS = [
     "GamepadA",
     "GamepadB",
     "GamepadX",
-    "GamepadY"
+    "GamepadY",
+    "GamepadR2",
+    "GamepadR1",
+    "GamepadL2",
+    "GamepadL1"
 ] as const;
 
 type GameKey = typeof ALLOWED_KEYS[number];
@@ -32,7 +37,7 @@ CONTROLS["jump"] = ["ArrowUp", "KeyW", "Space", "GamepadA", "GamepadUp"];
 CONTROLS["down"] = ["ArrowDown", "KeyS", "GamepadDown"];
 CONTROLS["left"] = ["ArrowLeft", "KeyA", "GamepadLeft"];
 CONTROLS["right"] = ["ArrowRight", "KeyD", "GamepadRight"];
-CONTROLS["roll"] = ["ShiftLeft", "GamepadB"];
+CONTROLS["roll"] = ["ShiftLeft", "ShiftRight", "GamepadR2"];
 
 export default class InputHandler {
     private readonly game: Game;
@@ -93,6 +98,10 @@ GAMEPAD_CONTROLS[0] = "GamepadA";
 GAMEPAD_CONTROLS[1] = "GamepadB";
 GAMEPAD_CONTROLS[2] = "GamepadX";
 GAMEPAD_CONTROLS[3] = "GamepadY";
+GAMEPAD_CONTROLS[4] = "GamepadL1";
+GAMEPAD_CONTROLS[5] = "GamepadR1";
+GAMEPAD_CONTROLS[6] = "GamepadL2";
+GAMEPAD_CONTROLS[7] = "GamepadR2";
 GAMEPAD_CONTROLS[12] = "GamepadUp";
 GAMEPAD_CONTROLS[13] = "GamepadDown";
 GAMEPAD_CONTROLS[14] = "GamepadLeft";

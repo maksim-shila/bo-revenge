@@ -11,8 +11,8 @@ type Direction = "right" | "left" | "top" | "bottom";
 
 export default abstract class Sprite {
 
-    public readonly game: Game;
-    public readonly image: CanvasImageSource;
+    protected readonly game: Game;
+    protected readonly image: CanvasImageSource;
     public readonly rect: Rect;
     public frameX: number;
     public frameY: number;
@@ -57,6 +57,14 @@ export default abstract class Sprite {
 
     public get height(): number {
         return this.rect.height;
+    }
+
+    public get centerX(): number {
+        return this.x + this.width * 0.5;
+    }
+
+    public get centerY(): number {
+        return this.y + this.height * 0.5;
     }
 
     public get fps(): number {

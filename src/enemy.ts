@@ -1,26 +1,48 @@
 import { Hitbox, RectHitbox } from "./core/hitbox.js";
 import Sprite, { SpriteConfig } from "./core/sprite.js";
+import Timer from "./core/timer.js";
 import Game from "./game.js";
 
-const flyingEnemyConfig: SpriteConfig = {
-    imageId: "enemyFlyImg",
-    width: 60,
-    height: 44
-};
-const groundEnemyConfig: SpriteConfig = {
-    imageId: "enemyPlantImg",
-    width: 60,
-    height: 87
-};
-const climbingEnemyConfig: SpriteConfig = {
-    imageId: "enemySpiderBigImg",
-    width: 120,
-    height: 144
-};
+export default class EnemySpawner {
+    private readonly game: Game;
+    private readonly timer: Timer;
+    public readonly enemies: Enemy[];
 
-export default abstract class Enemy extends Sprite {
+    constructor(game: Game) {
+        this.game = game;
+        this.enemies = [];
+        this.timer = new Timer(() => this.addEnemy(), 1000);
+    }
+
+    public update(deltaTime: number): void {
+        this.timer.update(deltaTime);
+        this.enemies.forEach(e => {
+            e.update(deltaTime);
+            if (e.markedForDeletion) {
+                this.enemies.splice(this.enemies.indexOf(e), 1);
+            }
+        });
+    }
+
+    public draw(context: CanvasRenderingContext2D): void {
+        this.enemies.forEach(e => e.draw(context));
+    }
+
+    private addEnemy(): void {
+        if (this.game.speed > 0) {
+            if (Math.random() > 0.5) {
+                this.enemies.push(new GroundEnemy(this.game));
+            }
+            this.enemies.push(new ClimbingEnemy(this.game));
+        }
+        this.enemies.push(new FlyingEnemy(this.game));
+    }
+}
+
+export abstract class Enemy extends Sprite {
     public markedForDeletion: boolean;
     public readonly hitbox: Hitbox;
+
     constructor(game: Game, config: SpriteConfig) {
         super(game, config);
         this.hitbox = new RectHitbox({ parent: this.rect });
@@ -45,12 +67,12 @@ export default abstract class Enemy extends Sprite {
     }
 }
 
-export class FlyingEnemy extends Enemy {
+class FlyingEnemy extends Enemy {
     private angle: number;
     private va: number;
 
     constructor(game: Game) {
-        super(game, flyingEnemyConfig);
+        super(game, { imageId: "enemyFlyImg", width: 60, height: 44 });
         this.x = this.game.width + Math.random() * this.game.width * 0.5;
         this.y = Math.random() * this.game.height * 0.5;
         this.vx = Math.random() + 1;
@@ -66,9 +88,9 @@ export class FlyingEnemy extends Enemy {
     }
 }
 
-export class GroundEnemy extends Enemy {
+class GroundEnemy extends Enemy {
     constructor(game: Game) {
-        super(game, groundEnemyConfig);
+        super(game, { imageId: "enemyPlantImg", width: 60, height: 87 });
         this.x = this.game.width;
         this.y = this.game.height - this.height - this.game.groundMargin;
         this.vx = 0;
@@ -77,9 +99,9 @@ export class GroundEnemy extends Enemy {
     }
 }
 
-export class ClimbingEnemy extends Enemy {
+class ClimbingEnemy extends Enemy {
     constructor(game: Game) {
-        super(game, climbingEnemyConfig);
+        super(game, { imageId: "enemySpiderBigImg", width: 120, height: 144 });
         this.x = this.game.width;
         this.y = Math.random() * this.game.height * 0.5;
         this.vx = 0;

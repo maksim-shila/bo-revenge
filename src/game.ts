@@ -1,6 +1,7 @@
 import Background from "./background.js";
-import EnemySpawner from "./enemySpawner.js";
+import EnemySpawner from "./enemy.js";
 import InputHandler from "./input.js";
+import ParticlesFactory from "./particles.js";
 import Player from "./player.js";
 import UI from "./UI.js";
 
@@ -8,31 +9,28 @@ export default class Game {
 
     public readonly input: InputHandler;
     public readonly player: Player;
+    public readonly particles: ParticlesFactory;
     public readonly enemySpawner: EnemySpawner;
     public readonly background: Background;
     public readonly ui: UI;
 
     public readonly width: number;
     public readonly height: number;
-    public readonly groundMargin: number;
+    public readonly groundMargin = 80;
+    public readonly maxSpeed = 6;
 
-    public score: number;
-    public debug: boolean;
-
-    public speed: number;
-    public readonly maxSpeed: number;
+    public score = 0;
+    public debug = false;
+    public speed = this.maxSpeed;
 
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
-        this.groundMargin = 80;
-        this.maxSpeed = 6;
-        this.speed = this.maxSpeed;
-        this.debug = false;
-        this.score = 0;
         this.ui = new UI(this);
         this.input = new InputHandler(this);
         this.player = new Player(this);
+        this.player.setState("sitting");
+        this.particles = new ParticlesFactory(this);
         this.background = new Background(this);
         this.enemySpawner = new EnemySpawner(this);
     }
@@ -40,6 +38,7 @@ export default class Game {
     public update(deltaTime: number): void {
         this.input.update();
         this.background.update();
+        this.particles.update();
         this.player.update(this.input, deltaTime);
         this.enemySpawner.update(deltaTime);
     }
@@ -47,6 +46,7 @@ export default class Game {
     public draw(context: CanvasRenderingContext2D): void {
         this.background.draw(context);
         this.enemySpawner.draw(context);
+        this.particles.draw(context);
         this.player.draw(context);
         this.ui.draw(context);
     }

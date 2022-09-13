@@ -1,3 +1,4 @@
+import Game from "./game.js";
 import InputHandler from "./input.js";
 import Player from "./player.js";
 
@@ -7,14 +8,14 @@ type States = { [key in PlayerStateType]: State };
 export class PlayerStateManager {
     private readonly states: States;
 
-    constructor(player: Player) {
+    constructor(game: Game) {
         this.states = {} as States;
-        this.states["standing"] = new Standing({ player, frameY: 0, framesCount: 7 });
-        this.states["jumping"] = new Jumping({ player, frameY: 1, framesCount: 7 });
-        this.states["falling"] = new Falling({ player, frameY: 2, framesCount: 7 });
-        this.states["running"] = new Running({ player, frameY: 3, framesCount: 9 });
-        this.states["sitting"] = new Sitting({ player, frameY: 5, framesCount: 5 });
-        this.states["rolling"] = new Rolling({ player, frameY: 6, framesCount: 7 });
+        this.states["standing"] = new Standing(game, { frameY: 0, framesCount: 7 });
+        this.states["jumping"] = new Jumping(game, { frameY: 1, framesCount: 7 });
+        this.states["falling"] = new Falling(game, { frameY: 2, framesCount: 7 });
+        this.states["running"] = new Running(game, { frameY: 3, framesCount: 9 });
+        this.states["sitting"] = new Sitting(game, { frameY: 5, framesCount: 5 });
+        this.states["rolling"] = new Rolling(game, { frameY: 6, framesCount: 7 });
     }
 
     public get(type: PlayerStateType): State {
@@ -27,20 +28,20 @@ export interface State {
     update(input: InputHandler): void;
 }
 
-type PlayerStateParams = {
-    player: Player;
-    frameY: number;
-    framesCount: number;
-}
 abstract class PlayerState implements State {
-    protected readonly player: Player;
+
+    protected readonly game: Game;
     protected readonly frameY: number;
     protected readonly framesCount: number;
 
-    constructor({ player, frameY, framesCount }: PlayerStateParams) {
-        this.player = player;
+    constructor(game: Game, { frameY, framesCount }: { frameY: number; framesCount: number; }) {
+        this.game = game;
         this.frameY = frameY;
         this.framesCount = framesCount;
+    }
+
+    protected get player(): Player {
+        return this.game.player;
     }
 
     public init(): void {
@@ -78,6 +79,8 @@ class Standing extends PlayerState {
             this.player.setState("sitting", 0);
         } else if (input.keyPressed("jump")) {
             this.player.setState("jumping", 1);
+        } else if (input.keyPressed("roll")) {
+            this.player.setState("rolling", 2);
         }
     }
 }
@@ -85,18 +88,15 @@ class Standing extends PlayerState {
 class Jumping extends PlayerState {
     public override init(): void {
         super.init();
-        if (this.player.onGround()) {
-            this.player.vy = -this.player.maxVY;
-        }
+        this.player.jump();
     }
 
     public update(input: InputHandler): void {
         this.allowVerticalMovement(input);
-        if (input.keyPressed("roll")) {
-            this.player.setState("rolling", 2);
-        }
         if (this.player.vy > this.player.weight) {
             this.player.setState("falling", 1);
+        } else if (input.keyPressed("roll")) {
+            this.player.setState("rolling", 2);
         }
     }
 }
@@ -110,8 +110,6 @@ class Falling extends PlayerState {
         this.allowVerticalMovement(input);
         if (this.player.onGround()) {
             this.player.setState("running", 1);
-        } else if (input.keyPressed("roll")) {
-            this.player.setState("rolling", 2);
         }
     }
 }
@@ -122,11 +120,14 @@ class Running extends PlayerState {
     }
 
     public update(input: InputHandler): void {
+        this.game.particles.push("dust", this.player.centerX, this.player.y + this.player.height);
         this.allowVerticalMovement(input);
         if (input.keyPressed("down")) {
             this.player.setState("sitting", 0);
         } else if (input.keyPressed("jump")) {
             this.player.setState("jumping", 1);
+        } else if (input.keyPressed("roll")) {
+            this.player.setState("rolling", 2);
         }
     }
 }
@@ -140,6 +141,8 @@ class Sitting extends PlayerState {
     public update(input: InputHandler): void {
         if (input.keyReleased("down")) {
             this.player.setState("running", 1);
+        } else if (input.keyPressed("roll")) {
+            this.player.setState("rolling", 2);
         }
     }
 }
@@ -151,8 +154,12 @@ class Rolling extends PlayerState {
 
     public update(input: InputHandler): void {
         this.allowVerticalMovement(input);
-        if (this.player.onGround()) {
+        if (input.keyReleased("roll") && this.player.onGround()) {
             this.player.setState("running", 1);
+        } else if (input.keyReleased("roll") && !this.player.onGround()) {
+            this.player.setState("falling", 1);
+        } else if (input.keyPressed("jump")) {
+            this.player.jump();
         }
     }
 }
