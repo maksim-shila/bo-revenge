@@ -1,4 +1,4 @@
-import { FontFamily } from "./core/styles.js";
+import { FontFamily } from "./core/fonts";
 import Game from "./game.js";
 
 export default class UI {
