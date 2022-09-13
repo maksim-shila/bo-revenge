@@ -1,4 +1,5 @@
 import Game from "../game.js";
+import { Rect } from "./hitbox.js";
 
 export interface SpriteConfig {
     imageId: string;
@@ -12,10 +13,7 @@ export default abstract class Sprite {
 
     public readonly game: Game;
     public readonly image: CanvasImageSource;
-    public readonly width: number;
-    public readonly height: number;
-    public x: number;
-    public y: number;
+    public readonly rect: Rect;
     public frameX: number;
     public frameY: number;
     public framesCount: number;
@@ -28,16 +26,37 @@ export default abstract class Sprite {
     constructor(game: Game, config: SpriteConfig) {
         this.game = game;
         this.image = document.getElementById(config.imageId) as CanvasImageSource;
-        this.width = config.width;
-        this.height = config.height;
-        this.x = 0;
-        this.y = 0;
+        this.rect = new Rect({ x: 0, y: 0, width: config.width, height: config.height });
         this.frameX = 0;
         this.frameY = 0;
         this.framesCount = 0;
         this.vx = 0;
         this.vy = 0;
         this.fps = 30;
+    }
+
+    public get x(): number {
+        return this.rect.x;
+    }
+
+    public set x(value: number) {
+        this.rect.x = value;
+    }
+
+    public get y(): number {
+        return this.rect.y;
+    }
+
+    public set y(value: number) {
+        this.rect.y = value;
+    }
+
+    public get width(): number {
+        return this.rect.width;
+    }
+
+    public get height(): number {
+        return this.rect.height;
     }
 
     public get fps(): number {

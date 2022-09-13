@@ -1,3 +1,5 @@
+import Game from "./game";
+
 const ALLOWED_KEYS = [
     "ArrowUp",
     "ArrowDown",
@@ -7,6 +9,7 @@ const ALLOWED_KEYS = [
     "KeyS",
     "KeyA",
     "KeyD",
+    "KeyJ",
     "Space",
     "GamepadUp",
     "GamepadDown",
@@ -27,10 +30,12 @@ CONTROLS["left"] = ["ArrowLeft", "KeyA", "GamepadLeft"];
 CONTROLS["right"] = ["ArrowRight", "KeyD", "GamepadRight"];
 
 export default class InputHandler {
+    private readonly game: Game;
     private keys: string[];
     private gamepad: Gamepad;
 
-    constructor() {
+    constructor(game: Game) {
+        this.game = game;
         this.keys = [];
         this.gamepad = new Gamepad(this.keydown, this.keyup);
         window.addEventListener("keydown", e => this.keydown(e.code as GameKey));
@@ -64,6 +69,9 @@ export default class InputHandler {
     private keydown = (code: GameKey): void => {
         if (!this.keys.includes(code) && ALLOWED_KEYS.includes(code)) {
             this.keys.push(code);
+        }
+        if (code === "KeyJ") {
+            this.game.debug = !this.game.debug;
         }
     };
 

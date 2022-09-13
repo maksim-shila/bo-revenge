@@ -1,3 +1,4 @@
+import { Hitbox, RectHitbox } from "./core/hitbox.js";
 import Sprite, { SpriteConfig } from "./core/sprite.js";
 import Game from "./game.js";
 
@@ -19,9 +20,10 @@ const climbingEnemyConfig: SpriteConfig = {
 
 export default abstract class Enemy extends Sprite {
     public markedForDeletion: boolean;
-
+    public readonly hitbox: Hitbox;
     constructor(game: Game, config: SpriteConfig) {
         super(game, config);
+        this.hitbox = new RectHitbox({ parent: this.rect });
         this.fps = 20;
         this.markedForDeletion = false;
     }
@@ -32,6 +34,13 @@ export default abstract class Enemy extends Sprite {
         this.y += this.vy;
         if (this.isOffscreen("left")) {
             this.markedForDeletion = true;
+        }
+    }
+
+    public override draw(context: CanvasRenderingContext2D): void {
+        super.draw(context);
+        if (this.game.debug) {
+            this.hitbox.draw(context);
         }
     }
 }
@@ -89,10 +98,10 @@ export class ClimbingEnemy extends Enemy {
     }
 
     public override draw(context: CanvasRenderingContext2D): void {
-        super.draw(context);
         context.beginPath();
         context.moveTo(this.x + this.width * 0.5, 0);
         context.lineTo(this.x + this.width * 0.5, this.y + this.height * 0.5);
         context.stroke();
+        super.draw(context);
     }
 }

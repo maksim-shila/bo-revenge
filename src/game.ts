@@ -2,6 +2,7 @@ import Background from "./background.js";
 import EnemySpawner from "./enemySpawner.js";
 import InputHandler from "./input.js";
 import Player from "./player.js";
+import UI from "./UI.js";
 
 export default class Game {
 
@@ -9,10 +10,14 @@ export default class Game {
     public readonly player: Player;
     public readonly enemySpawner: EnemySpawner;
     public readonly background: Background;
+    public readonly ui: UI;
 
     public readonly width: number;
     public readonly height: number;
     public readonly groundMargin: number;
+
+    public score: number;
+    public debug: boolean;
 
     public speed: number;
     public readonly maxSpeed: number;
@@ -23,7 +28,10 @@ export default class Game {
         this.groundMargin = 80;
         this.speed = 0;
         this.maxSpeed = 6;
-        this.input = new InputHandler();
+        this.debug = false;
+        this.score = 0;
+        this.ui = new UI(this);
+        this.input = new InputHandler(this);
         this.player = new Player(this);
         this.background = new Background(this);
         this.enemySpawner = new EnemySpawner(this);
@@ -38,7 +46,8 @@ export default class Game {
 
     public draw(context: CanvasRenderingContext2D): void {
         this.background.draw(context);
-        this.player.draw(context);
         this.enemySpawner.draw(context);
+        this.player.draw(context);
+        this.ui.draw(context);
     }
 }
