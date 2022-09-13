@@ -40,7 +40,7 @@ export class FlyingEnemy extends Enemy {
 
     public update(deltaTime: number): void {
         this.animate(deltaTime);
-        this.x -= this.vx - this.game.speed;
+        this.x -= this.vx + this.game.speed;
         this.y += this.vy;
         if (this.isOffscreen("left")) {
             this.markedForDeletion = true;
