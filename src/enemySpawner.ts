@@ -1,5 +1,5 @@
 import Timer from "./core/timer.js";
-import Enemy, { FlyingEnemy } from "./enemy.js";
+import Enemy, { ClimbingEnemy, FlyingEnemy, GroundEnemy } from "./enemy.js";
 import Game from "./game.js";
 
 export default class EnemySpawner {
@@ -29,6 +29,12 @@ export default class EnemySpawner {
     }
 
     private addEnemy(): void {
+        if (this.game.speed > 0) {
+            if (Math.random() > 0.5) {
+                this.enemies.push(new GroundEnemy(this.game));
+            }
+            this.enemies.push(new ClimbingEnemy(this.game));
+        }
         this.enemies.push(new FlyingEnemy(this.game));
     }
 }
