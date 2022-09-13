@@ -26,8 +26,8 @@ export default class Game {
         this.width = width;
         this.height = height;
         this.groundMargin = 80;
-        this.speed = 0;
         this.maxSpeed = 6;
+        this.speed = this.maxSpeed;
         this.debug = false;
         this.score = 0;
         this.ui = new UI(this);

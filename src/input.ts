@@ -11,15 +11,19 @@ const ALLOWED_KEYS = [
     "KeyD",
     "KeyJ",
     "Space",
+    "ShiftLeft",
     "GamepadUp",
     "GamepadDown",
     "GamepadLeft",
     "GamepadRight",
-    "GamepadA"
+    "GamepadA",
+    "GamepadB",
+    "GamepadX",
+    "GamepadY"
 ] as const;
 
 type GameKey = typeof ALLOWED_KEYS[number];
-type KeyAction = "jump" | "down" | "left" | "right";
+type KeyAction = "jump" | "down" | "left" | "right" | "roll";
 type Controls = { [key in KeyAction]: GameKey[] };
 type GameKeyListener = (code: GameKey) => unknown;
 
@@ -28,6 +32,7 @@ CONTROLS["jump"] = ["ArrowUp", "KeyW", "Space", "GamepadA", "GamepadUp"];
 CONTROLS["down"] = ["ArrowDown", "KeyS", "GamepadDown"];
 CONTROLS["left"] = ["ArrowLeft", "KeyA", "GamepadLeft"];
 CONTROLS["right"] = ["ArrowRight", "KeyD", "GamepadRight"];
+CONTROLS["roll"] = ["ShiftLeft", "GamepadB"];
 
 export default class InputHandler {
     private readonly game: Game;
@@ -85,6 +90,9 @@ export default class InputHandler {
 
 const GAMEPAD_CONTROLS: GameKey[] = [];
 GAMEPAD_CONTROLS[0] = "GamepadA";
+GAMEPAD_CONTROLS[1] = "GamepadB";
+GAMEPAD_CONTROLS[2] = "GamepadX";
+GAMEPAD_CONTROLS[3] = "GamepadY";
 GAMEPAD_CONTROLS[12] = "GamepadUp";
 GAMEPAD_CONTROLS[13] = "GamepadDown";
 GAMEPAD_CONTROLS[14] = "GamepadLeft";
@@ -116,13 +124,45 @@ class Gamepad {
         if (!gamepad) {
             return;
         }
-        for (let i = 0; i < gamepad.buttons.length; ++i) {
+        GAMEPAD_CONTROLS.forEach((code, i) => {
             const gamepadBtn = gamepad.buttons[i];
-            const key = GAMEPAD_CONTROLS[i];
-            if (!key) {
-                return;
+            let btnPressed = gamepadBtn.pressed;
+            switch (code) {
+                case "GamepadLeft":
+                    btnPressed ||= this.axePressed(gamepad, "left");
+                    break;
+                case "GamepadRight":
+                    btnPressed ||= this.axePressed(gamepad, "right");
+                    break;
+                case "GamepadDown":
+                    btnPressed ||= this.axePressed(gamepad, "down");
+                    break;
+                case "GamepadUp":
+                    btnPressed ||= this.axePressed(gamepad, "up");
+                    break;
             }
-            gamepadBtn.pressed ? this.onKeyDown(key) : this.onKeyUp(key);
+            btnPressed ? this.onKeyDown(code) : this.onKeyUp(code);
+        });
+    }
+
+    private axePressed(gamepad: globalThis.Gamepad, direction: "up" | "down" | "left" | "right"): boolean {
+        const axes = gamepad.axes;
+        if (!axes) {
+            return false;
+        }
+        const axeX = axes[0];
+        const axeY = axes[1];
+        const mainOffset = 0.4;
+        const backOffset = 0.7;
+        switch (direction) {
+            case "up":
+                return axeY < -mainOffset && axeX > -backOffset && axeX < backOffset;
+            case "down":
+                return axeY > mainOffset && axeX > -backOffset && axeX < backOffset;
+            case "left":
+                return axeX < -mainOffset && axeY > -backOffset && axeY < backOffset;
+            case "right":
+                return axeX > mainOffset && axeY > -backOffset && axeY < backOffset;
         }
     }
 }

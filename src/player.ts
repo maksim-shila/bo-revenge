@@ -47,8 +47,9 @@ export default class Player extends Sprite {
             this.hitbox.draw(context);
         }
     }
-    public setState(type: PlayerStateType): void {
+    public setState(type: PlayerStateType, speedMultiplier: number): void {
         this.state = this.stateManager.get(type);
+        this.game.speed = this.game.maxSpeed * speedMultiplier;
         this.state.init();
     }
 
