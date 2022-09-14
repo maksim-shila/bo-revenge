@@ -73,3 +73,19 @@ export class RectHitbox implements Hitbox {
             other.y + other.height > this.y;
     }
 }
+
+export class NoHitbox implements Hitbox {
+    public readonly x = 0;
+    public readonly y = 0;
+    public readonly width = 0;
+    public readonly height = 0;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    hasCollision(other: Hitbox): boolean {
+        return false;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    draw(context: CanvasRenderingContext2D): void {
+    }
+}

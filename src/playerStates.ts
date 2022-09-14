@@ -120,7 +120,7 @@ class Running extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        this.game.particles.push("dust", this.player.centerX, this.player.y + this.player.height);
+        this.game.particles.add("dust", this.player.centerX, this.player.y + this.player.height);
         this.allowVerticalMovement(input);
         if (input.keyPressed("down")) {
             this.player.setState("sitting", 0);
@@ -153,6 +153,7 @@ class Rolling extends PlayerState {
     }
 
     public update(input: InputHandler): void {
+        this.game.particles.add("fire", this.player.centerX, this.player.centerY);
         this.allowVerticalMovement(input);
         if (input.keyReleased("roll") && this.player.onGround()) {
             this.player.setState("running", 1);

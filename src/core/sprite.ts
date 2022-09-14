@@ -5,6 +5,7 @@ export interface SpriteConfig {
     imageId: string;
     width: number;
     height: number;
+    scale?: number;
 }
 
 type Direction = "right" | "left" | "top" | "bottom";
@@ -16,6 +17,9 @@ export default abstract class Sprite {
     public readonly rect: Rect;
     public frameX: number;
     public frameY: number;
+    public spriteWidth: number;
+    public spriteHeight: number;
+    public scale: number;
     public framesCount: number;
     public vx: number;
     public vy: number;
@@ -26,9 +30,12 @@ export default abstract class Sprite {
     constructor(game: Game, config: SpriteConfig) {
         this.game = game;
         this.image = document.getElementById(config.imageId) as CanvasImageSource;
-        this.rect = new Rect({ x: 0, y: 0, width: config.width, height: config.height });
         this.frameX = 0;
         this.frameY = 0;
+        this.spriteWidth = config.width;
+        this.spriteHeight = config.height;
+        this.scale = config.scale ?? 1;
+        this.rect = new Rect({ x: 0, y: 0, width: config.width * this.scale, height: config.height * this.scale });
         this.framesCount = 0;
         this.vx = 0;
         this.vy = 0;
@@ -88,10 +95,10 @@ export default abstract class Sprite {
     public draw(context: CanvasRenderingContext2D): void {
         context.drawImage(
             this.image,
-            this.frameX * this.width,
-            this.frameY * this.height,
-            this.width,
-            this.height,
+            this.frameX * this.spriteWidth,
+            this.frameY * this.spriteHeight,
+            this.spriteWidth,
+            this.spriteHeight,
             this.x,
             this.y,
             this.width,

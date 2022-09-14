@@ -1,4 +1,4 @@
-import { Hitbox, RectHitbox } from "./core/hitbox.js";
+import { Hitbox, NoHitbox, RectHitbox } from "./core/hitbox.js";
 import Sprite, { SpriteConfig } from "./core/sprite.js";
 import Timer from "./core/timer.js";
 import Game from "./game.js";
@@ -36,12 +36,13 @@ export default class EnemySpawner {
             this.enemies.push(new ClimbingEnemy(this.game));
         }
         this.enemies.push(new FlyingEnemy(this.game));
+        Math.random() > 0.5 && this.enemies.push(new Zombie(this.game));
     }
 }
 
 export abstract class Enemy extends Sprite {
     public markedForDeletion: boolean;
-    public readonly hitbox: Hitbox;
+    public hitbox: Hitbox;
 
     constructor(game: Game, config: SpriteConfig) {
         super(game, config);
@@ -125,5 +126,27 @@ class ClimbingEnemy extends Enemy {
         context.lineTo(this.x + this.width * 0.5, this.y + this.height * 0.5);
         context.stroke();
         super.draw(context);
+    }
+}
+
+const zombieImages = ["zombieGreenImg", "zombieOrangeImg", "zombiePurpleImg"];
+function getRandomZombieImageId(): string {
+    let index = Math.floor(Math.random() * 3);
+    if (index === 3) {
+        index--;
+    }
+    return zombieImages[index];
+}
+
+class Zombie extends Enemy {
+    constructor(game: Game) {
+        super(game, { imageId: getRandomZombieImageId(), width: 562, height: 502, scale: 0.2 });
+        this.x = this.game.width;
+        this.y = this.game.height - this.height - this.game.groundMargin;
+        this.vx = Math.random() * 1 + 1;
+        this.vy = 0;
+        this.fps = 30;
+        this.framesCount = 10;
+        this.hitbox = new NoHitbox();
     }
 }

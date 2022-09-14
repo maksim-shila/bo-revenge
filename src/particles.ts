@@ -1,12 +1,13 @@
 import Game from "./game";
 
 export default class ParticlesFactory {
-    public readonly particles: Particle[];
-    game: Game;
+    private readonly game: Game;
+
+    private particles: Particle[] = [];
+    private readonly maxParticles: number = 200;
 
     constructor(game: Game) {
         this.game = game;
-        this.particles = [];
     }
 
     public update(): void {
@@ -16,16 +17,22 @@ export default class ParticlesFactory {
                 this.particles.splice(this.particles.indexOf(particle), 1);
             }
         });
+        if (this.particles.length > 50) {
+            this.particles = this.particles.slice(0, 50);
+        }
     }
 
     public draw(context: CanvasRenderingContext2D): void {
         this.particles.forEach(particle => particle.draw(context));
     }
 
-    public push(particle: ParticleType, x: number, y: number): void {
+    public add(particle: ParticleType, x: number, y: number): void {
         switch (particle) {
             case "dust":
-                this.particles.push(new Dust(this.game, x, y));
+                this.particles.unshift(new Dust(this.game, x, y));
+                break;
+            case "fire":
+                this.particles.unshift(new Fire(this.game, x, y));
                 break;
         }
     }
@@ -50,7 +57,7 @@ abstract class Particle {
     public update(): void {
         this.x -= this.vx + this.game.speed;
         this.y -= this.vy;
-        this.size *= 0.95;
+        this.size *= 0.9;
         if (this.size < 0.5) {
             this.markedForDeletion = true;
         }
@@ -78,5 +85,43 @@ export class Dust extends Particle {
         context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         context.fillStyle = this.color;
         context.fill();
+    }
+}
+
+// export class Splash extends Particle {
+//     public draw(context: CanvasRenderingContext2D): void {
+//         throw new Error("Method not implemented.");
+//     }
+// }
+
+export class Fire extends Particle {
+    private readonly image: CanvasImageSource;
+    private angle: number;
+    private va: number;
+
+    constructor(game: Game, x: number, y: number) {
+        super(game);
+        this.image = document.getElementById("fireImg") as CanvasImageSource;
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 100 + 50;
+        this.vx = 1;
+        this.vy = 1;
+        this.angle = 0;
+        this.va = Math.random() * 0.2 - 0.1;
+    }
+
+    public override update(): void {
+        super.update();
+        this.angle += this.va;
+        this.x += Math.sin(this.angle * 5);
+    }
+
+    public draw(context: CanvasRenderingContext2D): void {
+        context.save();
+        context.translate(this.x, this.y);
+        context.rotate(this.angle);
+        context.drawImage(this.image, -this.size * 0.5, -this.size * 0.5, this.size, this.size);
+        context.restore();
     }
 }

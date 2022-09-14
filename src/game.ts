@@ -17,7 +17,7 @@ export default class Game {
     public readonly width: number;
     public readonly height: number;
     public readonly groundMargin = 80;
-    public readonly maxSpeed = 6;
+    public readonly maxSpeed = 3;
 
     public score = 0;
     public debug = false;
