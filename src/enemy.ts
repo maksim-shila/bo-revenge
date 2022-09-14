@@ -5,17 +5,23 @@ import Game from "./game.js";
 
 export default class EnemySpawner {
     private readonly game: Game;
-    private readonly timer: Timer;
     public readonly enemies: Enemy[];
+
+    private readonly spawners: Timer[];
 
     constructor(game: Game) {
         this.game = game;
         this.enemies = [];
-        this.timer = new Timer(() => this.addEnemy(), 1000);
+        this.spawners = [
+            new Timer(() => this.spawnZombie(), 3000),
+            new Timer(() => this.spawnPlant(), 1000),
+            new Timer(() => this.spawnBee(), 1000),
+            new Timer(() => this.spawnSpider(), 1000)
+        ];
     }
 
     public update(deltaTime: number): void {
-        this.timer.update(deltaTime);
+        this.spawners.forEach(spawner => spawner.update(deltaTime));
         this.enemies.forEach(e => {
             e.update(deltaTime);
             if (e.markedForDeletion) {
@@ -28,15 +34,26 @@ export default class EnemySpawner {
         this.enemies.forEach(e => e.draw(context));
     }
 
-    private addEnemy(): void {
+    private spawnZombie(): void {
+        if (Math.random() > 0.7) {
+            this.enemies.push(new Zombie(this.game));
+        }
+    }
+
+    private spawnPlant(): void {
+        if (this.game.speed > 0 && Math.random() > 0.5) {
+            this.enemies.push(new GroundEnemy(this.game));
+        }
+    }
+
+    private spawnBee(): void {
+        this.enemies.push(new FlyingEnemy(this.game));
+    }
+
+    private spawnSpider(): void {
         if (this.game.speed > 0) {
-            if (Math.random() > 0.5) {
-                this.enemies.push(new GroundEnemy(this.game));
-            }
             this.enemies.push(new ClimbingEnemy(this.game));
         }
-        this.enemies.push(new FlyingEnemy(this.game));
-        Math.random() > 0.5 && this.enemies.push(new Zombie(this.game));
     }
 }
 
