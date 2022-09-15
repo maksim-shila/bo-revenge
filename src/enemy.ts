@@ -5,13 +5,13 @@ import Game from "./game.js";
 
 export default class EnemySpawner {
     private readonly game: Game;
-    public readonly enemies: Enemy[];
+    private _enemies: Enemy[];
 
     private readonly spawners: Timer[];
 
     constructor(game: Game) {
         this.game = game;
-        this.enemies = [];
+        this._enemies = [];
         this.spawners = [
             new Timer(() => this.spawnZombie(), 3000),
             new Timer(() => this.spawnPlant(), 1000),
@@ -20,39 +20,39 @@ export default class EnemySpawner {
         ];
     }
 
+    public get enemies(): Enemy[] {
+        return this._enemies;
+    }
+
     public update(deltaTime: number): void {
         this.spawners.forEach(spawner => spawner.update(deltaTime));
-        this.enemies.forEach(e => {
-            e.update(deltaTime);
-            if (e.markedForDeletion) {
-                this.enemies.splice(this.enemies.indexOf(e), 1);
-            }
-        });
+        this._enemies.forEach(e => e.update(deltaTime));
+        this._enemies = this._enemies.filter(e => !e.markedForDeletion);
     }
 
     public draw(context: CanvasRenderingContext2D): void {
-        this.enemies.forEach(e => e.draw(context));
+        this._enemies.forEach(e => e.draw(context));
     }
 
     private spawnZombie(): void {
         if (Math.random() > 0.7) {
-            this.enemies.push(new Zombie(this.game));
+            this._enemies.push(new Zombie(this.game));
         }
     }
 
     private spawnPlant(): void {
         if (this.game.speed > 0 && Math.random() > 0.5) {
-            this.enemies.push(new GroundEnemy(this.game));
+            this._enemies.push(new GroundEnemy(this.game));
         }
     }
 
     private spawnBee(): void {
-        this.enemies.push(new FlyingEnemy(this.game));
+        this._enemies.push(new FlyingEnemy(this.game));
     }
 
     private spawnSpider(): void {
         if (this.game.speed > 0) {
-            this.enemies.push(new ClimbingEnemy(this.game));
+            this._enemies.push(new ClimbingEnemy(this.game));
         }
     }
 }

@@ -4,7 +4,7 @@ import Game from "./game.js";
 export default class CollisionAnimationFactory {
 
     private readonly game: Game;
-    private readonly animations: CollisionAnimation[];
+    private animations: CollisionAnimation[];
 
     constructor(game: Game) {
         this.game = game;
@@ -16,12 +16,8 @@ export default class CollisionAnimationFactory {
     }
 
     public update(deltaTime: number): void {
-        this.animations.forEach(animation => {
-            animation.update(deltaTime);
-            if (animation.markedForDeletion) {
-                this.animations.splice(this.animations.indexOf(animation), 1);
-            }
-        });
+        this.animations.forEach(animation => animation.update(deltaTime));
+        this.animations = this.animations.filter(a => !a.markedForDeletion);
     }
 
     public draw(context: CanvasRenderingContext2D): void {

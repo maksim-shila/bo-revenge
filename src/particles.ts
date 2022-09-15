@@ -13,12 +13,8 @@ export default class ParticlesFactory {
     }
 
     public update(): void {
-        this.particles.forEach(particle => {
-            particle.update();
-            if (particle.markedForDeletion) {
-                this.particles.splice(this.particles.indexOf(particle), 1);
-            }
-        });
+        this.particles.forEach(particle => particle.update());
+        this.particles = this.particles.filter(p => !p.markedForDeletion);
         if (this.particles.length > this.maxParticles) {
             this.particles.length = this.maxParticles;
         }
