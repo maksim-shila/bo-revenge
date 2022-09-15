@@ -20,6 +20,9 @@ export default class Player extends Sprite {
     public readonly maxVY: number;
     public readonly weight: number;
 
+    // TODO: move to config
+    private readonly immortal = false;
+
     constructor(game: Game) {
         super(game, playerConfig);
         this.x = 0;
@@ -84,7 +87,9 @@ export default class Player extends Sprite {
                 if (this.state.type === "rolling" || this.state.type === "diving") {
                     this.game.score++;
                 } else {
-                    this.setState("hit");
+                    if (!this.immortal) {
+                        this.setState("hit");
+                    }
                 }
             }
         });

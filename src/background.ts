@@ -50,7 +50,7 @@ class Layer {
     }
 
     public update(): void {
-        if (this.x <= -this.width) {
+        if (this.x <= -this.width + this.game.speed) {
             this.x = 0;
         } else {
             this.x -= this.game.speed * this.speedModifier;
