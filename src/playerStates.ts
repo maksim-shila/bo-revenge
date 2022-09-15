@@ -234,10 +234,11 @@ class Hit extends PlayerState {
 
     public override init(): void {
         super.init();
+        this.player.vx = 0;
     }
 
     public update(): void {
-        if (this.player.frameX >= this.framesCount - 1) {
+        if (this.player.isMaxFrame()) {
             if (this.player.onGround()) {
                 this.player.setState("running", 1);
             } else {

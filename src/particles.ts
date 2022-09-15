@@ -19,8 +19,8 @@ export default class ParticlesFactory {
                 this.particles.splice(this.particles.indexOf(particle), 1);
             }
         });
-        if (this.particles.length > 200) {
-            this.particles = this.particles.slice(0, 50);
+        if (this.particles.length > this.maxParticles) {
+            this.particles.length = this.maxParticles;
         }
     }
 

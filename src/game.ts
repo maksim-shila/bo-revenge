@@ -1,4 +1,5 @@
 import Background from "./background.js";
+import CollisionAnimationFactory from "./collisionAnimation.js";
 import EnemySpawner from "./enemy.js";
 import InputHandler from "./input.js";
 import ParticlesFactory from "./particles.js";
@@ -10,6 +11,7 @@ export default class Game {
     public readonly input: InputHandler;
     public readonly player: Player;
     public readonly particles: ParticlesFactory;
+    public readonly collisions: CollisionAnimationFactory;
     public readonly enemySpawner: EnemySpawner;
     public readonly background: Background;
     public readonly ui: UI;
@@ -23,6 +25,10 @@ export default class Game {
     public debug = false;
     public speed = this.maxSpeed;
 
+    private time = 0;
+    private maxTime = 2000;
+    private gameOver = false;
+
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
@@ -31,21 +37,28 @@ export default class Game {
         this.player = new Player(this);
         this.player.setState("sitting");
         this.particles = new ParticlesFactory(this);
+        this.collisions = new CollisionAnimationFactory(this);
         this.background = new Background(this);
         this.enemySpawner = new EnemySpawner(this);
     }
 
     public update(deltaTime: number): void {
+        this.time += deltaTime;
+        if (this.time > this.maxTime) {
+            this.gameOver = true;
+        }
         this.input.update();
         this.background.update();
         this.particles.update();
-        this.player.update(this.input, deltaTime);
         this.enemySpawner.update(deltaTime);
+        this.collisions.update(deltaTime);
+        this.player.update(this.input, deltaTime);
     }
 
     public draw(context: CanvasRenderingContext2D): void {
         this.background.draw(context);
         this.enemySpawner.draw(context);
+        this.collisions.draw(context);
         this.particles.draw(context);
         this.player.draw(context);
         this.ui.draw(context);

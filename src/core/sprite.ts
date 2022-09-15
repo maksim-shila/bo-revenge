@@ -174,4 +174,8 @@ export default abstract class Sprite {
             this.resetPosition(direction);
         }
     }
+
+    public isMaxFrame(): boolean {
+        return this.frameX === this.framesCount - 1;
+    }
 }
