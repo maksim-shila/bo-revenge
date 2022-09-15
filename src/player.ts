@@ -80,7 +80,11 @@ export default class Player extends Sprite {
         this.game.enemySpawner.enemies.forEach(enemy => {
             if (this.hitbox.hasCollision(enemy.hitbox)) {
                 enemy.markedForDeletion = true;
-                this.game.score++;
+                if (this.state.type === "rolling" || this.state.type === "diving") {
+                    this.game.score++;
+                } else {
+                    this.setState("hit");
+                }
             }
         });
     }

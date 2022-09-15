@@ -1,5 +1,7 @@
 import Game from "./game";
 
+export type ParticleType = "dust" | "splash" | "fire";
+
 export default class ParticlesFactory {
     private readonly game: Game;
 
@@ -17,7 +19,7 @@ export default class ParticlesFactory {
                 this.particles.splice(this.particles.indexOf(particle), 1);
             }
         });
-        if (this.particles.length > 50) {
+        if (this.particles.length > 200) {
             this.particles = this.particles.slice(0, 50);
         }
     }
@@ -34,11 +36,12 @@ export default class ParticlesFactory {
             case "fire":
                 this.particles.unshift(new Fire(this.game, x, y));
                 break;
+            case "splash":
+                this.particles.unshift(new Splash(this.game, x, y));
+                break;
         }
     }
 }
-
-export type ParticleType = "dust" | "splash" | "fire";
 
 abstract class Particle {
 
@@ -88,11 +91,31 @@ export class Dust extends Particle {
     }
 }
 
-// export class Splash extends Particle {
-//     public draw(context: CanvasRenderingContext2D): void {
-//         throw new Error("Method not implemented.");
-//     }
-// }
+export class Splash extends Particle {
+    private readonly image: CanvasImageSource;
+    private gravity: number;
+
+    constructor(game: Game, x: number, y: number) {
+        super(game);
+        this.image = document.getElementById("fireImg") as CanvasImageSource;
+        this.size = Math.random() * 100 + 100;
+        this.x = x - this.size * 0.4;
+        this.y = y - this.size * 0.5;
+        this.vx = Math.random() * 6 - 4;
+        this.vy = Math.random() * 2 + 1;
+        this.gravity = 0;
+    }
+
+    public override update(): void {
+        super.update();
+        this.gravity += 0.1;
+        this.y += this.gravity;
+    }
+
+    public draw(context: CanvasRenderingContext2D): void {
+        context.drawImage(this.image, this.x, this.y, this.size, this.size);
+    }
+}
 
 export class Fire extends Particle {
     private readonly image: CanvasImageSource;
