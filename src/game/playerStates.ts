@@ -1,5 +1,5 @@
 import Game from "./game.js";
-import InputHandler from "./input.js";
+import InputHandler from "../input.js";
 import Player from "./player.js";
 
 export type PlayerStateType = "standing" | "jumping" | "falling" | "running" | "sitting" | "rolling" | "diving" | "hit";

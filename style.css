@@ -4,7 +4,12 @@
     box-sizing: border-box;
 }
 
+body {
+    background-color: black;
+}
+
 #gameCanvas {
+    display: none;
     border: 5px solid black;
     position: absolute;
     top: 50%;
@@ -16,4 +21,28 @@
 
 img {
     display: none;
+}
+
+#mainMenu {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    list-style-type: none;
+}
+
+.menu-btn {
+    color: lightgray;
+    font: 50px 'Helvetica';
+    background: none;
+    border: none;
+    height: 70px;
+}
+
+.menu-btn.menu-btn-active {
+    font-size: 70px;
+    color: lightgray;
 }

@@ -1,13 +1,15 @@
+import GameConfig from "../global.js";
 import Background from "./background.js";
 import CollisionAnimationFactory from "./collisionAnimation.js";
 import EnemySpawner from "./enemy.js";
-import InputHandler from "./input.js";
+import InputHandler from "../input.js";
 import ParticlesFactory from "./particles.js";
 import Player from "./player.js";
 import UI from "./UI.js";
 
 export default class Game {
 
+    public readonly config: GameConfig;
     public readonly input: InputHandler;
     public readonly player: Player;
     public readonly particles: ParticlesFactory;
@@ -22,18 +24,18 @@ export default class Game {
     public readonly maxSpeed = 3;
 
     public score = 0;
-    public debug = false;
     public speed = this.maxSpeed;
 
-    private time = 0;
-    private maxTime = 2000;
-    private gameOver = false;
+    public time = 0;
+    public gameOver = false;
+    private maxTime = 5000;
 
-    constructor(width: number, height: number) {
-        this.width = width;
-        this.height = height;
+    constructor(config: GameConfig, input: InputHandler) {
+        this.config = config;
+        this.width = config.width;
+        this.height = config.height;
         this.ui = new UI(this);
-        this.input = new InputHandler(this);
+        this.input = input;
         this.player = new Player(this);
         this.player.setState("sitting");
         this.particles = new ParticlesFactory(this);

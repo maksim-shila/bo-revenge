@@ -1,7 +1,7 @@
 import { Hitbox, RectHitbox } from "./core/hitbox.js";
 import Sprite, { SpriteConfig } from "./core/sprite.js";
 import Game from "./game.js";
-import InputHandler from "./input.js";
+import InputHandler from "../input.js";
 import { PlayerStateManager, PlayerStateType, State } from "./playerStates.js";
 
 const playerConfig: SpriteConfig = {
@@ -19,9 +19,6 @@ export default class Player extends Sprite {
     public readonly maxVX: number;
     public readonly maxVY: number;
     public readonly weight: number;
-
-    // TODO: move to config
-    private readonly immortal = false;
 
     constructor(game: Game) {
         super(game, playerConfig);
@@ -44,7 +41,7 @@ export default class Player extends Sprite {
 
     public override draw(context: CanvasRenderingContext2D): void {
         super.draw(context);
-        if (this.game.debug) {
+        if (this.game.config.debug) {
             this.hitbox.draw(context);
         }
     }
@@ -87,7 +84,7 @@ export default class Player extends Sprite {
                 if (this.state.type === "rolling" || this.state.type === "diving") {
                     this.game.score++;
                 } else {
-                    if (!this.immortal) {
+                    if (!this.game.config.immportal) {
                         this.setState("hit");
                     }
                 }

@@ -79,7 +79,7 @@ export abstract class Enemy extends Sprite {
 
     public override draw(context: CanvasRenderingContext2D): void {
         super.draw(context);
-        if (this.game.debug) {
+        if (this.game.config.debug) {
             this.hitbox.draw(context);
         }
     }

@@ -1,4 +1,4 @@
-import Game from "./game";
+import GameConfig from "./global.js";
 
 const ALLOWED_KEYS = [
     "ArrowUp",
@@ -13,6 +13,7 @@ const ALLOWED_KEYS = [
     "Space",
     "ShiftLeft",
     "ShiftRight",
+    "Enter",
     "GamepadUp",
     "GamepadDown",
     "GamepadLeft",
@@ -28,24 +29,26 @@ const ALLOWED_KEYS = [
 ] as const;
 
 type GameKey = typeof ALLOWED_KEYS[number];
-type KeyAction = "jump" | "down" | "left" | "right" | "roll";
+type KeyAction = "jump" | "up" | "down" | "left" | "right" | "roll" | "select";
 type Controls = { [key in KeyAction]: GameKey[] };
 type GameKeyListener = (code: GameKey) => unknown;
 
 const CONTROLS = {} as Controls;
-CONTROLS["jump"] = ["ArrowUp", "KeyW", "Space", "GamepadA", "GamepadUp"];
+CONTROLS["jump"] = ["Space", "GamepadA"];
+CONTROLS["up"] = ["ArrowUp", "KeyW", "GamepadUp"];
 CONTROLS["down"] = ["ArrowDown", "KeyS", "GamepadDown"];
 CONTROLS["left"] = ["ArrowLeft", "KeyA", "GamepadLeft"];
 CONTROLS["right"] = ["ArrowRight", "KeyD", "GamepadRight"];
 CONTROLS["roll"] = ["ShiftLeft", "ShiftRight", "GamepadR2"];
+CONTROLS["select"] = ["Enter", "GamepadA"];
 
 export default class InputHandler {
-    private readonly game: Game;
+    private readonly gameConfig: GameConfig;
     private keys: string[];
     private gamepad: Gamepad;
 
-    constructor(game: Game) {
-        this.game = game;
+    constructor(gameConfig: GameConfig) {
+        this.gameConfig = gameConfig;
         this.keys = [];
         this.gamepad = new Gamepad(this.keydown, this.keyup);
         window.addEventListener("keydown", e => this.keydown(e.code as GameKey));
@@ -81,7 +84,7 @@ export default class InputHandler {
             this.keys.push(code);
         }
         if (code === "KeyJ") {
-            this.game.debug = !this.game.debug;
+            this.gameConfig.debug = !this.gameConfig.debug;
         }
     };
 
