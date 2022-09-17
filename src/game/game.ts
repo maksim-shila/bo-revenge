@@ -26,10 +26,6 @@ export default class Game {
     public score = 0;
     public speed = this.maxSpeed;
 
-    public time = 0;
-    public gameOver = false;
-    private maxTime = 5000;
-
     constructor(config: GameConfig, input: InputHandler) {
         this.config = config;
         this.width = config.width;
@@ -45,10 +41,6 @@ export default class Game {
     }
 
     public update(deltaTime: number): void {
-        this.time += deltaTime;
-        if (this.time > this.maxTime) {
-            this.gameOver = true;
-        }
         this.input.update();
         this.background.update();
         this.particles.update();

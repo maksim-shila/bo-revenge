@@ -17,6 +17,7 @@ export default class MainMenu {
         const controlsBtn = document.getElementById("mainMenu_controls") as HTMLButtonElement;
         const highscoresBtn = document.getElementById("mainMenu_highscores") as HTMLButtonElement;
         const exitBtn = document.getElementById("mainMenu_exit") as HTMLButtonElement;
+        exitBtn.addEventListener("click", () => window.close());
         this.menuButtons = [this.startBtn, controlsBtn, highscoresBtn, exitBtn];
         this.setActive(this.startBtn);
     }
