@@ -50,15 +50,15 @@ class Layer {
     }
 
     public update(): void {
-        if (this.x <= -this.width + this.game.speed - 1) {
-            this.x = 0;
-        } else {
-            this.x -= this.game.speed * this.speedModifier;
+        if (this.x <= -this.width) {
+            this.x += this.width;
         }
+        this.x -= this.game.speed * this.speedModifier;
     }
 
     public draw(context: CanvasRenderingContext2D): void {
-        context.drawImage(this.image, this.x, this.y, this.width, this.height);
-        context.drawImage(this.image, this.x + this.width, this.y, this.width, this.height);
+        for (let i = 0; i < Math.ceil(this.game.width / this.width) + 1; ++i) {
+            context.drawImage(this.image, this.x + this.width * i, this.y, this.width, this.height);
+        }
     }
 }
