@@ -1,5 +1,6 @@
 * {
     cursor: none;
+    pointer-events: none;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -26,11 +27,13 @@ img {
 }
 
 #mainMenu,
-#gameMenu {
+#gameMenu,
+#controlsMenu,
+#highscoresMenu {
     display: none;
 }
 
-#gameMenu .menu-btn {
+#gameMenu .menu-item {
     color: black;
     text-shadow: 1px 1px lightgray;
 }
@@ -56,7 +59,7 @@ img {
     list-style-type: none;
 }
 
-.menu .menu-btn {
+.menu .menu-item {
     color: lightgray;
     font: 50px 'Helvetica';
     background: none;
@@ -64,7 +67,7 @@ img {
     height: 70px;
 }
 
-.menu-btn.menu-btn-active {
-    font-size: 70px;
+.menu-item.menu-item-active {
     color: lightgray;
+    font-size: 70px;
 }

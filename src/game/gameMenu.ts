@@ -1,5 +1,5 @@
 import InputHandler from "../input.js";
-import MenuList from "../utils/menuList.js";
+import MenuList from "../menu/menuList.js";
 
 type GameMenuEvents = {
     onContinue: () => unknown,

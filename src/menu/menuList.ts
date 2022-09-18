@@ -1,4 +1,4 @@
-import InputHandler from "../input";
+import InputHandler from "../input.js";
 
 export default class MenuList {
 
@@ -22,10 +22,10 @@ export default class MenuList {
 
     public setActive(btn: HTMLButtonElement): void {
         if (this.activeBtn) {
-            this.activeBtn.classList.remove("menu-btn-active");
+            this.activeBtn.classList.remove("menu-item-active");
         }
         this.activeBtn = btn;
-        btn.classList.add("menu-btn-active");
+        btn.classList.add("menu-item-active");
     }
 
     private changeActiveBtn(input: InputHandler): void {
