@@ -14,6 +14,7 @@ const ALLOWED_KEYS = [
     "ShiftLeft",
     "ShiftRight",
     "Enter",
+    "Escape",
     "GamepadUp",
     "GamepadDown",
     "GamepadLeft",
@@ -25,11 +26,13 @@ const ALLOWED_KEYS = [
     "GamepadR2",
     "GamepadR1",
     "GamepadL2",
-    "GamepadL1"
+    "GamepadL1",
+    "GamepadSelect",
+    "GamepadStart"
 ] as const;
 
 type GameKey = typeof ALLOWED_KEYS[number];
-type KeyAction = "jump" | "up" | "down" | "left" | "right" | "roll" | "select";
+type KeyAction = "jump" | "up" | "down" | "left" | "right" | "roll" | "select" | "pause";
 type Controls = { [key in KeyAction]: GameKey[] };
 type GameKeyListener = (code: GameKey) => unknown;
 
@@ -41,6 +44,7 @@ CONTROLS["left"] = ["ArrowLeft", "KeyA", "GamepadLeft"];
 CONTROLS["right"] = ["ArrowRight", "KeyD", "GamepadRight"];
 CONTROLS["roll"] = ["ShiftLeft", "ShiftRight", "GamepadR2"];
 CONTROLS["select"] = ["Enter", "GamepadA"];
+CONTROLS["pause"] = ["Escape", "GamepadStart"];
 
 export default class InputHandler {
     private readonly gameConfig: GameConfig;
@@ -105,6 +109,8 @@ GAMEPAD_CONTROLS[4] = "GamepadL1";
 GAMEPAD_CONTROLS[5] = "GamepadR1";
 GAMEPAD_CONTROLS[6] = "GamepadL2";
 GAMEPAD_CONTROLS[7] = "GamepadR2";
+GAMEPAD_CONTROLS[8] = "GamepadSelect";
+GAMEPAD_CONTROLS[9] = "GamepadStart";
 GAMEPAD_CONTROLS[12] = "GamepadUp";
 GAMEPAD_CONTROLS[13] = "GamepadDown";
 GAMEPAD_CONTROLS[14] = "GamepadLeft";

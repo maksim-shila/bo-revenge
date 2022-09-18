@@ -1,33 +1,25 @@
 import InputHandler from "./input.js";
+import MenuList from "./utils/menuList.js";
 
 export default class MainMenu {
 
-    private readonly input: InputHandler;
     private readonly menu: HTMLElement;
-    private readonly menuButtons: HTMLButtonElement[];
-    private readonly startBtn: HTMLButtonElement;
-    private onStartBtnClick: (() => unknown) | null = null;
-    private activeBtn: HTMLButtonElement | null = null;
-    private throttleTimer: NodeJS.Timeout | null = null;
+    private readonly menuList: MenuList;
 
-    constructor(input: InputHandler) {
-        this.input = input;
+    constructor(onStartNewGame: () => unknown) {
         this.menu = document.getElementById("mainMenu") as HTMLElement;
-        this.startBtn = document.getElementById("mainMenu_start") as HTMLButtonElement;
+
+        const startBtn = document.getElementById("mainMenu_start") as HTMLButtonElement;
         const controlsBtn = document.getElementById("mainMenu_controls") as HTMLButtonElement;
         const highscoresBtn = document.getElementById("mainMenu_highscores") as HTMLButtonElement;
         const exitBtn = document.getElementById("mainMenu_exit") as HTMLButtonElement;
-        exitBtn.addEventListener("click", () => window.close());
-        this.menuButtons = [this.startBtn, controlsBtn, highscoresBtn, exitBtn];
-        this.setActive(this.startBtn);
-    }
+        const menuButtons = [startBtn, controlsBtn, highscoresBtn, exitBtn];
 
-    public onStartNewGame(callback: () => unknown): void {
-        if (this.onStartBtnClick) {
-            this.startBtn.removeEventListener("click", this.onStartBtnClick);
-        }
-        this.onStartBtnClick = callback;
-        this.startBtn.addEventListener("click", callback);
+        this.menuList = new MenuList(menuButtons);
+        this.menuList.setActive(startBtn);
+
+        startBtn.addEventListener("click", onStartNewGame);
+        exitBtn.addEventListener("click", () => window.close());
     }
 
     public show(): void {
@@ -36,43 +28,9 @@ export default class MainMenu {
 
     public hide(): void {
         this.menu.style.display = "none";
-        if (this.onStartBtnClick) {
-            this.startBtn.removeEventListener("click", this.onStartBtnClick);
-            this.onStartBtnClick = null;
-        }
     }
 
-    public update(): void {
-        this.changeActiveBtn();
-        if (this.input.keyPressed("select")) {
-            this.activeBtn?.click();
-        }
-    }
-
-    private changeActiveBtn(): void {
-        if (!this.activeBtn) {
-            this.activeBtn = this.menuButtons[0];
-            return;
-        }
-        if (this.input.keyPressed("up", "down") && !this.throttleTimer) {
-            const activeBtnIndex = this.menuButtons.indexOf(this.activeBtn);
-            const newIndex = this.input.keyPressed("down")
-                ? (activeBtnIndex + 1) % this.menuButtons.length
-                : activeBtnIndex === 0 ? this.menuButtons.length - 1 : activeBtnIndex - 1;
-            const activeBtn = this.menuButtons[newIndex];
-            this.setActive(activeBtn);
-            this.throttleTimer = setTimeout(() => this.throttleTimer = null, 200);
-        } else if (this.input.keyReleased("up", "down") && this.throttleTimer) {
-            clearTimeout(this.throttleTimer);
-            this.throttleTimer = null;
-        }
-    }
-
-    private setActive(btn: HTMLButtonElement): void {
-        if (this.activeBtn) {
-            this.activeBtn.classList.remove("menu-btn-active");
-        }
-        this.activeBtn = btn;
-        btn.classList.add("menu-btn-active");
+    public update(input: InputHandler): void {
+        this.menuList.update(input);
     }
 }

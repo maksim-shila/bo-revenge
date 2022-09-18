@@ -36,12 +36,25 @@
     <img id="fireImg" src="assets/fire.png">
     <img id="boomImg" src="assets/boom.png">
 
-    <ul id="mainMenu">
-        <li><button id="mainMenu_start" class="menu-btn">Start New Game</button></li>
-        <li><button id="mainMenu_controls" class="menu-btn">Controls</button></li>
-        <li><button id="mainMenu_highscores" class="menu-btn">Highscores</button></li>
-        <li><button id="mainMenu_exit" class="menu-btn">Exit</button></li>
-    </ul>
+    <div id="mainMenu">
+        <ul class="menu">
+            <li><button id="mainMenu_start" class="menu-btn">Start New Game</button></li>
+            <li><button id="mainMenu_controls" class="menu-btn">Controls (TODO)</button></li>
+            <li><button id="mainMenu_highscores" class="menu-btn">Highscores (TODO)</button></li>
+            <li><button id="mainMenu_exit" class="menu-btn">Exit</button></li>
+        </ul>
+    </div>
+
+    <div id="gameMenu">
+        <div class="menu-overlay">
+            <ul class="menu">
+                <li><button id="gameMenu_continue" class="menu-btn">Continue</button></li>
+                <li><button id="gameMenu_restart" class="menu-btn">Restart (TODO)</button></li>
+                <li><button id="gameMenu_exit" class="menu-btn">To Main Menu (TODO)</button></li>
+            </ul>
+        </div>
+    </div>
+
 
     <script type="module" src="./build/main.js"></script>
 </body>

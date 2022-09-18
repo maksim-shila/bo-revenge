@@ -14,8 +14,7 @@ window.addEventListener("load", () => {
     canvas.height = gameConfig.height;
 
     let gameStarted = false;
-    const mainMenu = new MainMenu(input);
-    mainMenu.onStartNewGame(() => {
+    const mainMenu = new MainMenu(() => {
         gameStarted = true;
         mainMenu.hide();
         canvas.style.display = "block";
@@ -27,7 +26,7 @@ window.addEventListener("load", () => {
         input.update();
         if (!gameStarted) {
             mainMenu.show();
-            mainMenu.update();
+            mainMenu.update(input);
         } else {
             const deltaTime = timeStamp - lastTime;
             lastTime = timeStamp;

@@ -11,8 +11,8 @@ body {
 
 #gameCanvas {
     display: none;
-    border-top: 3px solid white;
-    border-bottom: 5px solid white;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -25,18 +25,38 @@ img {
     display: none;
 }
 
-#mainMenu {
+#mainMenu,
+#gameMenu {
     display: none;
+}
+
+#gameMenu .menu-btn {
+    color: black;
+    text-shadow: 1px 1px lightgray;
+}
+
+.menu-overlay {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
+    height: 500px;
+    background-color: rgba(197, 197, 197, 0.5);
+}
+
+.menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    vertical-align: middle;
     text-align: center;
     list-style-type: none;
 }
 
-.menu-btn {
+.menu .menu-btn {
     color: lightgray;
     font: 50px 'Helvetica';
     background: none;

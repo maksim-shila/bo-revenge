@@ -6,8 +6,11 @@ import InputHandler from "../input.js";
 import ParticlesFactory from "./particles.js";
 import Player from "./player.js";
 import UI from "./UI.js";
+import GameMenu from "./gameMenu.js";
 
 export default class Game {
+
+    private readonly menu: GameMenu;
 
     public readonly config: GameConfig;
     public readonly input: InputHandler;
@@ -25,8 +28,10 @@ export default class Game {
 
     public score = 0;
     public speed = this.maxSpeed;
+    public paused = false;
 
     constructor(config: GameConfig, input: InputHandler) {
+        this.menu = new GameMenu(this);
         this.config = config;
         this.width = config.width;
         this.height = config.height;
@@ -42,11 +47,14 @@ export default class Game {
 
     public update(deltaTime: number): void {
         this.input.update();
-        this.background.update();
-        this.particles.update();
-        this.enemySpawner.update(deltaTime);
-        this.collisions.update(deltaTime);
-        this.player.update(this.input, deltaTime);
+        this.menu.update(this.input);
+        if (!this.paused) {
+            this.background.update();
+            this.particles.update();
+            this.enemySpawner.update(deltaTime);
+            this.collisions.update(deltaTime);
+            this.player.update(this.input, deltaTime);
+        }
     }
 
     public draw(context: CanvasRenderingContext2D): void {
@@ -56,5 +64,9 @@ export default class Game {
         this.particles.draw(context);
         this.player.draw(context);
         this.ui.draw(context);
+    }
+
+    public pause(): void {
+        this.paused = !this.paused;
     }
 }
