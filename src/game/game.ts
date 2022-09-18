@@ -17,6 +17,8 @@ export default class Game {
     public readonly background: Background;
     public readonly ui: UI;
 
+    private readonly soundtrack: HTMLAudioElement;
+
     public readonly width: number;
     public readonly height: number;
     public readonly groundMargin = 80;
@@ -25,7 +27,7 @@ export default class Game {
     public score = 0;
     public speed = this.maxSpeed;
     public paused = false;
-    public running = false;
+    private _running = false;
 
     public onPause: () => unknown = () => { };
     public onContinue: () => unknown = () => { };
@@ -41,6 +43,24 @@ export default class Game {
         this.collisions = new CollisionAnimationFactory(this);
         this.background = new Background(this);
         this.enemySpawner = new EnemySpawner(this);
+        this.soundtrack = new Audio();
+        this.soundtrack.src = "assets/sounds/game_level_1.mp3";
+        this.soundtrack.addEventListener("ended", () => this.playSoundtrack());
+    }
+
+    public get running(): boolean {
+        return this._running;
+    }
+
+    public start(): void {
+        this.playSoundtrack();
+        this._running = true;
+    }
+
+    public stop(): void {
+        this.soundtrack.pause();
+        this.soundtrack.currentTime = 0;
+        this._running = false;
     }
 
     public update(input: InputHandler, deltaTime: number): void {
@@ -73,5 +93,10 @@ export default class Game {
     public continue(): void {
         this.paused = false;
         this.onContinue();
+    }
+
+    private playSoundtrack(): void {
+        // this.soundtrack.currentTime = 1.8;
+        this.soundtrack.play();
     }
 }

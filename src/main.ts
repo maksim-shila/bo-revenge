@@ -22,7 +22,7 @@ window.addEventListener("load", () => {
 
     const mainMenu = new MainMenu({
         onStartNewGame: (): void => {
-            game.running = true;
+            game.start();
             mainMenu.hide();
             canvas.show();
         }
@@ -35,11 +35,13 @@ window.addEventListener("load", () => {
             game.continue();
         },
         onRestart: (): void => {
+            game.stop();
             game = newGame();
-            game.running = true;
+            game.start();
             gameMenu.hide();
         },
         onExit: (): void => {
+            game.stop();
             game = newGame();
             canvas.hide();
             gameMenu.hide();

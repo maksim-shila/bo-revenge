@@ -11,10 +11,14 @@ export default class MainMenu {
     private readonly menuList: MenuList;
     private readonly controls: InnerMenu;
     private readonly highscores: InnerMenu;
+    private readonly soundtrack: HTMLAudioElement;
     public shown = false;
 
     constructor(events: MainMenuEvents) {
         this.menu = document.getElementById("mainMenu")!;
+        this.soundtrack = new Audio();
+        this.soundtrack.src = "assets/sounds/main_menu.mp3";
+        this.soundtrack.addEventListener("ended", () => this.playSoundtrack());
         this.controls = new InnerMenu(this, "controlsMenu");
         this.highscores = new InnerMenu(this, "highscoresMenu");
         const startBtn = document.getElementById("mainMenu_start") as HTMLButtonElement;
@@ -32,11 +36,17 @@ export default class MainMenu {
     }
 
     public show(): void {
+        if (this.soundtrack.paused) {
+            this.playSoundtrack();
+        }
         this.menu.style.display = "block";
         this.shown = true;
     }
 
-    public hide(): void {
+    public hide(stopSoundtrack = true): void {
+        if (stopSoundtrack) {
+            this.soundtrack.pause();
+        }
         this.menu.style.display = "none";
         this.shown = false;
     }
@@ -45,6 +55,11 @@ export default class MainMenu {
         this.shown && this.menuList.update(input);
         this.controls.shown && this.controls.update(input);
         this.highscores.shown && this.highscores.update(input);
+    }
+
+    private playSoundtrack(): void {
+        this.soundtrack.currentTime = 1.8;
+        this.soundtrack.play();
     }
 }
 
@@ -60,7 +75,7 @@ class InnerMenu {
     }
 
     public show(): void {
-        this.parent.hide();
+        this.parent.hide(false);
         this.element.style.display = "block";
         this.shown = true;
     }
