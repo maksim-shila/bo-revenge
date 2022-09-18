@@ -32,7 +32,7 @@ const ALLOWED_KEYS = [
 ] as const;
 
 type GameKey = typeof ALLOWED_KEYS[number];
-type KeyAction = "jump" | "up" | "down" | "left" | "right" | "roll" | "select" | "pause";
+type KeyAction = "jump" | "up" | "down" | "left" | "right" | "roll" | "select" | "pause" | "back";
 type Controls = { [key in KeyAction]: GameKey[] };
 type GameKeyListener = (code: GameKey) => unknown;
 
@@ -45,6 +45,7 @@ CONTROLS["right"] = ["ArrowRight", "KeyD", "GamepadRight"];
 CONTROLS["roll"] = ["ShiftLeft", "ShiftRight", "GamepadR2"];
 CONTROLS["select"] = ["Enter", "GamepadA"];
 CONTROLS["pause"] = ["Escape", "GamepadStart"];
+CONTROLS["back"] = ["Escape", "GamepadB"];
 
 export default class InputHandler {
     private readonly gameConfig: GameConfig;

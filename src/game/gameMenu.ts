@@ -11,22 +11,26 @@ export default class GameMenu {
     private readonly menu: HTMLElement;
     private readonly menuList: MenuList;
     private shown = false;
+    private continueBtn: HTMLButtonElement;
 
     constructor(events: GameMenuEvents) {
         this.menu = document.getElementById("gameMenu") as HTMLElement;
 
-        const continueBtn = document.getElementById("gameMenu_continue") as HTMLButtonElement;
+        this.continueBtn = document.getElementById("gameMenu_continue") as HTMLButtonElement;
         const restartBtn = document.getElementById("gameMenu_restart") as HTMLButtonElement;
         const exitBtn = document.getElementById("gameMenu_exit") as HTMLButtonElement;
-        const menuButtons = [continueBtn, restartBtn, exitBtn];
-        this.menuList = new MenuList(menuButtons, continueBtn);
+        const menuButtons = [this.continueBtn, restartBtn, exitBtn];
+        this.menuList = new MenuList(menuButtons, this.continueBtn);
 
-        continueBtn.addEventListener("click", events.onContinue);
+        this.continueBtn.addEventListener("click", events.onContinue);
         restartBtn.addEventListener("click", events.onRestart);
         exitBtn.addEventListener("click", events.onExit);
     }
 
     public update(input: InputHandler): void {
+        if (input.lockKeyPressed("back")) {
+            this.continueBtn.click();
+        }
         this.menuList.update(input);
     }
 
