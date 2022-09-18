@@ -1,12 +1,16 @@
 import InputHandler from "./input.js";
 import MenuList from "./utils/menuList.js";
 
+type MainMenuEvents = {
+    onStartNewGame: () => unknown;
+}
+
 export default class MainMenu {
 
     private readonly menu: HTMLElement;
     private readonly menuList: MenuList;
 
-    constructor(onStartNewGame: () => unknown) {
+    constructor(events: MainMenuEvents) {
         this.menu = document.getElementById("mainMenu") as HTMLElement;
 
         const startBtn = document.getElementById("mainMenu_start") as HTMLButtonElement;
@@ -15,10 +19,9 @@ export default class MainMenu {
         const exitBtn = document.getElementById("mainMenu_exit") as HTMLButtonElement;
         const menuButtons = [startBtn, controlsBtn, highscoresBtn, exitBtn];
 
-        this.menuList = new MenuList(menuButtons);
-        this.menuList.setActive(startBtn);
+        this.menuList = new MenuList(menuButtons, startBtn);
 
-        startBtn.addEventListener("click", onStartNewGame);
+        startBtn.addEventListener("click", events.onStartNewGame);
         exitBtn.addEventListener("click", () => window.close());
     }
 

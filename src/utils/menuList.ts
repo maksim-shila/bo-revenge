@@ -4,16 +4,19 @@ export default class MenuList {
 
     private readonly menuButtons: HTMLButtonElement[];
     private activeBtn: HTMLButtonElement | null = null;
-    private throttleTimer: NodeJS.Timeout | null = null;
+    private defaultBtn: HTMLButtonElement;
 
-    constructor(menuButtons: HTMLButtonElement[]) {
+    constructor(menuButtons: HTMLButtonElement[], defaultBtn: HTMLButtonElement) {
         this.menuButtons = menuButtons;
+        this.defaultBtn = defaultBtn;
+        this.setActive(this.defaultBtn);
     }
 
     public update(input: InputHandler): void {
         this.changeActiveBtn(input);
-        if (input.keyPressed("select")) {
+        if (input.lockKeyPressed("select")) {
             this.activeBtn?.click();
+            this.setActive(this.defaultBtn);
         }
     }
 
@@ -30,17 +33,15 @@ export default class MenuList {
             this.activeBtn = this.menuButtons[0];
             return;
         }
-        if (input.keyPressed("up", "down") && !this.throttleTimer) {
+        const upPressed = input.lockKeyPressed("up");
+        const downPressed = input.lockKeyPressed("down");
+        if (upPressed || downPressed) {
             const activeBtnIndex = this.menuButtons.indexOf(this.activeBtn);
-            const newIndex = input.keyPressed("down")
+            const newIndex = downPressed
                 ? (activeBtnIndex + 1) % this.menuButtons.length
                 : activeBtnIndex === 0 ? this.menuButtons.length - 1 : activeBtnIndex - 1;
             const activeBtn = this.menuButtons[newIndex];
             this.setActive(activeBtn);
-            this.throttleTimer = setTimeout(() => this.throttleTimer = null, 200);
-        } else if (input.keyReleased("up", "down") && this.throttleTimer) {
-            clearTimeout(this.throttleTimer);
-            this.throttleTimer = null;
         }
     }
 }

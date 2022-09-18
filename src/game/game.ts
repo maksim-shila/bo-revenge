@@ -6,14 +6,10 @@ import InputHandler from "../input.js";
 import ParticlesFactory from "./particles.js";
 import Player from "./player.js";
 import UI from "./UI.js";
-import GameMenu from "./gameMenu.js";
 
 export default class Game {
 
-    private readonly menu: GameMenu;
-
     public readonly config: GameConfig;
-    public readonly input: InputHandler;
     public readonly player: Player;
     public readonly particles: ParticlesFactory;
     public readonly collisions: CollisionAnimationFactory;
@@ -29,14 +25,16 @@ export default class Game {
     public score = 0;
     public speed = this.maxSpeed;
     public paused = false;
+    public running = false;
 
-    constructor(config: GameConfig, input: InputHandler) {
-        this.menu = new GameMenu(this);
+    public onPause: () => unknown = () => { };
+    public onContinue: () => unknown = () => { };
+
+    constructor(config: GameConfig) {
         this.config = config;
         this.width = config.width;
         this.height = config.height;
         this.ui = new UI(this);
-        this.input = input;
         this.player = new Player(this);
         this.player.setState("sitting");
         this.particles = new ParticlesFactory(this);
@@ -45,15 +43,16 @@ export default class Game {
         this.enemySpawner = new EnemySpawner(this);
     }
 
-    public update(deltaTime: number): void {
-        this.input.update();
-        this.menu.update(this.input);
+    public update(input: InputHandler, deltaTime: number): void {
+        if (input.lockKeyPressed("pause")) {
+            this.paused ? this.continue() : this.pause();
+        }
         if (!this.paused) {
             this.background.update();
             this.particles.update();
             this.enemySpawner.update(deltaTime);
             this.collisions.update(deltaTime);
-            this.player.update(this.input, deltaTime);
+            this.player.update(input, deltaTime);
         }
     }
 
@@ -67,6 +66,12 @@ export default class Game {
     }
 
     public pause(): void {
-        this.paused = !this.paused;
+        this.paused = true;
+        this.onPause();
+    }
+
+    public continue(): void {
+        this.paused = false;
+        this.onContinue();
     }
 }

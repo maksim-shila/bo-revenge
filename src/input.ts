@@ -50,6 +50,7 @@ export default class InputHandler {
     private readonly gameConfig: GameConfig;
     private keys: string[];
     private gamepad: Gamepad;
+    private locked: GameKey[] = [];
 
     constructor(gameConfig: GameConfig) {
         this.gameConfig = gameConfig;
@@ -65,7 +66,25 @@ export default class InputHandler {
         }
     }
 
+    /**
+     * Returns key state and locks key until released
+     */
+    public lockKeyPressed(keyAction: KeyAction): boolean {
+        const pressed = this.keyPressed(keyAction);
+        if (pressed) {
+            CONTROLS[keyAction].forEach(c => {
+                if (this.keys.includes(c)) {
+                    this.locked.push(c);
+                }
+            });
+        }
+        return pressed;
+    }
+
     public keyPressed(...keyAction: KeyAction[]): boolean {
+        if (keyAction.flatMap(k => CONTROLS[k]).find(c => this.locked.includes(c))) {
+            return false;
+        }
         return this.keyStateIs("pressed", keyAction);
     }
 
@@ -96,6 +115,10 @@ export default class InputHandler {
         const keyCodeIndex = this.keys.indexOf(code);
         if (keyCodeIndex !== -1) {
             this.keys.splice(keyCodeIndex, 1);
+            const lockIndex = this.locked.indexOf(code);
+            if (lockIndex !== -1) {
+                this.locked.splice(lockIndex, 1);
+            }
         }
     };
 }

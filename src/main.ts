@@ -2,37 +2,66 @@ import Game from "./game/game.js";
 import InputHandler from "./input.js";
 import GameConfig from "./global.js";
 import MainMenu from "./mainMenu.js";
+import GameMenu from "./game/gameMenu.js";
+import Canvas from "./utils/canvas.js";
 
 window.addEventListener("load", () => {
 
     const gameConfig = new GameConfig();
     const input = new InputHandler(gameConfig);
+    const canvas = new Canvas(gameConfig);
 
-    const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
-    const context = canvas.getContext("2d")!;
-    canvas.width = gameConfig.width;
-    canvas.height = gameConfig.height;
+    let game = newGame();
 
-    let gameStarted = false;
-    const mainMenu = new MainMenu(() => {
-        gameStarted = true;
-        mainMenu.hide();
-        canvas.style.display = "block";
+    function newGame(): Game {
+        const game = new Game(gameConfig);
+        game.onPause = (): void => gameMenu.show();
+        game.onContinue = (): void => gameMenu.hide();
+        return game;
+    }
+
+    const mainMenu = new MainMenu({
+        onStartNewGame: (): void => {
+            game.running = true;
+            mainMenu.hide();
+            canvas.show();
+        }
     });
-    const game = new Game(gameConfig, input);
+    mainMenu.show();
+
+    const gameMenu = new GameMenu({
+        onContinue: (): void => {
+            gameMenu.hide();
+            game.continue();
+        },
+        onRestart: (): void => {
+            game = newGame();
+            game.running = true;
+            gameMenu.hide();
+        },
+        onExit: (): void => {
+            game = newGame();
+            canvas.hide();
+            gameMenu.hide();
+            mainMenu.show();
+        }
+    });
 
     let lastTime = 0;
     function animate(timeStamp: number): void {
         input.update();
-        if (!gameStarted) {
-            mainMenu.show();
+        if (!game.running) {
             mainMenu.update(input);
-        } else {
+        }
+        else {
             const deltaTime = timeStamp - lastTime;
             lastTime = timeStamp;
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            game.update(deltaTime);
-            game.draw(context);
+            if (game.paused) {
+                gameMenu.update(input);
+            }
+            canvas.clear();
+            game.update(input, deltaTime);
+            game.draw(canvas.context);
         }
 
         requestAnimationFrame(animate);
