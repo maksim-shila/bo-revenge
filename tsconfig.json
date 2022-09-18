@@ -9,5 +9,7 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "noImplicitOverride": true
-  }
+  },
+  "include": [ "src/**/*" ],
+  "exclude": [ "node_modules", "dist", "build" ]
 }
