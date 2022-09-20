@@ -20,6 +20,8 @@ export default class Player extends Sprite {
     public readonly maxVY: number;
     public readonly weight: number;
 
+    private onObstacle = false;
+
     constructor(game: Game) {
         super(game, playerConfig);
         this.x = 0;
@@ -36,7 +38,9 @@ export default class Player extends Sprite {
         this.animate(deltaTime);
         this.state.update(input);
         this.moveX();
+        this.checkHorizontalCollisions();
         this.moveY();
+        this.checkVerticalCollisions();
     }
 
     public override draw(context: CanvasRenderingContext2D): void {
@@ -59,7 +63,7 @@ export default class Player extends Sprite {
     }
 
     public onGround(): boolean {
-        return this.isTouching("bottom");
+        return this.isTouching("bottom") || this.onObstacle;
     }
 
     private moveX(): void {
@@ -90,5 +94,34 @@ export default class Player extends Sprite {
                 }
             }
         });
+    }
+
+    private checkVerticalCollisions(): void {
+        const wall = this.game.wall.hitbox;
+        if (this.rx <= wall.x || this.x >= wall.rx) {
+            this.onObstacle = false;
+            return;
+        }
+        if (this.ry > wall.y) {
+            this.y = wall.y - this.height;
+            this.onObstacle = true;
+            return;
+        }
+        this.onObstacle = false;
+    }
+
+    private checkHorizontalCollisions(): void {
+        const wall = this.game.wall.hitbox;
+        if (this.ry <= wall.y) {
+            return;
+        }
+        if (this.rx > wall.x && this.x < wall.rx) {
+            if (this.rx > wall.rx) {
+                this.x = wall.rx;
+            } else {
+                this.x = wall.x - this.width;
+            }
+            return;
+        }
     }
 }

@@ -58,6 +58,14 @@ export default abstract class Sprite {
         this.rect.y = value;
     }
 
+    public get rx(): number {
+        return this.x + this.width;
+    }
+
+    public get ry(): number {
+        return this.y + this.height;
+    }
+
     public get width(): number {
         return this.rect.width;
     }

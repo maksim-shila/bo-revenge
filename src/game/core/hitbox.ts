@@ -31,6 +31,8 @@ type HitboxParams = {
 export interface Hitbox {
     x: number;
     y: number;
+    rx: number;
+    ry: number;
     width: number;
     height: number;
     hasCollision(other: Hitbox): boolean;
@@ -62,8 +64,19 @@ export class RectHitbox implements Hitbox {
         return this.yCounter(this.parent);
     }
 
+    public get rx(): number {
+        return this.x + this.width;
+    }
+
+    public get ry(): number {
+        return this.y + this.height;
+    }
+
     public draw(context: CanvasRenderingContext2D): void {
+        context.save();
+        context.strokeStyle = "white";
         context.strokeRect(this.x, this.y, this.width, this.height);
+        context.restore();
     }
 
     public hasCollision(other: Hitbox): boolean {
@@ -77,6 +90,8 @@ export class RectHitbox implements Hitbox {
 export class NoHitbox implements Hitbox {
     public readonly x = 0;
     public readonly y = 0;
+    public readonly rx = 0;
+    public readonly ry = 0;
     public readonly width = 0;
     public readonly height = 0;
 
@@ -87,5 +102,10 @@ export class NoHitbox implements Hitbox {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     draw(context: CanvasRenderingContext2D): void {
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    collisionDirection(other: Hitbox): "left" | "top" | "right" | "bottom" | "none" {
+        return "none";
     }
 }

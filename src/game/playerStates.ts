@@ -154,6 +154,8 @@ class Running extends PlayerState {
             this.player.setState("jumping", 1);
         } else if (input.keyPressed("roll")) {
             this.player.setState("rolling", 2);
+        } else if (!this.player.onGround()) {
+            this.player.setState("falling", 1);
         }
     }
 }

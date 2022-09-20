@@ -6,6 +6,7 @@ import InputHandler from "../input.js";
 import ParticlesFactory from "./particles.js";
 import Player from "./player.js";
 import UI from "./UI.js";
+import BrickWall from "./static_objects/BrickWall.js";
 
 export default class Game {
 
@@ -32,6 +33,8 @@ export default class Game {
     public onPause: () => unknown = () => { };
     public onContinue: () => unknown = () => { };
 
+    public wall: BrickWall;
+
     constructor(config: GameConfig) {
         this.config = config;
         this.width = config.width;
@@ -46,6 +49,7 @@ export default class Game {
         this.soundtrack = new Audio();
         this.soundtrack.src = "assets/sounds/game_level_1.mp3";
         this.soundtrack.addEventListener("ended", () => this.playSoundtrack());
+        this.wall = new BrickWall(this, 500, this.height - this.groundMargin);
     }
 
     public get running(): boolean {
@@ -73,11 +77,13 @@ export default class Game {
             this.enemySpawner.update(deltaTime);
             this.collisions.update(deltaTime);
             this.player.update(input, deltaTime);
+            this.wall.update();
         }
     }
 
     public draw(context: CanvasRenderingContext2D): void {
         this.background.draw(context);
+        this.wall.draw(context);
         this.enemySpawner.draw(context);
         this.collisions.draw(context);
         this.particles.draw(context);
