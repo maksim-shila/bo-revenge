@@ -4,6 +4,8 @@ export interface Frame {
 }
 
 export interface Animation {
+    frameX: number;
+    isMaxFrame: boolean;
     getNextFrame(): Frame;
 }
 
@@ -17,6 +19,18 @@ export class AnimationRow implements Animation {
         this._frameX = 0;
         this._frameY = frameY;
         this._framesCount = framesCount;
+    }
+
+    public get isMaxFrame(): boolean {
+        return this._frameX === this._framesCount - 1;
+    }
+
+    public get frameX(): number {
+        return this._frameX;
+    }
+
+    public set frameX(value: number) {
+        this._frameX = value;
     }
 
     public getNextFrame(): Frame {

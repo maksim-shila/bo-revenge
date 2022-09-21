@@ -9,7 +9,6 @@
   ],
   "rules": {
     "no-console": "error",
-    "semi": "error",
     "quotes": [ "error", "double" ],
     "no-multi-spaces": [ "error" ],
     "eqeqeq": "warn",

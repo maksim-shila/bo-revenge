@@ -1,33 +1,31 @@
+import GlobalConfig from "../../global-config.js";
+import Dimension from "../dimension.js";
 import ScreenObject from "../screen-object.js";
 import { Frame, Animation } from "./animation.js";
 
-interface AnimatorProps {
-    spriteWidth: number;
-    spriteHeight: number;
-}
-
-export default class Animator {
-
+export default class Painter {
     private _parent: ScreenObject;
     private _image: CanvasImageSource;
     private _spriteWidth: number;
     private _spriteHeight: number;
+    private _config: GlobalConfig;
 
     private _fps = 60;
     private _frameInterval = 1000 / this._fps;
     private _frameTimer = 0;
 
-    private _frame: Frame | null = null;
+    private _frame: Frame = { x: 0, y: 0 };
     private _animation: Animation | null = null;
 
-    constructor(parent: ScreenObject, imageId: string, props?: AnimatorProps) {
+    constructor(parent: ScreenObject, imageId: string, dimension: Dimension, config: GlobalConfig) {
         this._parent = parent;
         this._image = document.getElementById(imageId) as CanvasImageSource;
-        this._spriteWidth = props?.spriteWidth ?? parent.width;
-        this._spriteHeight = props?.spriteHeight ?? parent.height;
+        this._spriteWidth = dimension?.sw ?? parent.width;
+        this._spriteHeight = dimension?.sh ?? parent.height;
+        this._config = config;
     }
 
-    private set fps(value: number) {
+    public set fps(value: number) {
         if (value > 60) {
             return;
         }
@@ -54,6 +52,9 @@ export default class Animator {
     public draw(context: CanvasRenderingContext2D): void {
         if (!this._frame) {
             return;
+        }
+        if (this._config.debug) {
+            this._parent.hitbox.draw(context);
         }
         context.drawImage(
             this._image,
