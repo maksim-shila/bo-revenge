@@ -1,4 +1,4 @@
-import InputHandler from "../input.js";
+import InputHandler from "../input/input-handler";
 
 export default class MenuList {
 
@@ -21,7 +21,7 @@ export default class MenuList {
 
     public update(input: InputHandler): void {
         this.changeActiveBtn(input);
-        if (input.lockKeyPressed("select")) {
+        if (input.keyPressedOnce("select")) {
             this.activeBtn?.click();
             this.setActive(this.defaultBtn);
         }
@@ -40,8 +40,8 @@ export default class MenuList {
             this.activeBtn = this.menuButtons[0];
             return;
         }
-        const upPressed = input.lockKeyPressed("up");
-        const downPressed = input.lockKeyPressed("down");
+        const upPressed = input.keyPressedOnce("up");
+        const downPressed = input.keyPressedOnce("down");
         if (upPressed || downPressed) {
             const activeBtnIndex = this.menuButtons.indexOf(this.activeBtn);
             const newIndex = downPressed

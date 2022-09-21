@@ -1,5 +1,5 @@
+import InputHandler from "../input/input-handler.js";
 import Game from "./game.js";
-import InputHandler from "../input.js";
 import Player from "./player.js";
 
 export type PlayerStateType = "standing" | "jumping" | "falling" | "running" | "sitting" | "rolling" | "diving" | "hit";
@@ -63,7 +63,7 @@ abstract class PlayerState implements State {
             this.player.vx = -this.player.maxVX;
         } else if (input.keyPressed("right")) {
             this.player.vx = this.player.maxVX;
-        } else if (input.keyReleased("left", "right")) {
+        } else if (input.keyReleased("left") || input.keyReleased("right")) {
             this.player.vx = 0;
         }
     }
@@ -87,7 +87,7 @@ class Standing extends PlayerState {
             this.player.setState("running", 1);
         } else if (input.keyPressed("down")) {
             this.player.setState("sitting", 0);
-        } else if (input.keyPressed("jump")) {
+        } else if (input.keyPressedOnce("jump")) {
             this.player.setState("jumping", 1);
         } else if (input.keyPressed("roll")) {
             this.player.setState("rolling", 2);
@@ -113,6 +113,8 @@ class Jumping extends PlayerState {
             this.player.setState("rolling", 2);
         } else if (input.keyPressed("down")) {
             this.player.setState("diving", 0);
+        } else if (input.keyPressedOnce("jump")) {
+            this.player.jump();
         }
     }
 }
@@ -132,6 +134,8 @@ class Falling extends PlayerState {
             this.player.setState("running", 1);
         } else if (input.keyPressed("down")) {
             this.player.setState("diving", 0);
+        } else if (input.keyPressedOnce("jump")) {
+            this.player.setState("jumping", 1);
         }
     }
 }
@@ -150,7 +154,7 @@ class Running extends PlayerState {
         this.allowHorizontalMovement(input);
         if (input.keyPressed("down")) {
             this.player.setState("sitting", 0);
-        } else if (input.keyPressed("jump")) {
+        } else if (input.keyPressedOnce("jump")) {
             this.player.setState("jumping", 1);
         } else if (input.keyPressed("roll")) {
             this.player.setState("rolling", 2);
@@ -193,7 +197,7 @@ class Rolling extends PlayerState {
             this.player.setState("running", 1);
         } else if (input.keyReleased("roll") && !this.player.onGround()) {
             this.player.setState("falling", 1);
-        } else if (input.keyPressed("jump")) {
+        } else if (input.keyPressedOnce("jump")) {
             this.player.jump();
         } else if (!this.player.onGround() && input.keyPressed("down")) {
             this.player.setState("diving", 0);

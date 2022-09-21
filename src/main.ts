@@ -1,9 +1,9 @@
 import Game from "./game/game.js";
-import InputHandler from "./input.js";
 import GameConfig from "./global.js";
 import MainMenu from "./mainMenu.js";
 import GameMenu from "./game/gameMenu.js";
 import Canvas from "./utils/canvas.js";
+import InputHandler from "./input/input-handler.js";
 
 window.addEventListener("load", () => {
 

@@ -1,8 +1,8 @@
 import GameConfig from "../global.js";
+import InputHandler from "../input/input-handler.js";
 import Background from "./background.js";
 import CollisionAnimationFactory from "./collisionAnimation.js";
 import EnemySpawner from "./enemy.js";
-import InputHandler from "../input.js";
 import ParticlesFactory from "./particles.js";
 import Player from "./player.js";
 import UI from "./UI.js";
@@ -64,7 +64,7 @@ export default class Game {
     }
 
     public update(input: InputHandler, deltaTime: number): void {
-        if (input.lockKeyPressed("pause")) {
+        if (input.keyPressedOnce("pause")) {
             this.paused ? this.continue() : this.pause();
         }
         if (!this.paused) {

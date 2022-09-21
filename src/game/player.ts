@@ -1,7 +1,7 @@
+import InputHandler from "../input/input-handler.js";
 import { Hitbox, RectHitbox } from "./core/hitbox.js";
 import Sprite, { SpriteConfig } from "./core/sprite.js";
 import Game from "./game.js";
-import InputHandler from "../input.js";
 import { PlayerStateManager, PlayerStateType, State } from "./playerStates.js";
 
 const playerConfig: SpriteConfig = {
@@ -19,6 +19,8 @@ export default class Player extends Sprite {
     public readonly maxVX: number;
     public readonly maxVY: number;
     public readonly weight: number;
+
+    private jumps = 0;
 
     constructor(game: Game) {
         super(game, playerConfig);
@@ -55,6 +57,10 @@ export default class Player extends Sprite {
     public jump(): void {
         if (this.onGround()) {
             this.vy = -this.maxVY;
+            this.jumps++;
+        } else if (this.jumps < 2) {
+            this.vy = -this.maxVY * 0.75;
+            this.jumps++;
         }
     }
 
@@ -72,6 +78,8 @@ export default class Player extends Sprite {
         this.y += this.vy;
         if (!this.onGround()) {
             this.vy += this.weight;
+        } else {
+            this.jumps = 0;
         }
         this.disallowOffscreen("bottom");
     }

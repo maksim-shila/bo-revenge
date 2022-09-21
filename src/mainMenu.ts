@@ -1,4 +1,4 @@
-import InputHandler from "./input.js";
+import InputHandler from "./input/input-handler.js";
 import MenuList from "./menu/menuList.js";
 
 type MainMenuEvents = {

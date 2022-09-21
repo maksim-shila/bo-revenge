@@ -1,4 +1,4 @@
-import InputHandler from "../input.js";
+import InputHandler from "../input/input-handler.js";
 import MenuList from "../menu/menuList.js";
 
 type GameMenuEvents = {
@@ -28,7 +28,7 @@ export default class GameMenu {
     }
 
     public update(input: InputHandler): void {
-        if (input.lockKeyPressed("back")) {
+        if (input.keyPressedOnce("back")) {
             this.continueBtn.click();
         }
         this.menuList.update(input);
