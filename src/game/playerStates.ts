@@ -71,13 +71,10 @@ abstract class PlayerState implements State {
     protected allowHorizontalMovement(input: InputHandler): void {
         if (input.keyPressed("left")) {
             this.player.vx = -this.player.maxVX;
-            this.game.speed = this.game.maxSpeed * 0.5;
         } else if (input.keyPressed("right")) {
             this.player.vx = this.player.maxVX;
-            this.game.speed = this.game.maxSpeed * 2;
         } else if (input.keyReleased("left") || input.keyReleased("right")) {
             this.player.vx = 0;
-            this.game.speed = this.game.maxSpeed * 1;
         }
     }
 }
