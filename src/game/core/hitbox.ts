@@ -63,7 +63,11 @@ export class RectHitbox implements Hitbox {
     }
 
     public draw(context: CanvasRenderingContext2D): void {
+        context.save();
+        context.strokeStyle = "white";
+        context.lineWidth = 4;
         context.strokeRect(this.x, this.y, this.width, this.height);
+        context.restore();
     }
 
     public hasCollision(other: Hitbox): boolean {

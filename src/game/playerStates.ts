@@ -2,7 +2,16 @@ import InputHandler from "../input/input-handler.js";
 import Game from "./game.js";
 import Player from "./player.js";
 
-export type PlayerStateType = "standing" | "jumping" | "falling" | "running" | "sitting" | "rolling" | "diving" | "hit";
+export type PlayerStateType =
+    "standing" |
+    "jumping" |
+    "falling" |
+    "running" |
+    "sitting" |
+    "rolling" |
+    "diving" |
+    "hit" |
+    "dash";
 type States = { [key in PlayerStateType]: State };
 
 export class PlayerStateManager {
@@ -18,6 +27,7 @@ export class PlayerStateManager {
         this.states["rolling"] = new Rolling(game);
         this.states["diving"] = new Diving(game);
         this.states["hit"] = new Hit(game);
+        this.states["dash"] = new Dash(game);
     }
 
     public get(type: PlayerStateType): State {
@@ -81,7 +91,9 @@ class Standing extends PlayerState {
 
     public update(input: InputHandler): void {
         this.allowHorizontalMovement(input);
-        if (input.keyPressed("right")) {
+        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+            this.player.setState("dash", 3);
+        } else if (input.keyPressed("right")) {
             this.player.setState("running", 1);
         } else if (input.keyPressed("left")) {
             this.player.setState("running", 1);
@@ -107,7 +119,9 @@ class Jumping extends PlayerState {
 
     public update(input: InputHandler): void {
         this.allowHorizontalMovement(input);
-        if (this.player.vy > this.player.weight) {
+        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+            this.player.setState("dash", 3);
+        } else if (this.player.vy > this.player.weight) {
             this.player.setState("falling", 1);
         } else if (input.keyPressed("roll")) {
             this.player.setState("rolling", 2);
@@ -130,7 +144,9 @@ class Falling extends PlayerState {
 
     public update(input: InputHandler): void {
         this.allowHorizontalMovement(input);
-        if (this.player.onGround()) {
+        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+            this.player.setState("dash", 3);
+        } else if (this.player.onGround()) {
             this.player.setState("running", 1);
         } else if (input.keyPressed("down")) {
             this.player.setState("diving", 0);
@@ -152,7 +168,9 @@ class Running extends PlayerState {
     public update(input: InputHandler): void {
         this.game.particles.add("dust", this.player.centerX, this.player.y + this.player.height);
         this.allowHorizontalMovement(input);
-        if (input.keyPressed("down")) {
+        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+            this.player.setState("dash", 3);
+        } else if (input.keyPressed("down")) {
             this.player.setState("sitting", 0);
         } else if (input.keyPressedOnce("jump")) {
             this.player.setState("jumping", 1);
@@ -173,7 +191,9 @@ class Sitting extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        if (input.keyReleased("down")) {
+        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+            this.player.setState("dash", 3);
+        } else if (input.keyReleased("down")) {
             this.player.setState("running", 1);
         } else if (input.keyPressed("roll")) {
             this.player.setState("rolling", 2);
@@ -193,7 +213,9 @@ class Rolling extends PlayerState {
     public update(input: InputHandler): void {
         this.game.particles.add("fire", this.player.centerX, this.player.centerY);
         this.allowHorizontalMovement(input);
-        if (input.keyReleased("roll") && this.player.onGround()) {
+        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+            this.player.setState("dash", 3);
+        } else if (input.keyReleased("roll") && this.player.onGround()) {
             this.player.setState("running", 1);
         } else if (input.keyReleased("roll") && !this.player.onGround()) {
             this.player.setState("falling", 1);
@@ -243,6 +265,39 @@ class Hit extends PlayerState {
 
     public update(): void {
         if (this.player.isMaxFrame()) {
+            if (this.player.onGround()) {
+                this.player.setState("running", 1);
+            } else {
+                this.player.setState("falling", 1);
+            }
+        }
+    }
+}
+
+class Dash extends PlayerState {
+
+    private readonly dashDistance = 200;
+    private readonly dashCD = 800;
+    private maxX = 0;
+
+    constructor(game: Game) {
+        super(game, "dash", { frameY: 6, framesCount: 7 });
+    }
+
+    public override init(): void {
+        super.init();
+        this.maxX = this.player.x + this.dashDistance;
+        this.player.noGravity = true;
+        this.player.dashInCD = true;
+        this.player.vx = 50;
+        this.player.vy = 0;
+        setTimeout(() => { this.player.dashInCD = false; }, this.dashCD);
+    }
+
+    public update(): void {
+        this.game.particles.add("fire", this.player.centerX, this.player.centerY);
+        if (this.player.x > this.maxX || this.player.isTouching("right")) {
+            this.player.noGravity = false;
             if (this.player.onGround()) {
                 this.player.setState("running", 1);
             } else {

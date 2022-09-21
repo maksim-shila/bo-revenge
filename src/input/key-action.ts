@@ -5,6 +5,7 @@ export type KeyAction =
     "right" |
     "jump" |
     "roll" |
+    "dash" |
     "select" |
     "pause" |
     "back";

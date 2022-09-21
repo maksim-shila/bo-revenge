@@ -13,6 +13,8 @@ export const KeyboardKeys = [
     "Space",
     "ShiftLeft",
     "ShiftRight",
+    "ControlLeft",
+    "ControlRight",
     "Enter",
     "Escape"
 ] as const;
@@ -26,6 +28,7 @@ KeyboardMapping["down"] = ["ArrowDown", "KeyS"];
 KeyboardMapping["left"] = ["ArrowLeft", "KeyA"];
 KeyboardMapping["right"] = ["ArrowRight", "KeyD"];
 KeyboardMapping["roll"] = ["ShiftLeft", "ShiftRight"];
+KeyboardMapping["dash"] = ["ControlLeft", "ControlRight"];
 KeyboardMapping["select"] = ["Enter"];
 KeyboardMapping["pause"] = ["Escape"];
 KeyboardMapping["back"] = ["Escape"];

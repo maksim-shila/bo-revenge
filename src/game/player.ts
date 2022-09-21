@@ -21,12 +21,20 @@ export default class Player extends Sprite {
     public readonly weight: number;
 
     private jumps = 0;
+    public noGravity = false;
+    public dashInCD = false;
 
     constructor(game: Game) {
         super(game, playerConfig);
         this.x = 0;
         this.y = this.game.height - this.height - this.game.groundMargin;
-        this.hitbox = new RectHitbox({ parent: this.rect });
+        this.hitbox = new RectHitbox({
+            parent: this.rect,
+            xCounter: (parent): number => parent.x + 20,
+            yCounter: (parent): number => parent.y + 40,
+            width: this.width - 40,
+            height: this.height - 40
+        });
         this.maxVX = 10;
         this.maxVY = 30;
         this.weight = 2;
@@ -76,9 +84,9 @@ export default class Player extends Sprite {
 
     private moveY(): void {
         this.y += this.vy;
-        if (!this.onGround()) {
+        if (!this.onGround() && !this.noGravity) {
             this.vy += this.weight;
-        } else {
+        } else if (this.onGround()) {
             this.jumps = 0;
         }
         this.disallowOffscreen("bottom");
@@ -89,7 +97,9 @@ export default class Player extends Sprite {
             if (this.hitbox.hasCollision(enemy.hitbox)) {
                 enemy.markedForDeletion = true;
                 this.game.collisions.add(enemy.centerX, enemy.centerY);
-                if (this.state.type === "rolling" || this.state.type === "diving") {
+                if (this.state.type === "rolling" ||
+                    this.state.type === "diving" ||
+                    this.state.type === "dash") {
                     this.game.score++;
                 } else {
                     if (!this.game.config.immportal) {

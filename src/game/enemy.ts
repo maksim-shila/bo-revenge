@@ -120,6 +120,13 @@ class GroundEnemy extends Enemy {
 class ClimbingEnemy extends Enemy {
     constructor(game: Game) {
         super(game, { imageId: "enemySpiderBigImg", width: 120, height: 144 });
+        this.hitbox = new RectHitbox({
+            parent: this.rect,
+            xCounter: (parent): number => parent.x + 30,
+            yCounter: (parent): number => parent.y + 30,
+            width: this.width - 60,
+            height: this.height - 60
+        });
         this.x = this.game.width;
         this.y = Math.random() * this.game.height * 0.5;
         this.vx = 0;
