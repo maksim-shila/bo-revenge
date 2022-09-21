@@ -2,7 +2,7 @@ import GameConfig from "../global.js";
 import InputHandler from "../input/input-handler.js";
 import Background from "./background.js";
 import CollisionAnimationFactory from "./collisionAnimation.js";
-import EnemySpawner from "./enemy.js";
+import EnemySpawner from "./enemy/enemy-spawner.js";
 import ParticlesFactory from "./particles.js";
 import Player from "./player.js";
 import UI from "./UI.js";
@@ -32,6 +32,8 @@ export default class Game {
     public onPause: () => unknown = () => { };
     public onContinue: () => unknown = () => { };
 
+    private _totalFrames = 0;
+
     constructor(config: GameConfig) {
         this.config = config;
         this.width = config.width;
@@ -52,6 +54,10 @@ export default class Game {
         return this._running;
     }
 
+    public get totalFrames(): number {
+        return this._totalFrames;
+    }
+
     public start(): void {
         this.playSoundtrack();
         this._running = true;
@@ -64,6 +70,7 @@ export default class Game {
     }
 
     public update(input: InputHandler, deltaTime: number): void {
+        this._totalFrames += this.speed;
         if (input.keyPressedOnce("pause")) {
             this.paused ? this.continue() : this.pause();
         }

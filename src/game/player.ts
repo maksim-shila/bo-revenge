@@ -21,6 +21,7 @@ export default class Player extends Sprite {
     public readonly weight: number;
 
     private jumps = 0;
+    private jumpPressed = false;
     public noGravity = false;
     public dashInCD = false;
 
@@ -47,6 +48,12 @@ export default class Player extends Sprite {
         this.state.update(input);
         this.moveX();
         this.moveY();
+        if (input.keyReleased("jump") && this.jumpPressed) {
+            if (!this.onGround() && this.vy < 0) {
+                this.vy = this.vy < -5 ? -5 : this.vy;
+            }
+            this.jumpPressed = false;
+        }
     }
 
     public override draw(context: CanvasRenderingContext2D): void {
@@ -66,6 +73,7 @@ export default class Player extends Sprite {
         if (this.onGround()) {
             this.vy = -this.maxVY;
             this.jumps++;
+            this.jumpPressed = true;
         } else if (this.jumps < 2) {
             this.vy = -this.maxVY * 0.75;
             this.jumps++;
