@@ -23,7 +23,9 @@ export default class Player extends Sprite {
     private jumps = 0;
     private jumpPressed = false;
     public noGravity = false;
-    public dashInCD = false;
+
+    private readonly dashCD = 800;
+    private dashTimer: NodeJS.Timeout | null = null;
 
     constructor(game: Game) {
         super(game, playerConfig);
@@ -42,8 +44,21 @@ export default class Player extends Sprite {
         this.stateManager = new PlayerStateManager(this.game);
     }
 
+    public get dashInCD(): boolean {
+        return this.dashTimer !== null;
+    }
+
+    public set dashInCD(value: boolean) {
+        if (value) {
+            this.dashTimer = setTimeout(() => { this.dashTimer = null; }, this.dashCD);
+        } else if (this.dashTimer) {
+            clearTimeout(this.dashTimer);
+            this.dashTimer = null;
+        }
+    }
+
     public update(input: InputHandler, deltaTime: number): void {
-        this.checkCollision();
+        this.checkCollision(input);
         this.animate(deltaTime);
         this.state.update(input);
         this.moveX();
@@ -63,10 +78,10 @@ export default class Player extends Sprite {
         }
     }
 
-    public setState(type: PlayerStateType, speedMultiplier = 0): void {
+    public setState(type: PlayerStateType, input?: InputHandler, speedMultiplier = 0): void {
         this.state = this.stateManager.get(type);
         this.game.speed = this.game.maxSpeed * speedMultiplier;
-        this.state.init();
+        this.state.init(input);
     }
 
     public jump(): void {
@@ -100,7 +115,7 @@ export default class Player extends Sprite {
         this.disallowOffscreen("bottom");
     }
 
-    private checkCollision(): void {
+    private checkCollision(input: InputHandler): void {
         this.game.enemySpawner.enemies.forEach(enemy => {
             if (this.hitbox.hasCollision(enemy.hitbox)) {
                 enemy.markedForDeletion = true;
@@ -111,7 +126,7 @@ export default class Player extends Sprite {
                     this.game.score++;
                 } else {
                     if (!this.game.config.immportal) {
-                        this.setState("hit");
+                        this.setState("hit", input);
                     }
                 }
             }

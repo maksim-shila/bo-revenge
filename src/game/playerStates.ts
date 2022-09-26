@@ -37,7 +37,7 @@ export class PlayerStateManager {
 
 export interface State {
     type: PlayerStateType;
-    init(): void;
+    init(input?: InputHandler): void;
     update(input: InputHandler): void;
 }
 
@@ -60,7 +60,8 @@ abstract class PlayerState implements State {
         return this.game.player;
     }
 
-    public init(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public init(input: InputHandler): void {
         this.player.frameY = this.frameY;
         this.player.frameX = 0;
         this.player.framesCount = this.framesCount;
@@ -84,25 +85,25 @@ class Standing extends PlayerState {
         super(game, "standing", { frameY: 0, framesCount: 7 });
     }
 
-    public override init(): void {
-        super.init();
+    public override init(input: InputHandler): void {
+        super.init(input);
         this.player.vx = 0;
     }
 
     public update(input: InputHandler): void {
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
-            this.player.setState("dash", 3);
+            this.player.setState("dash", input, 1);
         } else if (input.keyPressed("right")) {
-            this.player.setState("running", 1);
+            this.player.setState("running", input, 1);
         } else if (input.keyPressed("left")) {
-            this.player.setState("running", 1);
+            this.player.setState("running", input, 1);
         } else if (input.keyPressed("down")) {
-            this.player.setState("sitting", 0);
+            this.player.setState("sitting", input, 0);
         } else if (input.keyPressedOnce("jump")) {
-            this.player.setState("jumping", 1);
+            this.player.setState("jumping", input, 1);
         } else if (input.keyPressed("roll")) {
-            this.player.setState("rolling", 2);
+            this.player.setState("rolling", input, 2);
         }
     }
 }
@@ -112,21 +113,22 @@ class Jumping extends PlayerState {
         super(game, "jumping", { frameY: 1, framesCount: 7 });
     }
 
-    public override init(): void {
-        super.init();
+    public override init(input: InputHandler): void {
+        super.init(input);
+        this.player.dashInCD = false;
         this.player.jump();
     }
 
     public update(input: InputHandler): void {
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
-            this.player.setState("dash", 3);
+            this.player.setState("dash", input, 1);
         } else if (this.player.vy > this.player.weight) {
-            this.player.setState("falling", 1);
+            this.player.setState("falling", input, 1);
         } else if (input.keyPressed("roll")) {
-            this.player.setState("rolling", 2);
+            this.player.setState("rolling", input, 2);
         } else if (input.keyPressed("down")) {
-            this.player.setState("diving", 0);
+            this.player.setState("diving", input, 0);
         } else if (input.keyPressedOnce("jump")) {
             this.player.jump();
         }
@@ -138,20 +140,20 @@ class Falling extends PlayerState {
         super(game, "falling", { frameY: 2, framesCount: 7 });
     }
 
-    public override init(): void {
-        super.init();
+    public override init(input: InputHandler): void {
+        super.init(input);
     }
 
     public update(input: InputHandler): void {
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
-            this.player.setState("dash", 3);
+            this.player.setState("dash", input, 1);
         } else if (this.player.onGround()) {
-            this.player.setState("running", 1);
+            this.player.setState("running", input, 1);
         } else if (input.keyPressed("down")) {
-            this.player.setState("diving", 0);
+            this.player.setState("diving", input, 0);
         } else if (input.keyPressedOnce("jump")) {
-            this.player.setState("jumping", 1);
+            this.player.setState("jumping", input, 1);
         }
     }
 }
@@ -161,21 +163,21 @@ class Running extends PlayerState {
         super(game, "running", { frameY: 3, framesCount: 9 });
     }
 
-    public override init(): void {
-        super.init();
+    public override init(input: InputHandler): void {
+        super.init(input);
     }
 
     public update(input: InputHandler): void {
         this.game.particles.add("dust", this.player.centerX, this.player.y + this.player.height);
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
-            this.player.setState("dash", 3);
+            this.player.setState("dash", input, 1);
         } else if (input.keyPressed("down")) {
-            this.player.setState("sitting", 0);
+            this.player.setState("sitting", input, 0);
         } else if (input.keyPressedOnce("jump")) {
-            this.player.setState("jumping", 1);
+            this.player.setState("jumping", input, 1);
         } else if (input.keyPressed("roll")) {
-            this.player.setState("rolling", 2);
+            this.player.setState("rolling", input, 2);
         }
     }
 }
@@ -185,18 +187,18 @@ class Sitting extends PlayerState {
         super(game, "sitting", { frameY: 5, framesCount: 5 });
     }
 
-    public override init(): void {
-        super.init();
+    public override init(input: InputHandler): void {
+        super.init(input);
         this.player.vx = 0;
     }
 
     public update(input: InputHandler): void {
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
-            this.player.setState("dash", 3);
+            this.player.setState("dash", input, 1);
         } else if (input.keyReleased("down")) {
-            this.player.setState("running", 1);
+            this.player.setState("running", input, 1);
         } else if (input.keyPressed("roll")) {
-            this.player.setState("rolling", 2);
+            this.player.setState("rolling", input, 2);
         }
     }
 }
@@ -206,23 +208,23 @@ class Rolling extends PlayerState {
         super(game, "rolling", { frameY: 6, framesCount: 7 });
     }
 
-    public override init(): void {
-        super.init();
+    public override init(input: InputHandler): void {
+        super.init(input);
     }
 
     public update(input: InputHandler): void {
         this.game.particles.add("fire", this.player.centerX, this.player.centerY);
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
-            this.player.setState("dash", 3);
+            this.player.setState("dash", input, 1);
         } else if (input.keyReleased("roll") && this.player.onGround()) {
-            this.player.setState("running", 1);
+            this.player.setState("running", input, 1);
         } else if (input.keyReleased("roll") && !this.player.onGround()) {
-            this.player.setState("falling", 1);
+            this.player.setState("falling", input, 1);
         } else if (input.keyPressedOnce("jump")) {
             this.player.jump();
         } else if (!this.player.onGround() && input.keyPressed("down")) {
-            this.player.setState("diving", 0);
+            this.player.setState("diving", input, 0);
         }
     }
 }
@@ -232,8 +234,8 @@ class Diving extends PlayerState {
         super(game, "diving", { frameY: 6, framesCount: 7 });
     }
 
-    public override init(): void {
-        super.init();
+    public override init(input: InputHandler): void {
+        super.init(input);
         this.player.vx = 0;
         this.player.vy = 15;
     }
@@ -242,9 +244,9 @@ class Diving extends PlayerState {
         this.game.particles.add("fire", this.player.centerX, this.player.centerY);
         if (this.player.onGround()) {
             if (input.keyPressed("roll")) {
-                this.player.setState("rolling", 2);
+                this.player.setState("rolling", input, 2);
             } else {
-                this.player.setState("running", 1);
+                this.player.setState("running", input, 1);
             }
             for (let i = 0; i < 30; ++i) {
                 this.game.particles.add("splash", this.player.centerX, this.player.y + this.player.height);
@@ -258,17 +260,17 @@ class Hit extends PlayerState {
         super(game, "hit", { frameY: 4, framesCount: 11 });
     }
 
-    public override init(): void {
-        super.init();
+    public override init(input: InputHandler): void {
+        super.init(input);
         this.player.vx = 0;
     }
 
-    public update(): void {
+    public update(input: InputHandler): void {
         if (this.player.isMaxFrame()) {
             if (this.player.onGround()) {
-                this.player.setState("running", 1);
+                this.player.setState("running", input, 1);
             } else {
-                this.player.setState("falling", 1);
+                this.player.setState("falling", input, 1);
             }
         }
     }
@@ -276,32 +278,60 @@ class Hit extends PlayerState {
 
 class Dash extends PlayerState {
 
-    private readonly dashDistance = 200;
-    private readonly dashCD = 800;
-    private maxX = 0;
+    private readonly distanceX = 200;
+    private readonly distanceY = 200;
+    private readonly speedX = 50;
+    private readonly speedY = 50;
+    private startX = 0;
+    private startY = 0;
 
     constructor(game: Game) {
         super(game, "dash", { frameY: 6, framesCount: 7 });
     }
 
-    public override init(): void {
-        super.init();
-        this.maxX = this.player.x + this.dashDistance;
+    public override init(input: InputHandler): void {
+        super.init(input);
+        if (!input) {
+            return;
+        }
+
         this.player.noGravity = true;
         this.player.dashInCD = true;
-        this.player.vx = 50;
-        this.player.vy = 0;
-        setTimeout(() => { this.player.dashInCD = false; }, this.dashCD);
+        this.startX = this.player.x;
+        this.startY = this.player.y;
+        if (input.keyPressed("down") || input.keyPressed("up") || input.keyPressed("right") || input.keyPressed("left")) {
+            if (input.keyPressed("up")) {
+                this.player.vy = -this.speedY;
+            } else {
+                this.player.vy = 0;
+            }
+
+            if (input.keyPressed("right")) {
+                this.player.vx = this.speedX;
+            } else if (input.keyPressed("left")) {
+                this.player.vx = -this.speedX;
+            } else {
+                this.player.vx = 0;
+            }
+        } else {
+            this.player.vx = this.speedX;
+            this.player.vy = 0;
+        }
     }
 
-    public update(): void {
+    public update(input: InputHandler): void {
         this.game.particles.add("fire", this.player.centerX, this.player.centerY);
-        if (this.player.x > this.maxX || this.player.isTouching("right")) {
+        if (this.player.x > this.startX + this.distanceX ||
+            this.player.x < this.startX - this.distanceX ||
+            this.player.y < this.startY - this.distanceY ||
+            this.player.isTouching("right", "left", "top")
+        ) {
             this.player.noGravity = false;
+            this.player.vy = this.player.weight;
             if (this.player.onGround()) {
-                this.player.setState("running", 1);
+                this.player.setState("running", input, 1);
             } else {
-                this.player.setState("falling", 1);
+                this.player.setState("falling", input, 1);
             }
         }
     }
