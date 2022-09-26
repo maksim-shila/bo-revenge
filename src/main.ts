@@ -5,6 +5,7 @@ import GameMenu from "./game/gameMenu.js";
 import Canvas from "./utils/canvas.js";
 import InputHandler from "./input/input-handler.js";
 
+window.addEventListener("mousedown", e => e.preventDefault());
 window.addEventListener("load", () => {
 
     const gameConfig = new GameConfig();
