@@ -102,7 +102,7 @@ class Standing extends PlayerState {
             this.player.setState("sitting", input, 0);
         } else if (input.keyPressedOnce("jump")) {
             this.player.setState("jumping", input, 1);
-        } else if (input.keyPressed("roll")) {
+        } else if (input.keyPressed("roll") && this.player.canStartRoll) {
             this.player.setState("rolling", input, 2);
         }
     }
@@ -127,7 +127,7 @@ class Jumping extends PlayerState {
             this.player.setState("dash", input, 1);
         } else if (this.player.vy > this.player.weight) {
             this.player.setState("falling", input, 1);
-        } else if (input.keyPressed("roll")) {
+        } else if (input.keyPressed("roll") && this.player.canStartRoll) {
             this.player.setState("rolling", input, 2);
         } else if (input.keyPressed("down")) {
             this.player.setState("diving", input, 0);
@@ -178,7 +178,7 @@ class Running extends PlayerState {
             this.player.setState("sitting", input, 0);
         } else if (input.keyPressedOnce("jump")) {
             this.player.setState("jumping", input, 1);
-        } else if (input.keyPressed("roll")) {
+        } else if (input.keyPressed("roll") && this.player.canStartRoll) {
             this.player.setState("rolling", input, 2);
         }
     }
@@ -199,7 +199,7 @@ class Sitting extends PlayerState {
             this.player.setState("dash", input, 1);
         } else if (input.keyReleased("down")) {
             this.player.setState("running", input, 1);
-        } else if (input.keyPressed("roll")) {
+        } else if (input.keyPressed("roll") && this.player.canStartRoll) {
             this.player.setState("rolling", input, 2);
         }
     }
@@ -215,13 +215,14 @@ class Rolling extends PlayerState {
     }
 
     public update(input: InputHandler): void {
+        this.player.energy -= 0.5;
         this.game.particles.add("fire", this.player.centerX, this.player.centerY);
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
             this.player.setState("dash", input, 1);
-        } else if (input.keyReleased("roll") && this.player.onGround()) {
+        } else if ((input.keyReleased("roll") || this.player.energy === 0) && this.player.onGround()) {
             this.player.setState("running", input, 1);
-        } else if (input.keyReleased("roll") && !this.player.onGround()) {
+        } else if ((input.keyReleased("roll") || this.player.energy === 0) && !this.player.onGround()) {
             this.player.setState("falling", input, 1);
         } else if (input.keyPressedOnce("jump")) {
             this.player.jump();
@@ -245,7 +246,7 @@ class Diving extends PlayerState {
     public update(input: InputHandler): void {
         this.game.particles.add("fire", this.player.centerX, this.player.centerY);
         if (this.player.onGround()) {
-            if (input.keyPressed("roll")) {
+            if (input.keyPressed("roll") && this.player.canStartRoll) {
                 this.player.setState("rolling", input, 2);
             } else {
                 this.player.setState("running", input, 1);

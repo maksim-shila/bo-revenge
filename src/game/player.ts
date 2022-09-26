@@ -27,6 +27,10 @@ export default class Player extends Sprite {
     private readonly dashCD = 800;
     private dashTimer: NodeJS.Timeout | null = null;
 
+    public readonly maxEnergy = 50;
+    public readonly minEnergy = 10;
+    private _energy = this.maxEnergy;
+
     constructor(game: Game) {
         super(game, playerConfig);
         this.x = 0;
@@ -42,6 +46,24 @@ export default class Player extends Sprite {
         this.maxVY = 30;
         this.weight = 2;
         this.stateManager = new PlayerStateManager(this.game);
+    }
+
+    public get energy(): number {
+        return this._energy;
+    }
+
+    public set energy(value: number) {
+        if (value < 0) {
+            this.energy = 0;
+        } else if (value > this.maxEnergy) {
+            this._energy = this.maxEnergy;
+        } else {
+            this._energy = value;
+        }
+    }
+
+    public get canStartRoll(): boolean {
+        return this._energy > this.minEnergy;
     }
 
     public get jumps(): number {
@@ -72,6 +94,9 @@ export default class Player extends Sprite {
                 this.vy = this.vy < -5 ? -5 : this.vy;
             }
             this.jumpPressed = false;
+        }
+        if (this.state.type !== "rolling") {
+            this.energy += 0.1;
         }
     }
 
