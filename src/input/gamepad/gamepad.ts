@@ -27,13 +27,13 @@ export default class Gamepad extends Input<string> {
         }
 
         const buttons = gamepad.buttons;
-        const axeBtn = this.triggeredByAxes(gamepad.axes.slice());
+        const axeBtns = this.triggeredByAxes(gamepad.axes.slice());
         for (let i = 0; i < buttons.length; i++) {
             if (!GamepadKey[i]) {
                 continue;
             }
             const btn = buttons[i];
-            const pressed = btn.pressed || axeBtn === i;
+            const pressed = btn.pressed || axeBtns.includes(i);
             pressed ? this.onKeyDown(GamepadKey[i]) : this.onKeyUp(GamepadKey[i]);
         }
     }
@@ -42,23 +42,37 @@ export default class Gamepad extends Input<string> {
         return GamepadMapping[action].map(i => GamepadKey[i]);
     }
 
-    private triggeredByAxes(axes: number[]): GamepadKey | null {
+    private triggeredByAxes(axes: number[]): GamepadKey[] {
         const axeX = axes[0];
         const axeY = axes[1];
-        const mainOffset = 0.4;
-        const backOffset = 0.7;
-        if (axeY < -mainOffset && axeX > -backOffset && axeX < backOffset) {
-            return GamepadKey.Up;
+        if (Math.sqrt(axeX * axeX + axeY * axeY) < 1) {
+            return [];
         }
-        if (axeY > mainOffset && axeX > -backOffset && axeX < backOffset) {
-            return GamepadKey.Down;
+        if (axeX >= 0 && axeY >= 0) {
+            if (axeX === 1)
+                return [GamepadKey.Right];
+            if (axeY === 1)
+                return [GamepadKey.Down];
+            return [GamepadKey.Right, GamepadKey.Down];
+        } else if (axeX >= 0 && axeY <= 0) {
+            if (axeX === 1)
+                return [GamepadKey.Right];
+            if (axeY === -1)
+                return [GamepadKey.Up];
+            return [GamepadKey.Right, GamepadKey.Up];
+        } else if (axeX <= 0 && axeY <= 0) {
+            if (axeX === -1)
+                return [GamepadKey.Left];
+            if (axeY === -1)
+                return [GamepadKey.Up];
+            return [GamepadKey.Left, GamepadKey.Up];
+        } else if (axeX <= 0 && axeY >= 0) {
+            if (axeX === -1)
+                return [GamepadKey.Left];
+            if (axeY === 1)
+                return [GamepadKey.Down];
+            return [GamepadKey.Left, GamepadKey.Down];
         }
-        if (axeX < -mainOffset && axeY > -backOffset && axeY < backOffset) {
-            return GamepadKey.Left;
-        }
-        if (axeX > mainOffset && axeY > -backOffset && axeY < backOffset) {
-            return GamepadKey.Right;
-        }
-        return null;
+        return [];
     }
 }

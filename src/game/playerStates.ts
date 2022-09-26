@@ -115,7 +115,9 @@ class Jumping extends PlayerState {
 
     public override init(input: InputHandler): void {
         super.init(input);
-        this.player.dashInCD = false;
+        if (this.player.jumps === 0) {
+            this.player.dashInCD = false;
+        }
         this.player.jump();
     }
 
@@ -280,8 +282,8 @@ class Dash extends PlayerState {
 
     private readonly distanceX = 200;
     private readonly distanceY = 200;
-    private readonly speedX = 50;
-    private readonly speedY = 50;
+    private readonly speedX = 40;
+    private readonly speedY = 40;
     private startX = 0;
     private startY = 0;
 
@@ -299,7 +301,7 @@ class Dash extends PlayerState {
         this.player.dashInCD = true;
         this.startX = this.player.x;
         this.startY = this.player.y;
-        if (input.keyPressed("down") || input.keyPressed("up") || input.keyPressed("right") || input.keyPressed("left")) {
+        if (input.keyPressed("up") || input.keyPressed("right") || input.keyPressed("left")) {
             if (input.keyPressed("up")) {
                 this.player.vy = -this.speedY;
             } else {
@@ -324,7 +326,7 @@ class Dash extends PlayerState {
         if (this.player.x > this.startX + this.distanceX ||
             this.player.x < this.startX - this.distanceX ||
             this.player.y < this.startY - this.distanceY ||
-            this.player.isTouching("right", "left", "top")
+            this.player.isTouching("right", "left")
         ) {
             this.player.noGravity = false;
             this.player.vy = this.player.weight;

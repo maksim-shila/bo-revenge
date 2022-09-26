@@ -20,7 +20,7 @@ export default class Player extends Sprite {
     public readonly maxVY: number;
     public readonly weight: number;
 
-    private jumps = 0;
+    private _jumps = 0;
     private jumpPressed = false;
     public noGravity = false;
 
@@ -42,6 +42,10 @@ export default class Player extends Sprite {
         this.maxVY = 30;
         this.weight = 2;
         this.stateManager = new PlayerStateManager(this.game);
+    }
+
+    public get jumps(): number {
+        return this._jumps;
     }
 
     public get dashInCD(): boolean {
@@ -87,11 +91,11 @@ export default class Player extends Sprite {
     public jump(): void {
         if (this.onGround()) {
             this.vy = -this.maxVY;
-            this.jumps++;
+            this._jumps++;
             this.jumpPressed = true;
-        } else if (this.jumps < 2) {
+        } else if (this._jumps < 2) {
             this.vy = -this.maxVY * 0.75;
-            this.jumps++;
+            this._jumps++;
         }
     }
 
@@ -110,7 +114,7 @@ export default class Player extends Sprite {
         if (!this.onGround() && !this.noGravity) {
             this.vy += this.weight;
         } else if (this.onGround()) {
-            this.jumps = 0;
+            this._jumps = 0;
         }
         this.disallowOffscreen("bottom");
     }
