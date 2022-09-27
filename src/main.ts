@@ -5,13 +5,11 @@ import GameMenu from "./game/gameMenu.js";
 import Canvas from "./utils/canvas.js";
 import InputHandler from "./input/input-handler.js";
 
-window.addEventListener("mousedown", e => e.preventDefault());
 window.addEventListener("load", () => {
 
     const gameConfig = new GameConfig();
     const input = new InputHandler(gameConfig);
     const canvas = new Canvas(gameConfig);
-
     let game = newGame();
 
     function newGame(): Game {
@@ -63,7 +61,7 @@ window.addEventListener("load", () => {
                 gameMenu.update(input);
             }
             canvas.clear();
-            game.update(input, deltaTime);
+            game.update(input, { timeStamp, deltaTime });
             game.draw(canvas.context);
         }
 

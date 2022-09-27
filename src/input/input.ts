@@ -2,8 +2,8 @@ import { KeyAction } from "./key-action.js";
 
 export default abstract class Input<T> {
 
-    private keys: T[] = [];
-    private locked: T[] = [];
+    public keys: T[] = [];
+    public locked: T[] = [];
 
     /**
      * If key pressed - returns true only on first call.

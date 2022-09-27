@@ -1,7 +1,9 @@
 import GameConfig from "../global.js";
 import InputHandler from "../input/input-handler.js";
+import { FrameTimer } from "../utils/frame-timer.js";
 import Background from "./background.js";
 import CollisionAnimationFactory from "./collisionAnimation.js";
+import DebugWindow from "./debug-window.js";
 import EnemySpawner from "./enemy/enemy-spawner.js";
 import ParticlesFactory from "./particles.js";
 import Player from "./player.js";
@@ -17,6 +19,7 @@ export default class Game {
     public readonly background: Background;
     public readonly ui: UI;
 
+    private readonly debugWindow: DebugWindow;
     private readonly soundtrack: HTMLAudioElement;
 
     public readonly width: number;
@@ -39,6 +42,7 @@ export default class Game {
         this.width = config.width;
         this.height = config.height;
         this.ui = new UI(this);
+        this.debugWindow = new DebugWindow(this);
         this.player = new Player(this);
         this.player.setState("sitting");
         this.particles = new ParticlesFactory(this);
@@ -69,17 +73,18 @@ export default class Game {
         this._running = false;
     }
 
-    public update(input: InputHandler, deltaTime: number): void {
+    public update(input: InputHandler, frameTimer: FrameTimer): void {
         this._totalFrames += this.speed;
+        this.debugWindow.update(input, frameTimer);
         if (input.keyPressedOnce("pause")) {
             this.paused ? this.continue() : this.pause();
         }
         if (!this.paused) {
             this.background.update();
             this.particles.update();
-            this.enemySpawner.update(deltaTime);
-            this.collisions.update(deltaTime);
-            this.player.update(input, deltaTime);
+            this.enemySpawner.update(frameTimer);
+            this.collisions.update(frameTimer);
+            this.player.update(input, frameTimer);
         }
     }
 
@@ -90,6 +95,9 @@ export default class Game {
         this.particles.draw(context);
         this.player.draw(context);
         this.ui.draw(context);
+        if (this.config.debug) {
+            this.debugWindow.draw(context);
+        }
     }
 
     public pause(): void {
@@ -103,7 +111,6 @@ export default class Game {
     }
 
     private playSoundtrack(): void {
-        // this.soundtrack.currentTime = 1.8;
         this.soundtrack.play();
     }
 }

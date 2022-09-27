@@ -1,3 +1,4 @@
+import { FrameTimer } from "../utils/frame-timer.js";
 import Sprite from "./core/sprite.js";
 import Game from "./game.js";
 
@@ -15,8 +16,8 @@ export default class CollisionAnimationFactory {
         this.animations.push(new CollisionAnimation(this.game, x, y));
     }
 
-    public update(deltaTime: number): void {
-        this.animations.forEach(animation => animation.update(deltaTime));
+    public update(frameTimer: FrameTimer): void {
+        this.animations.forEach(animation => animation.update(frameTimer));
         this.animations = this.animations.filter(a => !a.markedForDeletion);
     }
 
@@ -37,8 +38,8 @@ class CollisionAnimation extends Sprite {
         this.markedForDeletion = false;
     }
 
-    public update(deltaTime: number): void {
-        this.animate(deltaTime);
+    public update(frameTimer: FrameTimer): void {
+        this.animate(frameTimer);
         this.x -= this.game.speed;
         if (this.isMaxFrame()) {
             this.markedForDeletion = true;

@@ -1,3 +1,4 @@
+import { FrameTimer } from "../../../utils/frame-timer.js";
 import Game from "../../game.js";
 import { Spawner } from "../enemy-spawner.js";
 import { Enemy } from "../enemy.js";
@@ -43,8 +44,8 @@ class Bee extends Enemy {
         this.va = Math.random() * 0.1 + 0.1;
     }
 
-    public override update(deltaTime: number): void {
-        super.update(deltaTime);
+    public override update(frameTimer: FrameTimer): void {
+        super.update(frameTimer);
         this.angle += this.va;
         this.y += Math.sin(this.angle);
     }

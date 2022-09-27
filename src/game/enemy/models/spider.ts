@@ -1,3 +1,4 @@
+import { FrameTimer } from "../../../utils/frame-timer.js";
 import { RectHitbox } from "../../core/hitbox.js";
 import Game from "../../game.js";
 import { Spawner } from "../enemy-spawner.js";
@@ -45,8 +46,8 @@ class Spider extends Enemy {
         this.framesCount = 6;
     }
 
-    public override update(deltaTime: number): void {
-        super.update(deltaTime);
+    public override update(frameTimer: FrameTimer): void {
+        super.update(frameTimer);
         if (this.isTouching("bottom")) {
             this.vy *= -1;
         }

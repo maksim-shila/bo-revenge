@@ -1,3 +1,4 @@
+import { FrameTimer } from "../../utils/frame-timer.js";
 import Game from "../game.js";
 import { Rect } from "./hitbox.js";
 
@@ -83,12 +84,12 @@ export default abstract class Sprite {
         this._frameInterval = 1000 / this._fps;
     }
 
-    public animate(deltaTime: number): void {
+    public animate(frameTimer: FrameTimer): void {
         if (this._frameTimer > this._frameInterval) {
             this.frameX = ++this.frameX % this.framesCount;
             this._frameTimer = 0;
         } else {
-            this._frameTimer += deltaTime;
+            this._frameTimer += frameTimer.deltaTime;
         }
     }
 

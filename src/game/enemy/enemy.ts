@@ -1,3 +1,4 @@
+import { FrameTimer } from "../../utils/frame-timer.js";
 import { Hitbox, RectHitbox } from "../core/hitbox.js";
 import Sprite, { SpriteConfig } from "../core/sprite.js";
 import Game from "../game.js";
@@ -13,8 +14,8 @@ export abstract class Enemy extends Sprite {
         this.markedForDeletion = false;
     }
 
-    public update(deltaTime: number): void {
-        this.animate(deltaTime);
+    public update(frameTimer: FrameTimer): void {
+        this.animate(frameTimer);
         this.x -= this.vx + this.game.speed;
         this.y += this.vy;
         if (this.isOffscreen("left")) {

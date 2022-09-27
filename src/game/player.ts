@@ -1,4 +1,5 @@
 import InputHandler from "../input/input-handler.js";
+import { FrameTimer } from "../utils/frame-timer.js";
 import { Hitbox, RectHitbox } from "./core/hitbox.js";
 import Sprite, { SpriteConfig } from "./core/sprite.js";
 import Game from "./game.js";
@@ -83,9 +84,9 @@ export default class Player extends Sprite {
         }
     }
 
-    public update(input: InputHandler, deltaTime: number): void {
+    public update(input: InputHandler, frameTimer: FrameTimer): void {
         this.checkCollision(input);
-        this.animate(deltaTime);
+        this.animate(frameTimer);
         this.state.update(input);
         this.moveX();
         this.moveY();

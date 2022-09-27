@@ -5,39 +5,39 @@ import GameConfig from "../global.js";
 
 export default class InputHandler {
 
+    public readonly gamepad: Gamepad;
+    public readonly keyboard: Keyboard;
     private readonly _globalConfig: GameConfig;
-    private readonly _gamepad: Gamepad;
-    private readonly _keyboard: Keyboard;
     private readonly _cheats: Cheats;
 
     constructor(globalConfig: GameConfig) {
         this._globalConfig = globalConfig;
-        this._gamepad = new Gamepad();
-        this._keyboard = new Keyboard();
-        this._cheats = new Cheats(this._keyboard, this._globalConfig);
+        this.gamepad = new Gamepad();
+        this.keyboard = new Keyboard();
+        this._cheats = new Cheats(this.keyboard, this._globalConfig);
     }
 
     public keyPressedOnce(action: KeyAction): boolean {
-        return this._gamepad.connected
-            ? this._gamepad.keyPressedOnce(action)
-            : this._keyboard.keyPressedOnce(action);
+        return this.gamepad.connected
+            ? this.gamepad.keyPressedOnce(action)
+            : this.keyboard.keyPressedOnce(action);
     }
 
     public keyPressed(action: KeyAction): boolean {
         this._cheats.apply();
-        return this._gamepad.connected
-            ? this._gamepad.keyPressed(action)
-            : this._keyboard.keyPressed(action);
+        return this.gamepad.connected
+            ? this.gamepad.keyPressed(action)
+            : this.keyboard.keyPressed(action);
     }
 
     public keyReleased(action: KeyAction): boolean {
-        return this._gamepad.connected
-            ? this._gamepad.keyReleased(action)
-            : this._keyboard.keyReleased(action);
+        return this.gamepad.connected
+            ? this.gamepad.keyReleased(action)
+            : this.keyboard.keyReleased(action);
     }
 
     public update(): void {
-        this._gamepad.update();
+        this.gamepad.update();
     }
 }
 

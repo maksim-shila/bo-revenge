@@ -1,3 +1,4 @@
+import { FrameTimer } from "../../utils/frame-timer.js";
 import Game from "../game.js";
 import { Enemy } from "./enemy.js";
 import BeeSpawner from "./models/bee.js";
@@ -26,14 +27,14 @@ export default class EnemySpawner {
         return this._enemies;
     }
 
-    public update(deltaTime: number): void {
+    public update(frameTimer: FrameTimer): void {
         this.spawners.forEach(spawner => {
-            spawner.update(deltaTime);
+            spawner.update(frameTimer);
             if (spawner.shouldSpawn) {
                 this.enemies.push(spawner.spawn());
             }
         });
-        this._enemies.forEach(e => e.update(deltaTime));
+        this._enemies.forEach(e => e.update(frameTimer));
         this._enemies = this._enemies.filter(e => !e.markedForDeletion);
     }
 
@@ -44,6 +45,6 @@ export default class EnemySpawner {
 
 export interface Spawner {
     shouldSpawn: boolean;
-    update(deltaTime: number): void;
+    update(frameTimer: FrameTimer): void;
     spawn(): Enemy;
 }
