@@ -1,3 +1,4 @@
+import CollisionHandler from "../engine/collision/CollisionHandler";
 import GameConfig from "../global";
 import InputHandler from "../input/input-handler";
 import { FrameTimer } from "../utils/frame-timer";
@@ -18,6 +19,7 @@ export default class Game {
     public readonly enemySpawner: EnemySpawner;
     public readonly background: Background;
     public readonly ui: UI;
+    public readonly colliders: CollisionHandler;
 
     private readonly debugWindow: DebugWindow;
     private readonly soundtrack: HTMLAudioElement;
@@ -37,13 +39,14 @@ export default class Game {
 
     private _totalFrames = 0;
 
-    constructor(config: GameConfig) {
+    constructor(config: GameConfig, input: InputHandler) {
         this.config = config;
         this.width = config.width;
         this.height = config.height;
         this.ui = new UI(this);
+        this.colliders = new CollisionHandler();
         this.debugWindow = new DebugWindow(this);
-        this.player = new Player(this);
+        this.player = new Player(this, input);
         this.player.setState("sitting");
         this.particles = new ParticlesFactory(this);
         this.collisions = new CollisionAnimationFactory(this);
@@ -83,7 +86,8 @@ export default class Game {
             this.particles.update();
             this.enemySpawner.update(frameTimer);
             this.collisions.update(frameTimer);
-            this.player.update(input, frameTimer);
+            this.player.update(frameTimer);
+            this.colliders.update();
         }
     }
 

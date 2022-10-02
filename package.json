@@ -8,10 +8,10 @@
     "main": false
   },
   "scripts": {
-    "dev": "parcel -p 3000 src/index.html --dist-dir build/dev",
+    "dev": "tsc --noEmit && parcel -p 3000 src/index.html --dist-dir build/dev",
     "dev:electron": "electron src/electron.dev.js",
     "lint": "eslint . --ext .ts",
-    "build": "parcel build src/index.html --dist-dir build/prod --public-url ./",
+    "build": "tsc --noEmit && parcel build src/index.html --dist-dir build/prod --public-url ./",
     "build:win": "npm run build && electron-builder -w",
     "build:mac": "npm run build && electron-builder -m"
   },

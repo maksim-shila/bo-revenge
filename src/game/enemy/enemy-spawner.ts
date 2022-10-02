@@ -31,11 +31,13 @@ export default class EnemySpawner {
         this.spawners.forEach(spawner => {
             spawner.update(frameTimer);
             if (spawner.shouldSpawn) {
-                this.enemies.push(spawner.spawn());
+                const enemy = spawner.spawn();
+                this.game.colliders.add([this.game.player], [enemy]);
+                this.enemies.push(enemy);
             }
         });
         this._enemies.forEach(e => e.update(frameTimer));
-        this._enemies = this._enemies.filter(e => !e.markedForDeletion);
+        this._enemies = this._enemies.filter(e => !e.destroyed);
     }
 
     public draw(context: CanvasRenderingContext2D): void {

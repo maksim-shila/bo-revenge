@@ -13,7 +13,7 @@ window.addEventListener("load", () => {
     let game = newGame();
 
     function newGame(): Game {
-        const game = new Game(gameConfig);
+        const game = new Game(gameConfig, input);
         game.onPause = (): void => gameMenu.show();
         game.onContinue = (): void => gameMenu.hide();
         return game;

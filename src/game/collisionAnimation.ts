@@ -30,7 +30,7 @@ class CollisionAnimation extends Sprite {
     public markedForDeletion: boolean;
 
     constructor(game: Game, x: number, y: number) {
-        super(game, { imageId: "boomImg", width: 100, height: 90, scale: Math.random() + 0.5 });
+        super("particle", game, { imageId: "boomImg", width: 100, height: 90, scale: Math.random() + 0.5 });
         this.x = x - this.width * 0.5;
         this.y = y - this.height * 0.5;
         this.framesCount = 5;

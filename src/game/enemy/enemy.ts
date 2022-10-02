@@ -1,17 +1,14 @@
+import { RectCollider } from "../../engine/collision/Collider";
 import { FrameTimer } from "../../utils/frame-timer";
-import { Hitbox, RectHitbox } from "../core/hitbox";
 import Sprite, { SpriteConfig } from "../core/sprite";
 import Game from "../game";
 
 export abstract class Enemy extends Sprite {
-    public markedForDeletion: boolean;
-    public hitbox: Hitbox;
 
     constructor(game: Game, config: SpriteConfig) {
-        super(game, config);
-        this.hitbox = new RectHitbox({ parent: this.rect });
+        super("enemy", game, config);
+        this.collider = new RectCollider(this);
         this.fps = 20;
-        this.markedForDeletion = false;
     }
 
     public update(frameTimer: FrameTimer): void {
@@ -19,14 +16,14 @@ export abstract class Enemy extends Sprite {
         this.x -= this.vx + this.game.speed;
         this.y += this.vy;
         if (this.isOffscreen("left")) {
-            this.markedForDeletion = true;
+            this.destroy();
         }
     }
 
     public override draw(context: CanvasRenderingContext2D): void {
         super.draw(context);
         if (this.game.config.debug) {
-            this.hitbox.draw(context);
+            this.collider?.draw(context);
         }
     }
 }

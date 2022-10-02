@@ -58,6 +58,11 @@ export default class DebugWindow {
         context.fillText("Delta time:", nameX, rowHeight * 6);
         context.fillText(`${Math.round(this.deltaTime * 100) / 100}`, valueX, rowHeight * 6);
 
+        context.fillText("Colliders:", nameX, rowHeight * 8);
+        context.fillText(`${this.game.colliders.watchPairs.length}`, valueX, rowHeight * 8);
+        context.fillText("Collisions:", nameX, rowHeight * 9);
+        context.fillText(`${this.game.colliders.collisions.length}`, valueX, rowHeight * 9);
+
         context.restore();
     }
 }

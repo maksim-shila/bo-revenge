@@ -170,7 +170,7 @@ class Running extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        this.game.particles.add("dust", this.player.centerX, this.player.y + this.player.height);
+        this.game.particles.add("dust", this.player.cx, this.player.y + this.player.height);
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
             this.player.setState("dash", input, 1);
@@ -216,7 +216,7 @@ class Rolling extends PlayerState {
 
     public update(input: InputHandler): void {
         this.player.energy -= 0.5;
-        this.game.particles.add("fire", this.player.centerX, this.player.centerY);
+        this.game.particles.add("fire", this.player.cx, this.player.cy);
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
             this.player.setState("dash", input, 1);
@@ -244,7 +244,7 @@ class Diving extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        this.game.particles.add("fire", this.player.centerX, this.player.centerY);
+        this.game.particles.add("fire", this.player.cx, this.player.cy);
         if (this.player.onGround()) {
             if (input.keyPressed("roll") && this.player.canStartRoll) {
                 this.player.setState("rolling", input, 2);
@@ -252,7 +252,7 @@ class Diving extends PlayerState {
                 this.player.setState("running", input, 1);
             }
             for (let i = 0; i < 30; ++i) {
-                this.game.particles.add("splash", this.player.centerX, this.player.y + this.player.height);
+                this.game.particles.add("splash", this.player.cx, this.player.y + this.player.height);
             }
         }
     }
@@ -323,7 +323,7 @@ class Dash extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        this.game.particles.add("fire", this.player.centerX, this.player.centerY);
+        this.game.particles.add("fire", this.player.cx, this.player.cy);
         if (this.player.x > this.startX + this.distanceX ||
             this.player.x < this.startX - this.distanceX ||
             this.player.y < this.startY - this.distanceY ||

@@ -1,6 +1,6 @@
+import GameObject from "../../engine/game-object/GameObject";
 import { FrameTimer } from "../../utils/frame-timer";
 import Game from "../game";
-import { Rect } from "./hitbox";
 
 export interface SpriteConfig {
     imageId: string;
@@ -11,68 +11,30 @@ export interface SpriteConfig {
 
 type Direction = "right" | "left" | "top" | "bottom";
 
-export default abstract class Sprite {
+// TODO: extending here is temporary, GameObject is going to replace Sprite at all
+export default abstract class Sprite extends GameObject {
 
     protected readonly game: Game;
     protected readonly image: CanvasImageSource;
-    public readonly rect: Rect;
     public frameX: number;
     public frameY: number;
     public spriteWidth: number;
     public spriteHeight: number;
-    public scale: number;
     public framesCount: number;
-    public vx: number;
-    public vy: number;
     private _fps = 0;
     private _frameInterval = 0;
     private _frameTimer = 0;
 
-    constructor(game: Game, config: SpriteConfig) {
+    constructor(type: string, game: Game, config: SpriteConfig) {
+        super(type, 0, 0, config.width * (config.scale ?? 1), config.height * (config.scale ?? 1));
         this.game = game;
         this.image = document.getElementById(config.imageId) as CanvasImageSource;
         this.frameX = 0;
         this.frameY = 0;
         this.spriteWidth = config.width;
         this.spriteHeight = config.height;
-        this.scale = config.scale ?? 1;
-        this.rect = new Rect({ x: 0, y: 0, width: config.width * this.scale, height: config.height * this.scale });
         this.framesCount = 0;
-        this.vx = 0;
-        this.vy = 0;
         this.fps = 30;
-    }
-
-    public get x(): number {
-        return this.rect.x;
-    }
-
-    public set x(value: number) {
-        this.rect.x = value;
-    }
-
-    public get y(): number {
-        return this.rect.y;
-    }
-
-    public set y(value: number) {
-        this.rect.y = value;
-    }
-
-    public get width(): number {
-        return this.rect.width;
-    }
-
-    public get height(): number {
-        return this.rect.height;
-    }
-
-    public get centerX(): number {
-        return this.x + this.width * 0.5;
-    }
-
-    public get centerY(): number {
-        return this.y + this.height * 0.5;
     }
 
     public get fps(): number {
