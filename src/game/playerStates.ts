@@ -1,6 +1,6 @@
-import InputHandler from "../input/input-handler.js";
-import Game from "./game.js";
-import Player from "./player.js";
+import InputHandler from "../input/input-handler";
+import Game from "./game";
+import Player from "./player";
 
 export type PlayerStateType =
     "standing" |

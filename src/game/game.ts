@@ -1,13 +1,13 @@
-import GameConfig from "../global.js";
-import InputHandler from "../input/input-handler.js";
-import { FrameTimer } from "../utils/frame-timer.js";
-import Background from "./background.js";
-import CollisionAnimationFactory from "./collisionAnimation.js";
-import DebugWindow from "./debug-window.js";
-import EnemySpawner from "./enemy/enemy-spawner.js";
-import ParticlesFactory from "./particles.js";
-import Player from "./player.js";
-import UI from "./UI.js";
+import GameConfig from "../global";
+import InputHandler from "../input/input-handler";
+import { FrameTimer } from "../utils/frame-timer";
+import Background from "./background";
+import CollisionAnimationFactory from "./collisionAnimation";
+import DebugWindow from "./debug-window";
+import EnemySpawner from "./enemy/enemy-spawner";
+import ParticlesFactory from "./particles";
+import Player from "./player";
+import UI from "./UI";
 
 export default class Game {
 
@@ -49,8 +49,7 @@ export default class Game {
         this.collisions = new CollisionAnimationFactory(this);
         this.background = new Background(this);
         this.enemySpawner = new EnemySpawner(this);
-        this.soundtrack = new Audio();
-        this.soundtrack.src = "assets/sounds/game_level_1.mp3";
+        this.soundtrack = document.getElementById("level1audio") as HTMLAudioElement;
         this.soundtrack.addEventListener("ended", () => this.playSoundtrack());
     }
 

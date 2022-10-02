@@ -2,14 +2,14 @@
   "compilerOptions": {
     "target": "ES2018",
     "lib": [ "ES2018", "dom" ],
+    "moduleResolution": "node",
     "allowJs": false,
     "outDir": "build",
     "rootDir": "src",
     "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
-    "noImplicitOverride": true
+    "noImplicitOverride": true,
   },
   "include": [ "src/**/*" ],
-  "exclude": [ "node_modules", "dist", "build" ]
 }

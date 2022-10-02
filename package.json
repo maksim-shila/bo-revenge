@@ -1,22 +1,45 @@
 {
-  "license": "UNLICENSED",
-  "main": "main.js",
+  "name": "bo-revenge",
+  "version": "0.0.1",
+  "main": "src/electron.js",
+  "author": "",
+  "license": "ISC",
+  "targets": {
+    "main": false
+  },
   "scripts": {
-    "build": "tsc",
-    "start": "npm run build && electron ./main.js",
-    "dev": "tsc --watch",
+    "dev": "parcel -p 3000 src/index.html --dist-dir build-dev",
+    "dev:electron": "electron src/electron.dev.js",
     "lint": "eslint . --ext .ts",
-    "pack:win32": "npm install && npm run build && npx electron-packager ./ BoRevenge --platform=win32 --arch=x64 --out=dist",
-    "pack:macOS": "npm install && npm run build && npx electron-packager ./ BoRevenge --platform=darwin --arch=x64 --out=dist"
+    "build": "parcel build src/index.html --dist-dir build --public-url ./",
+    "build:win": "npm run build && electron-builder -w",
+    "build:mac": "npm run build && electron-builder -m"
   },
   "devDependencies": {
     "@types/node": "^18.7.15",
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "@typescript-eslint/parser": "^5.36.2",
-    "electron": "^20.1.4",
-    "electron-packager": "^16.0.0",
+    "electron": "^21.0.1",
+    "electron-builder": "^23.3.3",
     "eslint": "^8.23.0",
-    "ts-node": "^10.9.1",
+    "parcel": "^2.7.0",
     "typescript": "4.8.2"
+  },
+  "build": {
+    "appId": "bo.revenge",
+    "files": [ "src/electron.js", "build/**/*" ],
+    "mac": {
+      "target": "dmg",
+      "icon": "src/assets/logo.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/logo.png"
+    },
+    "linux": {
+      "target": "deb",
+      "icon": "src/assets/logo.png",
+      "category": "Development"
+    }
   }
 }

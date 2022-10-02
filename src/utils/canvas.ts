@@ -1,4 +1,4 @@
-import GameConfig from "../global.js";
+import GameConfig from "../global";
 
 export default class Canvas {
 

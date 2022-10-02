@@ -1,6 +1,6 @@
-import InputHandler from "../input/input-handler.js";
-import { FrameTimer } from "../utils/frame-timer.js";
-import Game from "./game.js";
+import InputHandler from "../input/input-handler";
+import { FrameTimer } from "../utils/frame-timer";
+import Game from "./game";
 
 export default class DebugWindow {
 

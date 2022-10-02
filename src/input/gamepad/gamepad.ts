@@ -1,6 +1,6 @@
-import Input from "../input.js";
-import { KeyAction } from "../key-action.js";
-import { GamepadKey, GamepadMapping } from "./gamepad-config.js";
+import Input from "../input";
+import { KeyAction } from "../key-action";
+import { GamepadKey, GamepadMapping } from "./gamepad-config";
 
 export default class Gamepad extends Input<string> {
 

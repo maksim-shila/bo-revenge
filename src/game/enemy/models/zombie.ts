@@ -1,7 +1,7 @@
-import { NoHitbox } from "../../core/hitbox.js";
-import Game from "../../game.js";
-import { Spawner } from "../enemy-spawner.js";
-import { Enemy } from "../enemy.js";
+import { NoHitbox } from "../../core/hitbox";
+import Game from "../../game";
+import { Spawner } from "../enemy-spawner";
+import { Enemy } from "../enemy";
 
 const zombieImages = ["zombieGreenImg", "zombieOrangeImg", "zombiePurpleImg"];
 function getRandomZombieImageId(): string {

@@ -1,8 +1,8 @@
-import { FrameTimer } from "../../../utils/frame-timer.js";
-import { RectHitbox } from "../../core/hitbox.js";
-import Game from "../../game.js";
-import { Spawner } from "../enemy-spawner.js";
-import { Enemy } from "../enemy.js";
+import { FrameTimer } from "../../../utils/frame-timer";
+import { RectHitbox } from "../../core/hitbox";
+import Game from "../../game";
+import { Spawner } from "../enemy-spawner";
+import { Enemy } from "../enemy";
 
 export default class SpiderSpawner implements Spawner {
     private readonly game: Game;

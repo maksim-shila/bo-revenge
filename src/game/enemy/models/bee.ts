@@ -1,7 +1,7 @@
-import { FrameTimer } from "../../../utils/frame-timer.js";
-import Game from "../../game.js";
-import { Spawner } from "../enemy-spawner.js";
-import { Enemy } from "../enemy.js";
+import { FrameTimer } from "../../../utils/frame-timer";
+import Game from "../../game";
+import { Spawner } from "../enemy-spawner";
+import { Enemy } from "../enemy";
 
 export default class BeeSpawner implements Spawner {
     private readonly game: Game;

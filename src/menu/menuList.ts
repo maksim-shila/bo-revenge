@@ -11,10 +11,8 @@ export default class MenuList {
     constructor(menuButtons: HTMLButtonElement[], defaultBtn: HTMLButtonElement) {
         this.menuButtons = menuButtons;
         this.menuButtons.forEach(btn => btn.addEventListener("click", () => this.playSelectSound()));
-        this.changeSound = new Audio();
-        this.changeSound.src = "assets/sounds/menu_change.mp3";
-        this.selectSound = new Audio();
-        this.selectSound.src = "assets/sounds/menu_select.mp3";
+        this.changeSound = document.getElementById("menuChangeAudio") as HTMLAudioElement;
+        this.selectSound = document.getElementById("menuSelectAudio") as HTMLAudioElement;
         this.defaultBtn = defaultBtn;
         this.setActive(this.defaultBtn);
     }

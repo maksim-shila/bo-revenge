@@ -1,6 +1,6 @@
-import { FrameTimer } from "../../utils/frame-timer.js";
-import Game from "../game.js";
-import { Rect } from "./hitbox.js";
+import { FrameTimer } from "../../utils/frame-timer";
+import Game from "../game";
+import { Rect } from "./hitbox";
 
 export interface SpriteConfig {
     imageId: string;

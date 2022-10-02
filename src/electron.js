@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
 const { app, BrowserWindow } = require("electron");
+const path = require("path");
 
 function createWindow() {
     const mainWindow = new BrowserWindow({ fullscreen: true });
     mainWindow.setMenu(null);
-    mainWindow.loadFile("index.html");
+    mainWindow.loadFile(path.join(__dirname, "../build/index.html"));
 }
 
 app.whenReady().then(() => {

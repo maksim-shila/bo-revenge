@@ -1,6 +1,6 @@
-import Game from "../../game.js";
-import { Spawner } from "../enemy-spawner.js";
-import { Enemy } from "../enemy.js";
+import Game from "../../game";
+import { Spawner } from "../enemy-spawner";
+import { Enemy } from "../enemy";
 
 export default class PlantSpawner implements Spawner {
     private readonly game: Game;

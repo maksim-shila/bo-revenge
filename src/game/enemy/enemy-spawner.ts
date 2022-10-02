@@ -1,10 +1,10 @@
-import { FrameTimer } from "../../utils/frame-timer.js";
-import Game from "../game.js";
-import { Enemy } from "./enemy.js";
-import BeeSpawner from "./models/bee.js";
-import PlantSpawner from "./models/plant.js";
-import SpiderSpawner from "./models/spider.js";
-import ZombieSpawner from "./models/zombie.js";
+import { FrameTimer } from "../../utils/frame-timer";
+import Game from "../game";
+import { Enemy } from "./enemy";
+import BeeSpawner from "./models/bee";
+import PlantSpawner from "./models/plant";
+import SpiderSpawner from "./models/spider";
+import ZombieSpawner from "./models/zombie";
 
 export default class EnemySpawner {
     private readonly game: Game;

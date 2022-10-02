@@ -1,4 +1,4 @@
-import { KeyAction } from "../key-action.js";
+import { KeyAction } from "../key-action";
 
 export enum GamepadKey {
     A = 0,

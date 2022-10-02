@@ -1,6 +1,6 @@
-import Input from "../input.js";
-import { KeyAction } from "../key-action.js";
-import { KeyboardKey, KeyboardKeys, KeyboardMapping } from "./keyboard-config.js";
+import Input from "../input";
+import { KeyAction } from "../key-action";
+import { KeyboardKey, KeyboardKeys, KeyboardMapping } from "./keyboard-config";
 
 export default class Keyboard extends Input<KeyboardKey>{
 

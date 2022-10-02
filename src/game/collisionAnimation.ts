@@ -1,6 +1,6 @@
-import { FrameTimer } from "../utils/frame-timer.js";
-import Sprite from "./core/sprite.js";
-import Game from "./game.js";
+import { FrameTimer } from "../utils/frame-timer";
+import Sprite from "./core/sprite";
+import Game from "./game";
 
 export default class CollisionAnimationFactory {
 

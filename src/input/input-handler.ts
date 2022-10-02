@@ -1,7 +1,7 @@
-import Gamepad from "./gamepad/gamepad.js";
-import Keyboard from "./keyboard/keyboard.js";
-import { KeyAction } from "./key-action.js";
-import GameConfig from "../global.js";
+import Gamepad from "./gamepad/gamepad";
+import Keyboard from "./keyboard/keyboard";
+import { KeyAction } from "./key-action";
+import GameConfig from "../global";
 
 export default class InputHandler {
 

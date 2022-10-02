@@ -1,5 +1,5 @@
-import InputHandler from "./input/input-handler.js";
-import MenuList from "./menu/menuList.js";
+import InputHandler from "../input/input-handler";
+import MenuList from "./menuList";
 
 type MainMenuEvents = {
     onStartNewGame: () => unknown;
@@ -16,8 +16,7 @@ export default class MainMenu {
 
     constructor(events: MainMenuEvents) {
         this.menu = document.getElementById("mainMenu")!;
-        this.soundtrack = new Audio();
-        this.soundtrack.src = "assets/sounds/main_menu.mp3";
+        this.soundtrack = document.getElementById("mainMenuAudio") as HTMLAudioElement;
         this.soundtrack.addEventListener("ended", () => this.playSoundtrack());
         this.controls = new InnerMenu(this, "controlsMenu");
         this.highscores = new InnerMenu(this, "highscoresMenu");

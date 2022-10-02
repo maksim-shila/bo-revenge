@@ -1,9 +1,9 @@
-import InputHandler from "../input/input-handler.js";
-import { FrameTimer } from "../utils/frame-timer.js";
-import { Hitbox, RectHitbox } from "./core/hitbox.js";
-import Sprite, { SpriteConfig } from "./core/sprite.js";
-import Game from "./game.js";
-import { PlayerStateManager, PlayerStateType, State } from "./playerStates.js";
+import InputHandler from "../input/input-handler";
+import { FrameTimer } from "../utils/frame-timer";
+import { Hitbox, RectHitbox } from "./core/hitbox";
+import Sprite, { SpriteConfig } from "./core/sprite";
+import Game from "./game";
+import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
 
 const playerConfig: SpriteConfig = {
     imageId: "playerImg",

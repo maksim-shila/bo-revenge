@@ -1,7 +1,7 @@
-import { FrameTimer } from "../../utils/frame-timer.js";
-import { Hitbox, RectHitbox } from "../core/hitbox.js";
-import Sprite, { SpriteConfig } from "../core/sprite.js";
-import Game from "../game.js";
+import { FrameTimer } from "../../utils/frame-timer";
+import { Hitbox, RectHitbox } from "../core/hitbox";
+import Sprite, { SpriteConfig } from "../core/sprite";
+import Game from "../game";
 
 export abstract class Enemy extends Sprite {
     public markedForDeletion: boolean;
