@@ -1,8 +1,8 @@
 import { FrameTimer } from "../../../utils/frame-timer";
-import { RectHitbox } from "../../core/hitbox";
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";
+import { RectCollider } from "../../../engine/collision/Collider";
 
 export default class SpiderSpawner implements Spawner {
     private readonly game: Game;
@@ -32,13 +32,13 @@ export default class SpiderSpawner implements Spawner {
 class Spider extends Enemy {
     constructor(game: Game) {
         super(game, { imageId: "enemySpiderBigImg", width: 120, height: 144 });
-        this.hitbox = new RectHitbox({
-            parent: this.rect,
-            xCounter: (parent): number => parent.x + 30,
-            yCounter: (parent): number => parent.y + 30,
-            width: this.width - 60,
-            height: this.height - 60
-        });
+        this.collider = new RectCollider(
+            this,
+            p => p.x + 30,
+            p => p.y + 30,
+            p => p.width - 60,
+            p => p.height - 60,
+        );
         this.x = this.game.width;
         this.y = Math.random() * this.game.height * 0.5;
         this.vx = 0;
@@ -52,7 +52,7 @@ class Spider extends Enemy {
             this.vy *= -1;
         }
         if (this.isOffscreen("top")) {
-            this.markedForDeletion = true;
+            this.destroy();
         }
     }
 

@@ -1,7 +1,7 @@
-import { NoHitbox } from "../../core/hitbox";
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";
+import { BlankCollider } from "../../../engine/collision/Collider";
 
 const zombieImages = ["zombieGreenImg", "zombieOrangeImg", "zombiePurpleImg"];
 function getRandomZombieImageId(): string {
@@ -48,6 +48,6 @@ class Zombie extends Enemy {
         this.vy = 0;
         this.fps = 30;
         this.framesCount = 10;
-        this.hitbox = new NoHitbox();
+        this.collider = new BlankCollider();
     }
 }

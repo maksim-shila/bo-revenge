@@ -1,6 +1,7 @@
+import { RectCollider } from "../engine/collision/Collider";
+import Collision from "../engine/collision/Collision";
 import InputHandler from "../input/input-handler";
 import { FrameTimer } from "../utils/frame-timer";
-import { Hitbox, RectHitbox } from "./core/hitbox";
 import Sprite, { SpriteConfig } from "./core/sprite";
 import Game from "./game";
 import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
@@ -16,7 +17,6 @@ export default class Player extends Sprite {
     public stateManager: PlayerStateManager;
     public state!: State; // Initialized on Game class constructor
 
-    public readonly hitbox: Hitbox = new RectHitbox({ parent: this.rect });
     public readonly maxVX: number;
     public readonly maxVY: number;
     public readonly weight: number;
@@ -31,18 +31,20 @@ export default class Player extends Sprite {
     public readonly maxEnergy = 50;
     public readonly minEnergy = 10;
     private _energy = this.maxEnergy;
+    private input: InputHandler;
 
-    constructor(game: Game) {
-        super(game, playerConfig);
+    constructor(game: Game, input: InputHandler) {
+        super("player", game, playerConfig);
+        this.input = input;
         this.x = 0;
         this.y = this.game.height - this.height - this.game.groundMargin;
-        this.hitbox = new RectHitbox({
-            parent: this.rect,
-            xCounter: (parent): number => parent.x + 20,
-            yCounter: (parent): number => parent.y + 40,
-            width: this.width - 40,
-            height: this.height - 40
-        });
+        this.collider = new RectCollider(
+            this,
+            p => p.x + 20,
+            p => p.y + 40,
+            p => p.width - 40,
+            p => p.height - 40
+        );
         this.maxVX = 10;
         this.maxVY = 30;
         this.weight = 2;
@@ -84,13 +86,12 @@ export default class Player extends Sprite {
         }
     }
 
-    public update(input: InputHandler, frameTimer: FrameTimer): void {
-        this.checkCollision(input);
+    public update(frameTimer: FrameTimer): void {
         this.animate(frameTimer);
-        this.state.update(input);
+        this.state.update(this.input);
         this.moveX();
         this.moveY();
-        if (input.keyReleased("jump") && this.jumpPressed) {
+        if (this.input.keyReleased("jump") && this.jumpPressed) {
             if (!this.onGround() && this.vy < 0) {
                 this.vy = this.vy < -5 ? -5 : this.vy;
             }
@@ -104,7 +105,7 @@ export default class Player extends Sprite {
     public override draw(context: CanvasRenderingContext2D): void {
         super.draw(context);
         if (this.game.config.debug) {
-            this.hitbox.draw(context);
+            this.collider?.draw(context);
         }
     }
 
@@ -145,21 +146,21 @@ export default class Player extends Sprite {
         this.disallowOffscreen("bottom");
     }
 
-    private checkCollision(input: InputHandler): void {
-        this.game.enemySpawner.enemies.forEach(enemy => {
-            if (this.hitbox.hasCollision(enemy.hitbox)) {
-                enemy.markedForDeletion = true;
-                this.game.collisions.add(enemy.centerX, enemy.centerY);
-                if (this.state.type === "rolling" ||
-                    this.state.type === "diving" ||
-                    this.state.type === "dash") {
-                    this.game.score++;
-                } else {
-                    if (!this.game.config.immportal) {
-                        this.setState("hit", input);
-                    }
+    public override onCollisionEnter(collision: Collision): void {
+        const other = collision.other(this);
+        if (other.type === "enemy") {
+            const enemy = other;
+            enemy.destroy();
+            this.game.collisions.add(enemy.cx, enemy.cy);
+            if (this.state.type === "rolling" ||
+                this.state.type === "diving" ||
+                this.state.type === "dash") {
+                this.game.score++;
+            } else {
+                if (!this.game.config.immportal) {
+                    this.setState("hit", this.input);
                 }
             }
-        });
+        }
     }
 }
