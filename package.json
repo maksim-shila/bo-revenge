@@ -1,17 +1,17 @@
 {
   "name": "bo-revenge",
   "version": "0.0.1",
-  "main": "src/electron.js",
+  "main": "src/electron.prod.js",
   "author": "",
   "license": "ISC",
   "targets": {
     "main": false
   },
   "scripts": {
-    "dev": "parcel -p 3000 src/index.html --dist-dir build-dev",
+    "dev": "parcel -p 3000 src/index.html --dist-dir build/dev",
     "dev:electron": "electron src/electron.dev.js",
     "lint": "eslint . --ext .ts",
-    "build": "parcel build src/index.html --dist-dir build --public-url ./",
+    "build": "parcel build src/index.html --dist-dir build/prod --public-url ./",
     "build:win": "npm run build && electron-builder -w",
     "build:mac": "npm run build && electron-builder -m"
   },
@@ -27,7 +27,7 @@
   },
   "build": {
     "appId": "bo.revenge",
-    "files": [ "src/electron.js", "build/**/*" ],
+    "files": [ "src/electron.prod.js", "build/prod/**/*" ],
     "mac": {
       "target": "dmg",
       "icon": "src/assets/logo.png"
