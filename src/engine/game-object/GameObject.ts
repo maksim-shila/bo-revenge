@@ -1,14 +1,15 @@
-import { Collider } from "../collision/Collider";
-import Collision from "../collision/Collision";
+import { Collider, Collision, FrameTimer, RigidBody } from "..";
 
-export default abstract class GameObject {
+export abstract class GameObject {
 
-    public vx = 0;
-    public vy = 0;
-    public collider: Collider | null = null;
+    private _collider: Collider | null = null;
+    private _rigidBody: RigidBody | null = null;
 
     private _destroyActions: ((self: GameObject) => unknown)[] = [];
     private _destroyed = false;
+
+    public vx = 0;
+    public vy = 0;
 
     constructor(
         public readonly type: string,
@@ -17,6 +18,30 @@ export default abstract class GameObject {
         public width = 0,
         public height = 0
     ) { }
+
+    public get collider(): Collider | null {
+        return this._collider;
+    }
+
+    protected set collider(value: Collider | null) {
+        this._collider = value;
+    }
+
+    public get rigidBody(): RigidBody | null {
+        return this._rigidBody;
+    }
+
+    protected set rigidBody(value: RigidBody | null) {
+        this._rigidBody = value;
+    }
+
+    public get onGround(): boolean {
+        return this.rigidBody?.onGround ?? false;
+    }
+
+    public get weight(): number {
+        return this.rigidBody?.weight ?? 0;
+    }
 
     public get rx(): number {
         return this.x + this.width;
@@ -46,6 +71,9 @@ export default abstract class GameObject {
         this._destroyed = true;
         this._destroyActions.forEach(action => action(this));
     }
+
+    public abstract update(frameTimer: FrameTimer): void;
+    public abstract draw(context: CanvasRenderingContext2D): void;
 
     public onCollisionEnter?(collision: Collision): void;
     public onCollisionExit?(collision: Collision): void;

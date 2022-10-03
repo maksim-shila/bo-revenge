@@ -1,12 +1,16 @@
-import GameObject from "../game-object/GameObject";
-import Collision from "./Collision";
+import { Collision, GameObject } from "..";
 
 type WatchPair = { left: GameObject, right: GameObject };
 
-export default class CollisionHandler {
+export class CollisionHandler {
 
+    private _watchObjects: GameObject[] = [];
     private _watchPairs: WatchPair[] = [];
     private _collisions: Collision[] = [];
+
+    public get watchObjects(): GameObject[] {
+        return this._watchObjects;
+    }
 
     public get watchPairs(): WatchPair[] {
         return this._watchPairs;
@@ -16,12 +20,12 @@ export default class CollisionHandler {
         return this._collisions;
     }
 
-    public add(leftSet: GameObject[], rightSet: GameObject[]): void {
+    public watch(leftSet: GameObject[], rightSet: GameObject[]): void {
         leftSet.forEach(left => {
             rightSet.forEach(right => {
                 this._watchPairs.push({ left, right });
-                left.onDestroy((gameObject) => this.remove(gameObject));
-                right.onDestroy((gameObject) => this.remove(gameObject));
+                this.watchObject(left);
+                this.watchObject(right);
             });
         });
     }
@@ -31,6 +35,7 @@ export default class CollisionHandler {
             pair.left !== gameObject &&
             pair.right !== gameObject
         );
+        this._watchObjects = this._watchObjects.filter(o => o !== gameObject);
     }
 
     public update(): void {
@@ -42,13 +47,21 @@ export default class CollisionHandler {
             }
         });
         this._collisions = collisions;
+        this.handlePhysics();
+    }
+
+    private watchObject(gameObject: GameObject) {
+        if (!this._watchObjects.includes(gameObject)) {
+            this._watchObjects.push(gameObject);
+            gameObject.onDestroy(o => this.remove(o));
+        }
     }
 
     private handle(left: GameObject, right: GameObject): Collision | null {
         if (left.collider === null || right.collider === null) {
             return null;
         }
-        const existing = this._collisions.find(collision => left === collision.left && right === collision.right);
+        const existing = this._collisions.find(collision => collision.containsBoth(left, right));
         if (existing) {
             if (left.collider.hasCollision(right.collider)) {
                 return existing;
@@ -64,5 +77,32 @@ export default class CollisionHandler {
             return collision;
         }
         return null;
+    }
+
+    private handlePhysics() {
+        const rigidObjects = this._watchObjects.filter(obj => obj.rigidBody !== null);
+        rigidObjects.forEach(sprite => {
+            const collisions = this._collisions.filter(c => c.left === sprite && c.right.type === "obstacle");
+            const directions = collisions.map(collision => {
+                const direction = collision.direction;
+                const obstacle = collision.right;
+                switch (direction) {
+                    case "left":
+                        sprite.x = obstacle.rx;
+                        break;
+                    case "right":
+                        sprite.x = obstacle.x - sprite.width;
+                        break;
+                    case "top":
+                        sprite.y = obstacle.ry;
+                        break;
+                    case "bottom":
+                        sprite.y = obstacle.y - sprite.height;
+                        break;
+                }
+                return direction;
+            });
+            sprite.rigidBody!.onGround = directions.some(d => d === "bottom");
+        });
     }
 }

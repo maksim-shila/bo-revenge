@@ -1,13 +1,13 @@
-import CollisionHandler from "../engine/collision/CollisionHandler";
+import { CollisionHandler, FrameTimer, Scene } from "../engine";
 import GameConfig from "../global";
 import InputHandler from "../input/input-handler";
-import { FrameTimer } from "../utils/frame-timer";
 import Background from "./background";
 import CollisionAnimationFactory from "./collisionAnimation";
 import DebugWindow from "./debug-window";
 import EnemySpawner from "./enemy/enemy-spawner";
 import ParticlesFactory from "./particles";
 import Player from "./player";
+import BrickFloor from "./sprites/obstacles/BrickFloor";
 import UI from "./UI";
 
 export default class Game {
@@ -19,7 +19,7 @@ export default class Game {
     public readonly enemySpawner: EnemySpawner;
     public readonly background: Background;
     public readonly ui: UI;
-    public readonly colliders: CollisionHandler;
+    public readonly scene: Scene;
 
     private readonly debugWindow: DebugWindow;
     private readonly soundtrack: HTMLAudioElement;
@@ -44,7 +44,6 @@ export default class Game {
         this.width = config.width;
         this.height = config.height;
         this.ui = new UI(this);
-        this.colliders = new CollisionHandler();
         this.debugWindow = new DebugWindow(this);
         this.player = new Player(this, input);
         this.player.setState("sitting");
@@ -54,6 +53,10 @@ export default class Game {
         this.enemySpawner = new EnemySpawner(this);
         this.soundtrack = document.getElementById("level1audio") as HTMLAudioElement;
         this.soundtrack.addEventListener("ended", () => this.playSoundtrack());
+
+        this.scene = new Scene("scene", 0, 0, config.width, config.height);
+        this.scene.addObject(this.player);
+        this.scene.addContainer(new BrickFloor(this));
     }
 
     public get running(): boolean {
@@ -83,20 +86,18 @@ export default class Game {
         }
         if (!this.paused) {
             this.background.update();
+            this.scene.update(frameTimer);
             this.particles.update();
             this.enemySpawner.update(frameTimer);
             this.collisions.update(frameTimer);
-            this.player.update(frameTimer);
-            this.colliders.update();
         }
     }
 
     public draw(context: CanvasRenderingContext2D): void {
         this.background.draw(context);
-        this.enemySpawner.draw(context);
+        this.scene.draw(context);
         this.collisions.draw(context);
         this.particles.draw(context);
-        this.player.draw(context);
         this.ui.draw(context);
         if (this.config.debug) {
             this.debugWindow.draw(context);

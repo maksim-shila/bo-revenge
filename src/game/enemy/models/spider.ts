@@ -1,4 +1,4 @@
-import { FrameTimer } from "../../../utils/frame-timer";
+import { FrameTimer } from "../../../engine";
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";

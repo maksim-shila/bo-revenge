@@ -1,4 +1,4 @@
-import GameObject from "../game-object/GameObject";
+import { GameObject } from "..";
 
 export interface Collider {
     x: number;

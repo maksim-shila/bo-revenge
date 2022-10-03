@@ -1,5 +1,4 @@
-import { RectCollider } from "../../engine/collision/Collider";
-import { FrameTimer } from "../../utils/frame-timer";
+import { FrameTimer, RectCollider } from "../../engine";
 import Sprite, { SpriteConfig } from "../core/sprite";
 import Game from "../game";
 

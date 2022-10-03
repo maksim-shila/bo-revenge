@@ -3,4 +3,5 @@ export default class GameConfig {
     public height = 500;
     public debug = false;
     public immportal = false;
+    public unlimitedEnergy = false;
 }

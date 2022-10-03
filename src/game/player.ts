@@ -1,7 +1,6 @@
+import { Collision, FrameTimer, RigidBody } from "../engine";
 import { RectCollider } from "../engine/collision/Collider";
-import Collision from "../engine/collision/Collision";
 import InputHandler from "../input/input-handler";
-import { FrameTimer } from "../utils/frame-timer";
 import Sprite, { SpriteConfig } from "./core/sprite";
 import Game from "./game";
 import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
@@ -19,10 +18,9 @@ export default class Player extends Sprite {
 
     public readonly maxVX: number;
     public readonly maxVY: number;
-    public readonly weight: number;
 
     private _jumps = 0;
-    private jumpPressed = false;
+    private _onJump = false;
     public noGravity = false;
 
     private readonly dashCD = 800;
@@ -38,6 +36,9 @@ export default class Player extends Sprite {
         this.input = input;
         this.x = 0;
         this.y = this.game.height - this.height - this.game.groundMargin;
+        this.maxVX = 10;
+        this.maxVY = 30;
+        this.stateManager = new PlayerStateManager(this.game);
         this.collider = new RectCollider(
             this,
             p => p.x + 20,
@@ -45,10 +46,8 @@ export default class Player extends Sprite {
             p => p.width - 40,
             p => p.height - 40
         );
-        this.maxVX = 10;
-        this.maxVY = 30;
-        this.weight = 2;
-        this.stateManager = new PlayerStateManager(this.game);
+        this.rigidBody = new RigidBody(2);
+
     }
 
     public get energy(): number {
@@ -91,11 +90,11 @@ export default class Player extends Sprite {
         this.state.update(this.input);
         this.moveX();
         this.moveY();
-        if (this.input.keyReleased("jump") && this.jumpPressed) {
-            if (!this.onGround() && this.vy < 0) {
+        if (this.input.keyReleased("jump") && this._onJump) {
+            if (!this.onGround && this.vy < 0) {
                 this.vy = this.vy < -5 ? -5 : this.vy;
             }
-            this.jumpPressed = false;
+            this._onJump = false;
         }
         if (this.state.type !== "rolling") {
             this.energy += 0.1;
@@ -116,18 +115,14 @@ export default class Player extends Sprite {
     }
 
     public jump(): void {
-        if (this.onGround()) {
+        if (this.onGround) {
             this.vy = -this.maxVY;
             this._jumps++;
-            this.jumpPressed = true;
+            this._onJump = true;
         } else if (this._jumps < 2) {
             this.vy = -this.maxVY * 0.75;
             this._jumps++;
         }
-    }
-
-    public onGround(): boolean {
-        return this.isTouching("bottom");
     }
 
     private moveX(): void {
@@ -138,12 +133,11 @@ export default class Player extends Sprite {
 
     private moveY(): void {
         this.y += this.vy;
-        if (!this.onGround() && !this.noGravity) {
+        if (!this.onGround && !this.noGravity) {
             this.vy += this.weight;
-        } else if (this.onGround()) {
+        } else if (this.onGround && !this._onJump) {
             this._jumps = 0;
         }
-        this.disallowOffscreen("bottom");
     }
 
     public override onCollisionEnter(collision: Collision): void {

@@ -1,5 +1,4 @@
-import GameObject from "../../engine/game-object/GameObject";
-import { FrameTimer } from "../../utils/frame-timer";
+import { FrameTimer, GameObject } from "../../engine";
 import Game from "../game";
 
 export interface SpriteConfig {

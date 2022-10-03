@@ -1,5 +1,5 @@
+import { FrameTimer } from "../engine";
 import InputHandler from "../input/input-handler";
-import { FrameTimer } from "../utils/frame-timer";
 import Game from "./game";
 
 export default class DebugWindow {
@@ -58,10 +58,18 @@ export default class DebugWindow {
         context.fillText("Delta time:", nameX, rowHeight * 6);
         context.fillText(`${Math.round(this.deltaTime * 100) / 100}`, valueX, rowHeight * 6);
 
-        context.fillText("Colliders:", nameX, rowHeight * 8);
-        context.fillText(`${this.game.colliders.watchPairs.length}`, valueX, rowHeight * 8);
-        context.fillText("Collisions:", nameX, rowHeight * 9);
-        context.fillText(`${this.game.colliders.collisions.length}`, valueX, rowHeight * 9);
+        context.fillText("Sprites:", nameX, rowHeight * 8);
+        context.fillText(`${this.game.scene.sprites.length}`, valueX, rowHeight * 8);
+        context.fillText("Obstacles:", nameX, rowHeight * 9);
+        context.fillText(`${this.game.scene.obstacles.length}`, valueX, rowHeight * 9);
+
+        const colliders = this.game.scene.colliders;
+        context.fillText("Watch objects:", nameX, rowHeight * 11);
+        context.fillText(`${colliders.watchObjects.length}`, valueX, rowHeight * 11);
+        context.fillText("Colliders:", nameX, rowHeight * 12);
+        context.fillText(`${colliders.watchPairs.length}`, valueX, rowHeight * 12);
+        context.fillText("Collisions:", nameX, rowHeight * 13);
+        context.fillText(`${colliders.collisions.length}`, valueX, rowHeight * 13);
 
         context.restore();
     }

@@ -1,4 +1,4 @@
-import { FrameTimer } from "../utils/frame-timer";
+import { FrameTimer } from "../engine";
 import Sprite from "./core/sprite";
 import Game from "./game";
 

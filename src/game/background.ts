@@ -15,8 +15,7 @@ export default class Background {
             new Layer(this.game, this.width, this.height, 0, "backgroundCityImg_1"),
             new Layer(this.game, this.width, this.height, 0.2, "backgroundCityImg_2"),
             new Layer(this.game, this.width, this.height, 0.4, "backgroundCityImg_3"),
-            new Layer(this.game, this.width, this.height, 0.6, "backgroundCityImg_4"),
-            new Layer(this.game, this.width, this.height, 1, "backgroundCityImg_5"),
+            new Layer(this.game, this.width, this.height, 0.6, "backgroundCityImg_4")
         ];
     }
 
@@ -58,7 +57,7 @@ class Layer {
 
     public draw(context: CanvasRenderingContext2D): void {
         for (let i = 0; i < Math.ceil(this.game.width / this.width) + 1; ++i) {
-            context.drawImage(this.image, this.x + this.width * i, this.y, this.width, this.height);
+            context.drawImage(this.image, this.x + this.width * i - i, this.y, this.width, this.height);
         }
     }
 }

@@ -1,4 +1,4 @@
-import { FrameTimer } from "../../utils/frame-timer";
+import { FrameTimer } from "../../engine";
 import Game from "../game";
 import { Enemy } from "./enemy";
 import BeeSpawner from "./models/bee";
@@ -32,16 +32,12 @@ export default class EnemySpawner {
             spawner.update(frameTimer);
             if (spawner.shouldSpawn) {
                 const enemy = spawner.spawn();
-                this.game.colliders.add([this.game.player], [enemy]);
+                this.game.scene.addObject(enemy);
+                this.game.scene.colliders.watch([this.game.player], [enemy]);
                 this.enemies.push(enemy);
             }
         });
-        this._enemies.forEach(e => e.update(frameTimer));
         this._enemies = this._enemies.filter(e => !e.destroyed);
-    }
-
-    public draw(context: CanvasRenderingContext2D): void {
-        this._enemies.forEach(e => e.draw(context));
     }
 }
 
