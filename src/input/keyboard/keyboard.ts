@@ -11,6 +11,7 @@ export default class Keyboard extends Input<KeyboardKey>{
         super();
         this._sequence = [];
         window.addEventListener("keydown", e => {
+            e.preventDefault();
             this._sequence.push(e.key);
             if (this._sequence.length > Keyboard.SequenceLength) {
                 this._sequence.shift();
@@ -21,6 +22,7 @@ export default class Keyboard extends Input<KeyboardKey>{
             }
         });
         window.addEventListener("keyup", e => {
+            e.preventDefault();
             const key = e.code as KeyboardKey;
             if (KeyboardKeys.includes(key)) {
                 this.onKeyUp(key);
