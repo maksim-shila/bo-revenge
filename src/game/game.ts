@@ -1,4 +1,4 @@
-import { CollisionHandler, FrameTimer, Scene } from "../engine";
+import { FrameTimer, Scene } from "../engine";
 import GameConfig from "../global";
 import InputHandler from "../input/input-handler";
 import Background from "./background";
