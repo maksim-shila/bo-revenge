@@ -1,8 +1,7 @@
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";
-import { BlankCollider, RectCollider } from "../../../engine/collision/Collider";
-import { Collision, FrameTimer, RigidBody } from "../../../engine";
+import { FrameTimer, RectCollider, RigidBody } from "../../../engine";
 
 const zombieImages = ["zombieGreenImg", "zombieOrangeImg", "zombiePurpleImg"];
 function getRandomZombieImageId(): string {
