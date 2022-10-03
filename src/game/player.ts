@@ -35,7 +35,7 @@ export default class Player extends Sprite {
         super("player", game, playerConfig);
         this.input = input;
         this.x = 0;
-        this.y = this.game.height - this.height - this.game.groundMargin;
+        this.y = this.game.height - this.height - 200;
         this.maxVX = 10;
         this.maxVY = 30;
         this.stateManager = new PlayerStateManager(this.game);
@@ -86,10 +86,10 @@ export default class Player extends Sprite {
     }
 
     public update(frameTimer: FrameTimer): void {
-        this.animate(frameTimer);
-        this.state.update(this.input);
         this.moveX();
         this.moveY();
+        this.animate(frameTimer);
+        this.state.update(this.input);
         if (this.input.keyReleased("jump") && this._onJump) {
             if (!this.onGround && this.vy < 0) {
                 this.vy = this.vy < -5 ? -5 : this.vy;

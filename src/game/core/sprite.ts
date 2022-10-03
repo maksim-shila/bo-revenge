@@ -25,7 +25,7 @@ export default abstract class Sprite extends GameObject {
     private _frameTimer = 0;
 
     constructor(type: string, game: Game, config: SpriteConfig) {
-        super(type, 0, 0, config.width * (config.scale ?? 1), config.height * (config.scale ?? 1));
+        super(type, 0, 0, Math.ceil(config.width * (config.scale ?? 1)), Math.ceil(config.height * (config.scale ?? 1)));
         this.game = game;
         this.image = document.getElementById(config.imageId) as CanvasImageSource;
         this.frameX = 0;
@@ -76,9 +76,9 @@ export default abstract class Sprite extends GameObject {
                 case "left":
                     return this.x < 0 - this.width;
                 case "bottom":
-                    return this.y > this.game.height - this.game.groundMargin;
+                    return this.y > this.game.height;
                 case "top":
-                    return this.y < 0 - this.game.groundMargin - this.height;
+                    return this.y < 0 - this.height;
             }
         };
         for (let i = 0; i < directions.length; ++i) {
@@ -97,7 +97,7 @@ export default abstract class Sprite extends GameObject {
                 case "left":
                     return this.x <= 0;
                 case "bottom":
-                    return this.y >= this.game.height - this.height - this.game.groundMargin;
+                    return this.y >= this.game.height - this.height;
                 case "top":
                     return this.y <= 0;
             }
@@ -121,7 +121,7 @@ export default abstract class Sprite extends GameObject {
                 this.vx = 0;
                 break;
             case "bottom":
-                this.y = this.game.height - this.height - this.game.groundMargin;
+                this.y = this.game.height - this.height;
                 this.vy = 0;
                 break;
             case "top":

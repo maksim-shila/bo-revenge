@@ -15,11 +15,11 @@ export class Collision {
         const isTop = this.right.y < this.left.y;
         const collisionWidth = isLeft ? this.right.rx - this.left.x : this.left.rx - this.right.x;
         const collisionHeight = isTop ? this.right.ry - this.left.y : this.left.ry - this.right.y;
+        if (collisionHeight <= Math.abs((this.left.vy + this.left.weight) - (this.right.vy + this.right.weight))) {
+            return isTop ? "top" : "bottom";
+        }
         if (collisionWidth <= Math.abs(this.left.vx - this.right.vx)) {
             return isLeft ? "left" : "right";
-        }
-        if (collisionHeight <= Math.abs(this.left.vy - this.right.vy)) {
-            return isTop ? "top" : "bottom";
         }
 
         // Default value could be updated so don't merge it with condition

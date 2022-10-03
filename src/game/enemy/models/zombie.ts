@@ -1,7 +1,8 @@
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";
-import { BlankCollider } from "../../../engine/collision/Collider";
+import { BlankCollider, RectCollider } from "../../../engine/collision/Collider";
+import { Collision, FrameTimer, RigidBody } from "../../../engine";
 
 const zombieImages = ["zombieGreenImg", "zombieOrangeImg", "zombiePurpleImg"];
 function getRandomZombieImageId(): string {
@@ -42,12 +43,21 @@ export default class ZombieSpawner implements Spawner {
 class Zombie extends Enemy {
     constructor(game: Game) {
         super(game, { imageId: getRandomZombieImageId(), width: 562, height: 502, scale: 0.2 });
-        this.x = this.game.width;
-        this.y = this.game.height - this.height - this.game.groundMargin;
+        this.type = "zombie";
+        this.x = this.game.width + 50; // move spawn offscreen to have time until plant falls
+        this.y = this.game.height - this.height - 200;
         this.vx = Math.random() * 1 + 1;
         this.vy = 0;
         this.fps = 30;
         this.framesCount = 10;
-        this.collider = new BlankCollider();
+        this.collider = new RectCollider(this);
+        this.rigidBody = new RigidBody(20);
+    }
+
+    public override update(frameTimer: FrameTimer): void {
+        super.update(frameTimer);
+        if (!this.onGround) {
+            this.y += this.weight;
+        }
     }
 }

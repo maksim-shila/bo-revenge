@@ -88,16 +88,16 @@ export class CollisionHandler {
                 const obstacle = collision.right;
                 switch (direction) {
                     case "left":
-                        sprite.x = obstacle.rx;
+                        sprite.x = Math.ceil(obstacle.rx);
                         break;
                     case "right":
-                        sprite.x = obstacle.x - sprite.width;
+                        sprite.x = Math.ceil(obstacle.x - sprite.width);
                         break;
                     case "top":
-                        sprite.y = obstacle.ry;
+                        sprite.y = Math.ceil(obstacle.ry);
                         break;
                     case "bottom":
-                        sprite.y = obstacle.y - sprite.height;
+                        sprite.y = Math.ceil(obstacle.y - sprite.height);
                         break;
                 }
                 return direction;

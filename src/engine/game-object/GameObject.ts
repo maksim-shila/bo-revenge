@@ -12,7 +12,7 @@ export abstract class GameObject {
     public vy = 0;
 
     constructor(
-        public readonly type: string,
+        public type: string,
         public x = 0,
         public y = 0,
         public width = 0,

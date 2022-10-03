@@ -1,6 +1,7 @@
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";
+import { FrameTimer, RigidBody } from "../../../engine";
 
 export default class PlantSpawner implements Spawner {
     private readonly game: Game;
@@ -30,10 +31,18 @@ export default class PlantSpawner implements Spawner {
 class Plant extends Enemy {
     constructor(game: Game) {
         super(game, { imageId: "enemyPlantImg", width: 60, height: 87 });
-        this.x = this.game.width;
-        this.y = this.game.height - this.height - this.game.groundMargin;
+        this.x = this.game.width + 50; // move spawn offscreen to have time until plant falls
+        this.y = this.game.height - this.height - 300;
         this.vx = 0;
         this.vy = 0;
         this.framesCount = 2;
+        this.rigidBody = new RigidBody(20);
+    }
+
+    public override update(frameTimer: FrameTimer): void {
+        super.update(frameTimer);
+        if (!this.onGround) {
+            this.y += this.weight;
+        }
     }
 }

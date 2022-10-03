@@ -1,6 +1,8 @@
 export class RigidBody {
+
+    public onGround = false;
+
     constructor(
-        public readonly weight = 0,
-        public onGround = false
+        public readonly weight = 0
     ) { }
 }

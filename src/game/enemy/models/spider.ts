@@ -1,4 +1,4 @@
-import { FrameTimer } from "../../../engine";
+import { FrameTimer, RigidBody } from "../../../engine";
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";
@@ -30,15 +30,11 @@ export default class SpiderSpawner implements Spawner {
 }
 
 class Spider extends Enemy {
+
     constructor(game: Game) {
         super(game, { imageId: "enemySpiderBigImg", width: 120, height: 144 });
-        this.collider = new RectCollider(
-            this,
-            p => p.x + 30,
-            p => p.y + 30,
-            p => p.width - 60,
-            p => p.height - 60,
-        );
+        this.collider = new RectCollider(this);
+        this.rigidBody = new RigidBody();
         this.x = this.game.width;
         this.y = Math.random() * this.game.height * 0.5;
         this.vx = 0;
@@ -48,7 +44,7 @@ class Spider extends Enemy {
 
     public override update(frameTimer: FrameTimer): void {
         super.update(frameTimer);
-        if (this.isTouching("bottom")) {
+        if (this.vy > 0 && this.onGround) {
             this.vy *= -1;
         }
         if (this.isOffscreen("top")) {
