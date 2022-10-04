@@ -1,8 +1,11 @@
 import { GameObject } from "..";
 
 export interface Collider {
+    parent: GameObject;
     x: number;
     y: number;
+    rx: number;
+    ry: number;
     width: number;
     height: number;
     hasCollision(other: Collider): boolean;
@@ -11,27 +14,43 @@ export interface Collider {
 
 export class RectCollider implements Collider {
     constructor(
-        private parent: GameObject,
-        private computeX: (parent: GameObject) => number = p => p.x,
-        private computeY: (parent: GameObject) => number = p => p.y,
-        private computeWidth: (parent: GameObject) => number = p => p.width,
-        private computeHeight: (parent: GameObject) => number = p => p.height
+        public readonly parent: GameObject,
+        private offsetX = 0,
+        private offsetY = 0,
+        private offsetWidth = 0,
+        private offsetHeight = 0
     ) { }
 
     public get x(): number {
-        return this.computeX(this.parent);
+        return this.parent.x + this.offsetX;
+    }
+
+    public set x(value: number) {
+        this.parent.x = value - this.offsetX;
     }
 
     public get y(): number {
-        return this.computeY(this.parent);
+        return this.parent.y + this.offsetY;
+    }
+
+    public set y(value: number) {
+        this.parent.y = value - this.offsetY;
+    }
+
+    public get rx(): number {
+        return this.x + this.width;
+    }
+
+    public get ry(): number {
+        return this.y + this.height;
     }
 
     public get width(): number {
-        return this.computeWidth(this.parent);
+        return this.parent.width + this.offsetWidth;
     }
 
     public get height(): number {
-        return this.computeHeight(this.parent);
+        return this.parent.height + this.offsetHeight;
     }
 
     public draw(context: CanvasRenderingContext2D): void {
@@ -41,25 +60,9 @@ export class RectCollider implements Collider {
     }
 
     public hasCollision(other: Collider): boolean {
-        return other.x <= this.x + this.width &&
-            other.x + other.width >= this.x &&
-            other.y <= this.y + this.height &&
-            other.y + other.height >= this.y;
-    }
-}
-
-export class BlankCollider {
-    public readonly x = 0;
-    public readonly y = 0;
-    public readonly width = 0;
-    public readonly height = 0;
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    hasCollision(other: Collider): boolean {
-        return false;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    draw(context: CanvasRenderingContext2D): void {
+        return other.x <= this.rx &&
+            other.rx >= this.x &&
+            other.y <= this.ry &&
+            other.ry >= this.y;
     }
 }

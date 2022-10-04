@@ -1,36 +1,35 @@
-import { GameObject } from "..";
+import { Collider, GameObject } from "..";
 
 export class Collision {
     constructor(
-        public readonly left: GameObject,
-        public readonly right: GameObject,
+        public readonly left: Collider,
+        public readonly right: Collider,
     ) { }
 
     public other(self: GameObject): GameObject {
-        return this.left === self ? this.right : this.left;
+        return this.left.parent === self ? this.right.parent : this.left.parent;
     }
 
     public get direction(): "left" | "right" | "top" | "bottom" {
         const isLeft = this.right.x < this.left.x;
         const isTop = this.right.y < this.left.y;
-        const collisionWidth = isLeft ? this.right.rx - this.left.x : this.left.rx - this.right.x;
-        const collisionHeight = isTop ? this.right.ry - this.left.y : this.left.ry - this.right.y;
-        if (collisionHeight <= Math.abs((this.left.vy + this.left.weight) - (this.right.vy + this.right.weight))) {
+        const collisionWidth = Math.floor(isLeft ? this.right.rx - this.left.x : this.left.rx - this.right.x);
+        const collisionHeight = Math.floor(isTop ? this.right.ry - this.left.y : this.left.ry - this.right.y);
+        if (collisionHeight <= Math.abs(this.left.parent.vy - this.right.parent.vy)) {
             return isTop ? "top" : "bottom";
         }
-        if (collisionWidth <= Math.abs(this.left.vx - this.right.vx)) {
+        if (collisionWidth <= Math.abs(this.left.parent.vx - this.right.parent.vx)) {
             return isLeft ? "left" : "right";
         }
 
-        // Default value could be updated so don't merge it with condition
-        return isTop ? "top" : "bottom";
+        return "right";
     }
 
     public equals(other: Collision): boolean {
         return this.containsBoth(other.left, other.right);
     }
 
-    public containsBoth(left: GameObject, right: GameObject) {
+    public containsBoth(left: Collider, right: Collider) {
         return this.left === left && this.right === right;
     }
 }

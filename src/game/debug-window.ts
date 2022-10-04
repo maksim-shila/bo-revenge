@@ -16,8 +16,15 @@ export default class DebugWindow {
     private deltaTime = 0;
     private fps = 0;
 
+    private readonly startX;
+    private readonly startY = 0;
+    private readonly valueOffset = 150;
+    private readonly colWidth = 250;
+    private readonly rowHeight = 20;
+
     constructor(game: Game) {
         this.game = game;
+        this.startX = this.game.width - 800;
     }
 
     public update(input: InputHandler, frameTimer: FrameTimer): void {
@@ -39,38 +46,37 @@ export default class DebugWindow {
     }
 
     public draw(context: CanvasRenderingContext2D): void {
-        const nameX = this.game.width - 350;
-        const valueX = nameX + 150;
-        const rowHeight = 20;
-
         context.save();
         context.font = "15px Book Antiqua";
         context.textAlign = "left";
         context.fillStyle = "white";
-        context.fillText("Keyboard keys:", nameX, rowHeight * 1);
-        context.fillText(this.keyboardKeysPressed.join(), valueX, rowHeight * 1);
-        context.fillText("Gamepad connected:", nameX, rowHeight * 2);
-        context.fillText(`${this.gamepadConnected}`, valueX, rowHeight * 2);
-        context.fillText("Gamepad keys:", nameX, rowHeight * 3);
-        context.fillText(this.gamepadKeysPressed.join(), valueX, rowHeight * 3);
-        context.fillText("FPS:", nameX, rowHeight * 5);
-        context.fillText(`${Math.round(this.fps * 100) / 100}`, valueX, rowHeight * 5);
-        context.fillText("Delta time:", nameX, rowHeight * 6);
-        context.fillText(`${Math.round(this.deltaTime * 100) / 100}`, valueX, rowHeight * 6);
 
-        context.fillText("Sprites:", nameX, rowHeight * 8);
-        context.fillText(`${this.game.scene.sprites.length}`, valueX, rowHeight * 8);
-        context.fillText("Obstacles:", nameX, rowHeight * 9);
-        context.fillText(`${this.game.scene.obstacles.length}`, valueX, rowHeight * 9);
+        this.show(context, "X", `${this.game.player.x}`, 1, 1);
+        this.show(context, "PlayerY", `${this.game.player.y}`, 1, 2);
+        this.show(context, "PlayerVX", `${this.game.player.vx}`, 1, 3);
+        this.show(context, "PlayerVY", `${this.game.player.vy}`, 1, 4);
+        this.show(context, "PlayerWeight", `${this.game.player.weight}`, 1, 5);
+        this.show(context, "PlayerOnGround", `${this.game.player.onGround}`, 1, 6);
+
+        this.show(context, "Keyboard keys", this.keyboardKeysPressed.join(), 2, 1);
+        this.show(context, "Gamepad connected", `${this.gamepadConnected}`, 2, 2);
+        this.show(context, "Gamepad keys", this.gamepadKeysPressed.join(), 2, 3);
+
+        this.show(context, "FPS", `${Math.round(this.fps * 100) / 100}`, 2, 5);
+        this.show(context, "Delta time", `${Math.round(this.deltaTime * 100) / 100}`, 2, 6);
+
+        this.show(context, "Sprites", `${this.game.scene.sprites.length}`, 2, 8);
+        this.show(context, "Obstacles", `${this.game.scene.obstacles.length}`, 2, 9);
 
         const colliders = this.game.scene.colliders;
-        context.fillText("Watch objects:", nameX, rowHeight * 11);
-        context.fillText(`${colliders.watchObjects.length}`, valueX, rowHeight * 11);
-        context.fillText("Colliders:", nameX, rowHeight * 12);
-        context.fillText(`${colliders.watchPairs.length}`, valueX, rowHeight * 12);
-        context.fillText("Collisions:", nameX, rowHeight * 13);
-        context.fillText(`${colliders.collisions.length}`, valueX, rowHeight * 13);
-
+        this.show(context, "Watch objects", `${colliders.watchObjects.length}`, 2, 11);
+        this.show(context, "Colliders", `${colliders.watchPairs.length}`, 2, 12);
+        this.show(context, "Collisions", `${colliders.collisions.length}`, 2, 13);
         context.restore();
+    }
+
+    private show(context: CanvasRenderingContext2D, key: string, value: string, col: number, row: number) {
+        context.fillText(`${key}:`, this.startX + this.colWidth * col, this.startY + this.rowHeight * row);
+        context.fillText(value, this.startX + this.colWidth * col + this.valueOffset, this.startY + this.rowHeight * row);
     }
 }

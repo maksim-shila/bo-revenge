@@ -4,4 +4,5 @@ export default class GameConfig {
     public debug = false;
     public immportal = false;
     public unlimitedEnergy = false;
+    public preventEnemiesSpawn = false;
 }

@@ -10,6 +10,7 @@ export abstract class GameObject {
 
     public vx = 0;
     public vy = 0;
+    public name = "unknown";
 
     constructor(
         public type: string,

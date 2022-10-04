@@ -33,6 +33,7 @@ export class Scene extends GameObject {
 
     public addContainer(container: GameObjectContainer): void {
         this._containers.push(container);
+        this._objects.push(...container.objects);
         container.onSpawn(object => this.addObject(object));
     }
 

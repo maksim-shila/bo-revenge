@@ -11,7 +11,9 @@ export default class Keyboard extends Input<KeyboardKey>{
         super();
         this._sequence = [];
         window.addEventListener("keydown", e => {
-            e.preventDefault();
+            if (e.code !== "AltLeft" && e.code !== "F4") {
+                e.preventDefault();
+            }
             this._sequence.push(e.key);
             if (this._sequence.length > Keyboard.SequenceLength) {
                 this._sequence.shift();

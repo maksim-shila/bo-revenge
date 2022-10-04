@@ -16,8 +16,8 @@ export default class Player extends Sprite {
     public stateManager: PlayerStateManager;
     public state!: State; // Initialized on Game class constructor
 
-    public readonly maxVX: number;
-    public readonly maxVY: number;
+    public readonly maxVX = 10;
+    public readonly maxVY = 30;
 
     private _jumps = 0;
     private _onJump = false;
@@ -36,18 +36,9 @@ export default class Player extends Sprite {
         this.input = input;
         this.x = 0;
         this.y = this.game.height - this.height - 200;
-        this.maxVX = 10;
-        this.maxVY = 30;
         this.stateManager = new PlayerStateManager(this.game);
-        this.collider = new RectCollider(
-            this,
-            p => p.x + 20,
-            p => p.y + 40,
-            p => p.width - 40,
-            p => p.height - 40
-        );
+        this.collider = new RectCollider(this, 10, 10, -20, -10);
         this.rigidBody = new RigidBody(2);
-
     }
 
     public get energy(): number {
@@ -86,10 +77,10 @@ export default class Player extends Sprite {
     }
 
     public update(frameTimer: FrameTimer): void {
+        this.state.update(this.input);
         this.moveX();
         this.moveY();
         this.animate(frameTimer);
-        this.state.update(this.input);
         if (this.input.keyReleased("jump") && this._onJump) {
             if (!this.onGround && this.vy < 0) {
                 this.vy = this.vy < -5 ? -5 : this.vy;
@@ -98,6 +89,10 @@ export default class Player extends Sprite {
         }
         if (this.state.type !== "rolling") {
             this.energy += 0.1;
+        }
+        if (this.isOffscreen("left", "right", "bottom")) {
+            this.x = 0;
+            this.y = 100;
         }
     }
 

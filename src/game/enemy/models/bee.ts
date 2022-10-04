@@ -1,7 +1,7 @@
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";
-import { FrameTimer } from "../../../engine";
+import { Collision, FrameTimer, RigidBody } from "../../../engine";
 
 export default class BeeSpawner implements Spawner {
     private readonly game: Game;
@@ -42,11 +42,20 @@ class Bee extends Enemy {
         this.framesCount = 6;
         this.angle = 0;
         this.va = Math.random() * 0.1 + 0.1;
+        this.rigidBody = new RigidBody(0);
     }
 
     public override update(frameTimer: FrameTimer): void {
         super.update(frameTimer);
         this.angle += this.va;
         this.y += Math.sin(this.angle);
+    }
+
+    public override onCollisionEnter(collision: Collision) {
+        if (collision.other(this).type === "obstacle" && collision.direction === "left") {
+            this.vy = -this.vx;
+        } else {
+            this.vy = 0;
+        }
     }
 }

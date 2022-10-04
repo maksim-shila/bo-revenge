@@ -31,22 +31,26 @@ export default class SpiderSpawner implements Spawner {
 
 class Spider extends Enemy {
 
+    private readonly maxVY: number;
+
     constructor(game: Game) {
         super(game, { imageId: "enemySpiderBigImg", width: 120, height: 144 });
+        this.name = "spider";
         this.collider = new RectCollider(this);
         this.rigidBody = new RigidBody();
-        this.x = this.game.width;
+        this.x = this.game.width + 50;
         this.y = Math.random() * this.game.height * 0.5;
         this.vx = 0;
-        this.vy = Math.random() > 0.5 ? 1 : -1;
+        this.maxVY = Math.random() > 0.5 ? 1 : -1;
+        this.vy = this.maxVY;
         this.framesCount = 6;
     }
 
     public override update(frameTimer: FrameTimer): void {
-        super.update(frameTimer);
-        if (this.vy > 0 && this.onGround) {
-            this.vy *= -1;
+        if (this.onGround) {
+            this.vy = -this.maxVY;
         }
+        super.update(frameTimer);
         if (this.isOffscreen("top")) {
             this.destroy();
         }
@@ -54,6 +58,8 @@ class Spider extends Enemy {
 
     public override draw(context: CanvasRenderingContext2D): void {
         context.beginPath();
+        context.strokeStyle = "black";
+        context.lineWidth = 1;
         context.moveTo(this.x + this.width * 0.5, 0);
         context.lineTo(this.x + this.width * 0.5, this.y + this.height * 0.5);
         context.stroke();

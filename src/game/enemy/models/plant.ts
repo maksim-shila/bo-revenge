@@ -31,18 +31,19 @@ export default class PlantSpawner implements Spawner {
 class Plant extends Enemy {
     constructor(game: Game) {
         super(game, { imageId: "enemyPlantImg", width: 60, height: 87 });
-        this.x = this.game.width + 50; // move spawn offscreen to have time until plant falls
-        this.y = this.game.height - this.height - 300;
+        this.name = "plant";
+        this.x = this.game.width + 100; // move spawn offscreen to have time until plant falls
+        this.y = this.game.height - this.height - 100;
         this.vx = 0;
         this.vy = 0;
         this.framesCount = 2;
-        this.rigidBody = new RigidBody(20);
+        this.rigidBody = new RigidBody(2);
     }
 
     public override update(frameTimer: FrameTimer): void {
         super.update(frameTimer);
         if (!this.onGround) {
-            this.y += this.weight;
+            this.vy += this.weight;
         }
     }
 }

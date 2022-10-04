@@ -30,7 +30,7 @@ export default class EnemySpawner {
     public update(frameTimer: FrameTimer): void {
         this.spawners.forEach(spawner => {
             spawner.update(frameTimer);
-            if (spawner.shouldSpawn) {
+            if (spawner.shouldSpawn && !this.game.config.preventEnemiesSpawn) {
                 const enemy = spawner.spawn();
                 this.game.scene.addObject(enemy);
                 this.game.scene.colliders.watch([this.game.player], [enemy]);

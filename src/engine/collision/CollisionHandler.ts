@@ -1,4 +1,4 @@
-import { Collision, GameObject } from "..";
+import { Collider, Collision, GameObject } from "..";
 
 type WatchPair = { left: GameObject, right: GameObject };
 
@@ -41,7 +41,10 @@ export class CollisionHandler {
     public update(): void {
         const collisions: Collision[] = [];
         this._watchPairs.forEach(pair => {
-            const collision = this.handle(pair.left, pair.right);
+            if (!pair.left.collider || !pair.right.collider) {
+                return;
+            }
+            const collision = this.handle(pair.left.collider, pair.right.collider);
             if (collision) {
                 collisions.push(collision);
             }
@@ -57,52 +60,58 @@ export class CollisionHandler {
         }
     }
 
-    private handle(left: GameObject, right: GameObject): Collision | null {
-        if (left.collider === null || right.collider === null) {
-            return null;
-        }
+    private handle(left: Collider, right: Collider): Collision | null {
         const existing = this._collisions.find(collision => collision.containsBoth(left, right));
         if (existing) {
-            if (left.collider.hasCollision(right.collider)) {
+            if (left.hasCollision(right)) {
                 return existing;
             } else {
-                left.onCollisionExit && left.onCollisionExit(existing);
-                right.onCollisionExit && right.onCollisionExit(existing);
+                left.parent.onCollisionExit && left.parent.onCollisionExit(existing);
+                right.parent.onCollisionExit && right.parent.onCollisionExit(existing);
                 return null;
             }
-        } else if (left.collider.hasCollision(right.collider)) {
+        } else if (left.hasCollision(right)) {
             const collision = new Collision(left, right);
-            left.onCollisionEnter && left.onCollisionEnter(collision);
-            right.onCollisionEnter && right.onCollisionEnter(collision);
+            left.parent.onCollisionEnter && left.parent.onCollisionEnter(collision);
+            right.parent.onCollisionEnter && right.parent.onCollisionEnter(collision);
             return collision;
         }
         return null;
     }
 
     private handlePhysics() {
-        const rigidObjects = this._watchObjects.filter(obj => obj.rigidBody !== null);
-        rigidObjects.forEach(sprite => {
-            const collisions = this._collisions.filter(c => c.left === sprite && c.right.type === "obstacle");
+        const rigid = this._watchObjects
+            .filter(obj => obj.rigidBody !== null && obj.collider !== null)
+            .map(obj => obj.collider) as Collider[];
+        rigid.forEach(collider => {
+            const collisions = this._collisions.filter(c => c.left === collider && c.right.parent.type === "obstacle");
             const directions = collisions.map(collision => {
                 const direction = collision.direction;
                 const obstacle = collision.right;
                 switch (direction) {
                     case "left":
-                        sprite.x = Math.ceil(obstacle.rx);
+                        collider.x = Math.ceil(obstacle.rx);
                         break;
                     case "right":
-                        sprite.x = Math.ceil(obstacle.x - sprite.width);
+                        collider.x = Math.ceil(obstacle.x - collider.width);
                         break;
                     case "top":
-                        sprite.y = Math.ceil(obstacle.ry);
+                        collider.y = Math.ceil(obstacle.ry);
                         break;
                     case "bottom":
-                        sprite.y = Math.ceil(obstacle.y - sprite.height);
+                        collider.y = Math.ceil(obstacle.y - collider.height);
                         break;
                 }
                 return direction;
             });
-            sprite.rigidBody!.onGround = directions.some(d => d === "bottom");
+
+            const sprite = collider.parent;
+            if (directions.some(d => d === "bottom")) {
+                sprite.rigidBody!.onGround = true;
+                sprite.vy = 0;
+            } else {
+                sprite.rigidBody!.onGround = false;
+            }
         });
     }
 }

@@ -8,6 +8,7 @@ import EnemySpawner from "./enemy/enemy-spawner";
 import ParticlesFactory from "./particles";
 import Player from "./player";
 import BrickFloor from "./sprites/obstacles/BrickFloor";
+import { BrickWall } from "./sprites/obstacles/BrickWall";
 import UI from "./UI";
 
 export default class Game {
@@ -56,6 +57,9 @@ export default class Game {
         this.scene = new Scene("scene", 0, 0, config.width, config.height);
         this.scene.addObject(this.player);
         this.scene.addContainer(new BrickFloor(this));
+        this.scene.addObject(new BrickWall(this, Math.floor(this.width / 3) * 1));
+        this.scene.addObject(new BrickWall(this, Math.floor(this.width / 3) * 2));
+        this.scene.addObject(new BrickWall(this, Math.floor(this.width / 3) * 3));
     }
 
     public get running(): boolean {

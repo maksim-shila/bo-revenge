@@ -133,6 +133,8 @@ class Jumping extends PlayerState {
             this.player.setState("diving", input, 0);
         } else if (input.keyPressedOnce("jump")) {
             this.player.jump();
+        } else if (this.player.onGround) {
+            this.player.setState("running", input, 1);
         }
     }
 }
