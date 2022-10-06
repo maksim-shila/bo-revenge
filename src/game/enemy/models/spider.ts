@@ -40,6 +40,7 @@ class Spider extends Enemy {
         this.name = "spider";
 
         this.animator = new Animator(Source.imageId, Source.width, Source.height);
+        this.animator.fps = 20;
         this.animator.animation = new AnimationRow(0, 6);
         this.rigidBody = new RigidBody();
         this.collider = new RectCollider(this);

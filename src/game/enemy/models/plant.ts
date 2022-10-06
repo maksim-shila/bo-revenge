@@ -36,6 +36,7 @@ class Plant extends Enemy {
         this.name = "plant";
 
         this.animator = new Animator(Source.imageId, Source.width, Source.height);
+        this.animator.fps = 20;
         this.animator.animation = new AnimationRow(0, 2);
         this.rigidBody = new RigidBody(2);
         this.collider = new RectCollider(this);

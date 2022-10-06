@@ -1,16 +1,27 @@
 import { Collider, GameObject } from "..";
 
+type CollisionDirection = "left" | "right" | "top" | "bottom";
+
 export class Collision {
+
+    private _direction: CollisionDirection;
+
     constructor(
         public readonly left: Collider,
         public readonly right: Collider,
-    ) { }
+    ) {
+        this._direction = this.computeDirection();
+    }
 
     public other(self: GameObject): GameObject {
         return this.left.parent === self ? this.right.parent : this.left.parent;
     }
 
-    public get direction(): "left" | "right" | "top" | "bottom" {
+    public get direction(): CollisionDirection {
+        return this._direction;
+    }
+
+    public computeDirection(): CollisionDirection {
         const isLeft = this.right.x < this.left.x;
         const isTop = this.right.y < this.left.y;
         const collisionWidth = Math.floor(isLeft ? this.right.rx - this.left.x : this.left.rx - this.right.x);
