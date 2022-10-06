@@ -94,5 +94,6 @@ export abstract class GameObject {
     }
 
     public onCollisionEnter?(collision: Collision): void;
+    public onCollision?(collision: Collision): void;
     public onCollisionExit?(collision: Collision): void;
 }

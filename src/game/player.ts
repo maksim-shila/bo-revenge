@@ -144,4 +144,13 @@ export default class Player extends Sprite {
             }
         }
     }
+
+    public override onCollision(collision: Collision): void {
+        const other = collision.other(this);
+        if (other.type === "obstacle") {
+            if (this.state.type === "dash" && collision.direction === "right" || collision.direction === "left") {
+                this.state.exit(this.input);
+            }
+        }
+    }
 }

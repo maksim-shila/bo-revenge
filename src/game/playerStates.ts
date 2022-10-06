@@ -48,6 +48,7 @@ export class PlayerStateManager {
 export interface State {
     type: PlayerStateType;
     init(input?: InputHandler): void;
+    exit(input?: InputHandler): void;
     update(input: InputHandler): void;
 }
 
@@ -70,6 +71,9 @@ abstract class PlayerState implements State {
             this.player.animator.animation = this.animation;
         }
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public exit(input: InputHandler): void { }
 
     public abstract update(input: InputHandler): void;
 
@@ -337,13 +341,17 @@ class Dash extends PlayerState {
             this.player.y < this.startY - this.distanceY ||
             this.player.isTouching("right", "left")
         ) {
-            this.player.noGravity = false;
-            this.player.vy = this.player.weight;
-            if (this.player.onGround) {
-                this.player.setState("running", input, 1);
-            } else {
-                this.player.setState("falling", input, 1);
-            }
+            this.exit(input);
+        }
+    }
+
+    public override exit(input: InputHandler) {
+        this.player.noGravity = false;
+        this.player.vy = this.player.weight;
+        if (this.player.onGround) {
+            this.player.setState("running", input, 1);
+        } else {
+            this.player.setState("falling", input, 1);
         }
     }
 }

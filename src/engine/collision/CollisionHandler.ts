@@ -64,6 +64,8 @@ export class CollisionHandler {
         const existing = this._collisions.find(collision => collision.containsBoth(left, right));
         if (existing) {
             if (left.hasCollision(right)) {
+                left.parent.onCollision && left.parent.onCollision(existing);
+                right.parent.onCollision && right.parent.onCollision(existing);
                 return existing;
             } else {
                 left.parent.onCollisionExit && left.parent.onCollisionExit(existing);
