@@ -1,4 +1,4 @@
-import { Animator, Collider, Collision, FrameTimer, Global, RigidBody } from "..";
+import { Animator, Collider, Collision, CollisionDirection, FrameTimer, Global, RigidBody } from "..";
 
 export abstract class GameObject {
 
@@ -95,5 +95,6 @@ export abstract class GameObject {
 
     public onCollisionEnter?(collision: Collision): void;
     public onCollision?(collision: Collision): void;
+    public onObstacleCollisions?(directions: CollisionDirection[]): void;
     public onCollisionExit?(collision: Collision): void;
 }

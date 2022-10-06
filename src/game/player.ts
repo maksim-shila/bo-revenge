@@ -1,4 +1,4 @@
-import { Animator, Collision, FrameTimer, Global, RigidBody } from "../engine";
+import { Animator, Collision, CollisionDirection, FrameTimer, Global, RigidBody } from "../engine";
 import { RectCollider } from "../engine/collision/Collider";
 import InputHandler from "../input/input-handler";
 import Sprite from "./core/sprite";
@@ -26,6 +26,7 @@ export default class Player extends Sprite {
     public readonly minEnergy = 10;
     private _energy = this.maxEnergy;
 
+    public canMoveForward = true;
     private readonly input: InputHandler;
 
     constructor(game: Game, input: InputHandler) {
@@ -145,12 +146,17 @@ export default class Player extends Sprite {
         }
     }
 
-    public override onCollision(collision: Collision): void {
-        const other = collision.other(this);
-        if (other.type === "obstacle") {
-            if (this.state.type === "dash" && collision.direction === "right" || collision.direction === "left") {
-                this.state.exit(this.input);
+    public override onObstacleCollisions(directions: CollisionDirection[]): void {
+        if (this.state.type === "dash" && (directions.includes("right") || directions.includes("left"))) {
+            this.state.exit(this.input);
+        }
+        if (directions.includes("right")) {
+            this.canMoveForward = false;
+            if (this.state.type !== "standing") {
+                this.setState("standing", this.input, 0);
             }
+        } else {
+            this.canMoveForward = true;
         }
     }
 }

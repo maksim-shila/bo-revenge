@@ -80,7 +80,7 @@ abstract class PlayerState implements State {
     protected allowHorizontalMovement(input: InputHandler): void {
         if (input.keyPressed("left")) {
             this.player.vx = -this.player.maxVX;
-        } else if (input.keyPressed("right")) {
+        } else if (input.keyPressed("right") && this.player.canMoveForward) {
             this.player.vx = this.player.maxVX;
         } else if (input.keyReleased("left") || input.keyReleased("right")) {
             this.player.vx = 0;
@@ -102,7 +102,7 @@ class Standing extends PlayerState {
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
             this.player.setState("dash", input, 1);
-        } else if (input.keyPressed("right")) {
+        } else if (input.keyPressed("right") && this.player.canMoveForward) {
             this.player.setState("running", input, 1);
         } else if (input.keyPressed("left")) {
             this.player.setState("running", input, 1);

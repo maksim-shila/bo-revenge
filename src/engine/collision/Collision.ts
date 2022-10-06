@@ -1,6 +1,6 @@
 import { Collider, GameObject } from "..";
 
-type CollisionDirection = "left" | "right" | "top" | "bottom";
+export type CollisionDirection = "left" | "right" | "top" | "bottom";
 
 export class Collision {
 

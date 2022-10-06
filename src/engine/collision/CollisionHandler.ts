@@ -122,6 +122,8 @@ export class CollisionHandler {
             } else {
                 sprite.rigidBody!.onGround = false;
             }
+
+            sprite.onObstacleCollisions && sprite.onObstacleCollisions(directions);
         });
     }
 }

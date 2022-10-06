@@ -53,10 +53,10 @@ export default class Game {
 
         this.scene = new Scene(this.width, this.height);
         this.scene.addObject(this.player);
-        this.scene.addContainer(new BrickFloor(this));
         this.scene.addObject(new BrickWall(this, Math.floor(this.width / 3) * 1));
         this.scene.addObject(new BrickWall(this, Math.floor(this.width / 3) * 2));
         this.scene.addObject(new BrickWall(this, Math.floor(this.width / 3) * 3));
+        this.scene.addContainer(new BrickFloor(this));
     }
 
     public get running(): boolean {
@@ -80,7 +80,6 @@ export default class Game {
 
     public update(input: InputHandler, frameTimer: FrameTimer): void {
         this._totalFrames += this.speed;
-        this.debugWindow.update(input, frameTimer);
         if (input.keyPressedOnce("pause")) {
             this.paused ? this.continue() : this.pause();
         }
@@ -91,6 +90,7 @@ export default class Game {
             this.enemySpawner.update(frameTimer);
             this.collisions.update(frameTimer);
         }
+        this.debugWindow.update(input, frameTimer);
     }
 
     public draw(context: CanvasRenderingContext2D): void {

@@ -51,12 +51,13 @@ export default class DebugWindow {
         context.textAlign = "left";
         context.fillStyle = "white";
 
-        this.show(context, "X", `${this.game.player.x}`, 1, 1);
-        this.show(context, "PlayerY", `${this.game.player.y}`, 1, 2);
-        this.show(context, "PlayerVX", `${this.game.player.vx}`, 1, 3);
-        this.show(context, "PlayerVY", `${this.game.player.vy}`, 1, 4);
-        this.show(context, "PlayerWeight", `${this.game.player.weight}`, 1, 5);
-        this.show(context, "PlayerOnGround", `${this.game.player.onGround}`, 1, 6);
+        this.show(context, "GameSpeed", `${this.game.speed}`, 1, 1);
+        this.show(context, "PlayerX", `${this.game.player.x}`, 1, 2);
+        this.show(context, "PlayerY", `${this.game.player.y}`, 1, 3);
+        this.show(context, "PlayerVX", `${this.game.player.vx}`, 1, 4);
+        this.show(context, "PlayerVY", `${this.game.player.vy}`, 1, 5);
+        this.show(context, "PlayerWeight", `${this.game.player.weight}`, 1, 6);
+        this.show(context, "PlayerOnGround", `${this.game.player.onGround}`, 1, 7);
 
         this.show(context, "Keyboard keys", this.keyboardKeysPressed.join(), 2, 1);
         this.show(context, "Gamepad connected", `${this.gamepadConnected}`, 2, 2);
