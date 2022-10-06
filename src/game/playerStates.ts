@@ -78,7 +78,7 @@ abstract class PlayerState implements State {
     public abstract update(input: InputHandler): void;
 
     protected allowHorizontalMovement(input: InputHandler): void {
-        if (input.keyPressed("left")) {
+        if (input.keyPressed("left") && this.player.canMoveBackward) {
             this.player.vx = -this.player.maxVX;
         } else if (input.keyPressed("right") && this.player.canMoveForward) {
             this.player.vx = this.player.maxVX;
@@ -100,17 +100,17 @@ class Standing extends PlayerState {
 
     public update(input: InputHandler): void {
         this.allowHorizontalMovement(input);
-        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+        if (input.keyPressedOnce("dash") && !this.player.dashInCD && this.player.canMoveForward) {
             this.player.setState("dash", input, 1);
         } else if (input.keyPressed("right") && this.player.canMoveForward) {
             this.player.setState("running", input, 1);
-        } else if (input.keyPressed("left")) {
+        } else if (input.keyPressed("left") && this.player.canMoveBackward) {
             this.player.setState("running", input, 1);
         } else if (input.keyPressed("down")) {
             this.player.setState("sitting", input, 0);
         } else if (input.keyPressedOnce("jump")) {
-            this.player.setState("jumping", input, 1);
-        } else if (input.keyPressed("roll") && this.player.canStartRoll) {
+            this.player.setState("jumping", input, this.player.canMoveForward ? 1 : 0);
+        } else if (input.keyPressed("roll") && this.player.canStartRoll && this.player.canMoveForward) {
             this.player.setState("rolling", input, 2);
         }
     }
@@ -131,11 +131,11 @@ class Jumping extends PlayerState {
 
     public update(input: InputHandler): void {
         this.allowHorizontalMovement(input);
-        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+        if (input.keyPressedOnce("dash") && !this.player.dashInCD && this.player.canMoveForward) {
             this.player.setState("dash", input, 1);
         } else if (this.player.vy > this.player.weight) {
-            this.player.setState("falling", input, 1);
-        } else if (input.keyPressed("roll") && this.player.canStartRoll) {
+            this.player.setState("falling", input, this.player.canMoveForward ? 1 : 0);
+        } else if (input.keyPressed("roll") && this.player.canStartRoll && this.player.canMoveForward) {
             this.player.setState("rolling", input, 2);
         } else if (input.keyPressed("down")) {
             this.player.setState("diving", input, 0);
@@ -158,14 +158,16 @@ class Falling extends PlayerState {
 
     public update(input: InputHandler): void {
         this.allowHorizontalMovement(input);
-        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+        if (input.keyPressedOnce("dash") && !this.player.dashInCD && this.player.canMoveForward) {
             this.player.setState("dash", input, 1);
         } else if (this.player.onGround) {
-            this.player.setState("running", input, 1);
+            this.player.canMoveForward ?
+                this.player.setState("running", input, 1) :
+                this.player.setState("standing", input, 0);
         } else if (input.keyPressed("down")) {
             this.player.setState("diving", input, 0);
         } else if (input.keyPressedOnce("jump")) {
-            this.player.setState("jumping", input, 1);
+            this.player.setState("jumping", input, this.player.canMoveForward ? 1 : 0);
         }
     }
 }
@@ -205,11 +207,13 @@ class Sitting extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+        if (input.keyPressedOnce("dash") && !this.player.dashInCD && this.player.canMoveForward) {
             this.player.setState("dash", input, 1);
         } else if (input.keyReleased("down")) {
-            this.player.setState("running", input, 1);
-        } else if (input.keyPressed("roll") && this.player.canStartRoll) {
+            this.player.canMoveForward ?
+                this.player.setState("running", input, 1) :
+                this.player.setState("standing", input, 0);
+        } else if (input.keyPressed("roll") && this.player.canStartRoll && this.player.canMoveForward) {
             this.player.setState("rolling", input, 2);
         }
     }
@@ -258,10 +262,12 @@ class Diving extends PlayerState {
     public update(input: InputHandler): void {
         this.game.particles.add("fire", this.player.cx, this.player.cy);
         if (this.player.onGround) {
-            if (input.keyPressed("roll") && this.player.canStartRoll) {
+            if (input.keyPressed("roll") && this.player.canStartRoll && this.player.canMoveForward) {
                 this.player.setState("rolling", input, 2);
             } else {
-                this.player.setState("running", input, 1);
+                this.player.canMoveForward ?
+                    this.player.setState("running", input, 1) :
+                    this.player.setState("standing", input, 0);
             }
             for (let i = 0; i < 30; ++i) {
                 this.game.particles.add("splash", this.player.cx, this.player.y + this.player.height);

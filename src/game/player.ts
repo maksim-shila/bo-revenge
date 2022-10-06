@@ -26,6 +26,7 @@ export default class Player extends Sprite {
     public readonly minEnergy = 10;
     private _energy = this.maxEnergy;
 
+    public canMoveBackward = true;
     public canMoveForward = true;
     private readonly input: InputHandler;
 
@@ -152,11 +153,16 @@ export default class Player extends Sprite {
         }
         if (directions.includes("right")) {
             this.canMoveForward = false;
-            if (this.state.type !== "standing") {
+            if (!["standing", "jumping", "falling", "sitting", "diving"].includes(this.state.type)) {
                 this.setState("standing", this.input, 0);
             }
         } else {
             this.canMoveForward = true;
+        }
+        if (this.isTouching("left") && this.state.type === "standing") {
+            this.canMoveBackward = false;
+        } else {
+            this.canMoveBackward = true;
         }
     }
 }
