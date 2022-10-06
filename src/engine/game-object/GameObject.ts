@@ -1,9 +1,10 @@
-import { Collider, Collision, FrameTimer, RigidBody } from "..";
+import { Animator, Collider, Collision, FrameTimer, Global, RigidBody } from "..";
 
 export abstract class GameObject {
 
     private _collider: Collider | null = null;
     private _rigidBody: RigidBody | null = null;
+    private _animator: Animator | null = null;
 
     private _destroyActions: ((self: GameObject) => unknown)[] = [];
     private _destroyed = false;
@@ -34,6 +35,14 @@ export abstract class GameObject {
 
     protected set rigidBody(value: RigidBody | null) {
         this._rigidBody = value;
+    }
+
+    public get animator(): Animator | null {
+        return this._animator;
+    }
+
+    protected set animator(value: Animator | null) {
+        this._animator = value;
     }
 
     public get onGround(): boolean {
@@ -73,8 +82,16 @@ export abstract class GameObject {
         this._destroyActions.forEach(action => action(this));
     }
 
-    public abstract update(frameTimer: FrameTimer): void;
-    public abstract draw(context: CanvasRenderingContext2D): void;
+    public update(frameTimer: FrameTimer): void {
+        this._animator?.update(frameTimer);
+    }
+
+    public draw(context: CanvasRenderingContext2D): void {
+        this._animator?.draw(context, this.x, this.y);
+        if (Global.debug) {
+            this._collider?.draw(context);
+        }
+    }
 
     public onCollisionEnter?(collision: Collision): void;
     public onCollisionExit?(collision: Collision): void;

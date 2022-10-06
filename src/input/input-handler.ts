@@ -1,20 +1,18 @@
 import Gamepad from "./gamepad/gamepad";
 import Keyboard from "./keyboard/keyboard";
 import { KeyAction } from "./key-action";
-import GameConfig from "../global";
+import { Global } from "../engine";
 
 export default class InputHandler {
 
     public readonly gamepad: Gamepad;
     public readonly keyboard: Keyboard;
-    private readonly _globalConfig: GameConfig;
     private readonly _cheats: Cheats;
 
-    constructor(globalConfig: GameConfig) {
-        this._globalConfig = globalConfig;
+    constructor() {
         this.gamepad = new Gamepad();
         this.keyboard = new Keyboard();
-        this._cheats = new Cheats(this.keyboard, this._globalConfig);
+        this._cheats = new Cheats(this.keyboard);
     }
 
     public keyPressedOnce(action: KeyAction): boolean {
@@ -44,16 +42,14 @@ export default class InputHandler {
 class Cheats {
 
     private readonly _keyboard: Keyboard;
-    private readonly _globalConfig: GameConfig;
 
-    constructor(keyboard: Keyboard, globalConfig: GameConfig) {
+    constructor(keyboard: Keyboard) {
         this._keyboard = keyboard;
-        this._globalConfig = globalConfig;
     }
 
     public apply(): void {
         if (this._keyboard.getSequence().endsWith("debug")) {
-            this._globalConfig.debug = !this._globalConfig.debug;
+            Global.debug = !Global.debug;
             this._keyboard.clearSequence();
         }
     }

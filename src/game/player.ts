@@ -1,15 +1,11 @@
-import { Collision, FrameTimer, RigidBody } from "../engine";
+import { Animator, Collision, FrameTimer, Global, RigidBody } from "../engine";
 import { RectCollider } from "../engine/collision/Collider";
 import InputHandler from "../input/input-handler";
-import Sprite, { SpriteConfig } from "./core/sprite";
+import Sprite from "./core/sprite";
 import Game from "./game";
 import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
 
-const playerConfig: SpriteConfig = {
-    imageId: "playerImg",
-    width: 100.3,
-    height: 91.3
-};
+const Source = { image: "playerImg", widht: 100.3, height: 91.3 };
 
 export default class Player extends Sprite {
 
@@ -29,16 +25,19 @@ export default class Player extends Sprite {
     public readonly maxEnergy = 50;
     public readonly minEnergy = 10;
     private _energy = this.maxEnergy;
-    private input: InputHandler;
+
+    private readonly input: InputHandler;
 
     constructor(game: Game, input: InputHandler) {
-        super("player", game, playerConfig);
+        super("player", game, Source.widht, Source.height);
         this.input = input;
-        this.x = 0;
-        this.y = this.game.height - this.height - 200;
         this.stateManager = new PlayerStateManager(this.game);
         this.collider = new RectCollider(this, 10, 10, -20, -10);
         this.rigidBody = new RigidBody(2);
+        this.animator = new Animator(Source.image, Source.widht, Source.height);
+
+        this.x = 0;
+        this.y = this.game.height - this.height - 200;
     }
 
     public get energy(): number {
@@ -76,11 +75,11 @@ export default class Player extends Sprite {
         }
     }
 
-    public update(frameTimer: FrameTimer): void {
+    public override update(frameTimer: FrameTimer): void {
+        super.update(frameTimer);
         this.state.update(this.input);
         this.moveX();
         this.moveY();
-        this.animate(frameTimer);
         if (this.input.keyReleased("jump") && this._onJump) {
             if (!this.onGround && this.vy < 0) {
                 this.vy = this.vy < -5 ? -5 : this.vy;
@@ -93,13 +92,6 @@ export default class Player extends Sprite {
         if (this.isOffscreen("left", "right", "bottom")) {
             this.x = 0;
             this.y = 100;
-        }
-    }
-
-    public override draw(context: CanvasRenderingContext2D): void {
-        super.draw(context);
-        if (this.game.config.debug) {
-            this.collider?.draw(context);
         }
     }
 
@@ -146,7 +138,7 @@ export default class Player extends Sprite {
                 this.state.type === "dash") {
                 this.game.score++;
             } else {
-                if (!this.game.config.immportal) {
+                if (!Global.cheats.immportal) {
                     this.setState("hit", this.input);
                 }
             }

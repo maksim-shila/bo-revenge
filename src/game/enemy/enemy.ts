@@ -1,28 +1,19 @@
-import { FrameTimer, RectCollider } from "../../engine";
-import Sprite, { SpriteConfig } from "../core/sprite";
+import { FrameTimer } from "../../engine";
+import Sprite from "../core/sprite";
 import Game from "../game";
 
 export abstract class Enemy extends Sprite {
 
-    constructor(game: Game, config: SpriteConfig) {
-        super("enemy", game, config);
-        this.collider = new RectCollider(this);
-        this.fps = 20;
+    constructor(game: Game, width: number, height: number) {
+        super("enemy", game, width, height);
     }
 
-    public update(frameTimer: FrameTimer): void {
-        this.animate(frameTimer);
+    public override update(frameTimer: FrameTimer): void {
+        super.update(frameTimer);
         this.x -= this.vx + this.game.speed;
         this.y += this.vy;
         if (this.isOffscreen("left")) {
             this.destroy();
-        }
-    }
-
-    public override draw(context: CanvasRenderingContext2D): void {
-        super.draw(context);
-        if (this.game.config.debug) {
-            this.collider?.draw(context);
         }
     }
 }

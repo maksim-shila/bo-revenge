@@ -1,4 +1,4 @@
-import { FrameTimer } from "../engine";
+import { AnimationRow, Animator, FrameTimer } from "../engine";
 import Sprite from "./core/sprite";
 import Game from "./game";
 
@@ -26,22 +26,31 @@ export default class CollisionAnimationFactory {
     }
 }
 
+const Source = { imageId: "boomImg", width: 100, height: 90 };
+
 class CollisionAnimation extends Sprite {
     public markedForDeletion: boolean;
 
     constructor(game: Game, x: number, y: number) {
-        super("particle", game, { imageId: "boomImg", width: 100, height: 90, scale: Math.random() + 0.5 });
+        const scale = Math.random() + 0.5;
+        const width = Math.floor(Source.width * scale);
+        const height = Math.floor(Source.height * scale);
+
+        super("particle", game, width, height);
         this.x = x - this.width * 0.5;
         this.y = y - this.height * 0.5;
-        this.framesCount = 5;
-        this.fps = 15;
+
+        this.animator = new Animator(Source.imageId, width, height, Source.width, Source.height);
+        this.animator.fps = 15;
+        this.animator.animation = new AnimationRow(0, 5);
+
         this.markedForDeletion = false;
     }
 
-    public update(frameTimer: FrameTimer): void {
-        this.animate(frameTimer);
+    public override update(frameTimer: FrameTimer): void {
+        super.update(frameTimer);
         this.x -= this.game.speed;
-        if (this.isMaxFrame()) {
+        if (this.animator?.animation?.isMaxFrame) {
             this.markedForDeletion = true;
         }
     }

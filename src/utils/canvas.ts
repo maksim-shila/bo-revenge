@@ -1,14 +1,12 @@
-import GameConfig from "../global";
-
 export default class Canvas {
 
     private readonly canvas: HTMLCanvasElement;
     public readonly context: CanvasRenderingContext2D;
 
-    constructor(gameConfig: GameConfig) {
+    constructor(width: number, height: number) {
         this.canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
-        this.canvas.width = gameConfig.width;
-        this.canvas.height = gameConfig.height;
+        this.canvas.width = width;
+        this.canvas.height = height;
         this.context = this.canvas.getContext("2d")!;
     }
 

@@ -1,4 +1,4 @@
-import { GameObject, RectCollider } from "../../../engine";
+import { FrameTimer, GameObject, Global, RectCollider } from "../../../engine";
 import Game from "../../game";
 
 export class BrickWall extends GameObject {
@@ -21,7 +21,8 @@ export class BrickWall extends GameObject {
         this.collider = new RectCollider(this);
     }
 
-    public update(): void {
+    public override update(frameTimer: FrameTimer): void {
+        super.update(frameTimer);
         this.vx = -this.game.speed;
         if (this.rx < -50) {
             this.x = this.game.width + 100;
@@ -30,7 +31,7 @@ export class BrickWall extends GameObject {
         }
     }
 
-    public draw(context: CanvasRenderingContext2D): void {
+    public override draw(context: CanvasRenderingContext2D): void {
         for (let i = 0; i < this.wallWidht; ++i) {
             for (let j = 0; j < this.wallHeight; ++j) {
                 context.drawImage(
@@ -45,7 +46,7 @@ export class BrickWall extends GameObject {
                     this.brickHeight);
             }
         }
-        if (this.game.config.debug) {
+        if (Global.debug) {
             this.collider?.draw(context);
         }
     }

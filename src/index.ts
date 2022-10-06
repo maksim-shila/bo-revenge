@@ -1,19 +1,27 @@
 import Game from "./game/game";
-import GameConfig from "./global";
 import MainMenu from "./menu/mainMenu";
 import GameMenu from "./game/gameMenu";
 import Canvas from "./utils/canvas";
 import InputHandler from "./input/input-handler";
+import { Global } from "./engine";
 
 window.addEventListener("load", () => {
 
-    const gameConfig = new GameConfig();
-    const input = new InputHandler(gameConfig);
-    const canvas = new Canvas(gameConfig);
+    Global.window.width = window.innerWidth;
+    Global.window.height = 500;
+
+    Global.debug = false;
+
+    Global.cheats.immortal = true;
+    Global.cheats.unlimitedEnergy = true;
+    Global.cheats.preventEnemiesSpawn = false;
+
+    const input = new InputHandler();
+    const canvas = new Canvas(Global.window.width, Global.window.height);
     let game = newGame();
 
     function newGame(): Game {
-        const game = new Game(gameConfig, input);
+        const game = new Game(Global.window.width, Global.window.height, input);
         game.onPause = (): void => gameMenu.show();
         game.onContinue = (): void => gameMenu.hide();
         return game;

@@ -1,5 +1,4 @@
-import { FrameTimer, Scene } from "../engine";
-import GameConfig from "../global";
+import { FrameTimer, Global, Scene } from "../engine";
 import InputHandler from "../input/input-handler";
 import Background from "./background";
 import CollisionAnimationFactory from "./collisionAnimation";
@@ -13,7 +12,6 @@ import UI from "./UI";
 
 export default class Game {
 
-    public readonly config: GameConfig;
     public readonly player: Player;
     public readonly particles: ParticlesFactory;
     public readonly collisions: CollisionAnimationFactory;
@@ -39,10 +37,9 @@ export default class Game {
 
     private _totalFrames = 0;
 
-    constructor(config: GameConfig, input: InputHandler) {
-        this.config = config;
-        this.width = config.width;
-        this.height = config.height;
+    constructor(width: number, height: number, input: InputHandler) {
+        this.width = width;
+        this.height = height;
         this.ui = new UI(this);
         this.debugWindow = new DebugWindow(this);
         this.player = new Player(this, input);
@@ -54,7 +51,7 @@ export default class Game {
         this.soundtrack = document.getElementById("level1audio") as HTMLAudioElement;
         this.soundtrack.addEventListener("ended", () => this.playSoundtrack());
 
-        this.scene = new Scene("scene", 0, 0, config.width, config.height);
+        this.scene = new Scene(this.width, this.height);
         this.scene.addObject(this.player);
         this.scene.addContainer(new BrickFloor(this));
         this.scene.addObject(new BrickWall(this, Math.floor(this.width / 3) * 1));
@@ -102,7 +99,7 @@ export default class Game {
         this.collisions.draw(context);
         this.particles.draw(context);
         this.ui.draw(context);
-        if (this.config.debug) {
+        if (Global.debug) {
             this.debugWindow.draw(context);
         }
     }

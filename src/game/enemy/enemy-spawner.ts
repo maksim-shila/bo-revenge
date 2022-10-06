@@ -1,4 +1,4 @@
-import { FrameTimer } from "../../engine";
+import { FrameTimer, Global } from "../../engine";
 import Game from "../game";
 import { Enemy } from "./enemy";
 import BeeSpawner from "./models/bee";
@@ -30,7 +30,7 @@ export default class EnemySpawner {
     public update(frameTimer: FrameTimer): void {
         this.spawners.forEach(spawner => {
             spawner.update(frameTimer);
-            if (spawner.shouldSpawn && !this.game.config.preventEnemiesSpawn) {
+            if (spawner.shouldSpawn && !Global.cheats.preventEnemiesSpawn) {
                 const enemy = spawner.spawn();
                 this.game.scene.addObject(enemy);
                 this.game.scene.colliders.watch([this.game.player], [enemy]);

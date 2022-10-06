@@ -1,16 +1,7 @@
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";
-import { Collision, FrameTimer, RectCollider, RigidBody } from "../../../engine";
-
-const zombieImages = ["zombieGreenImg", "zombieOrangeImg"];
-function getRandomZombieImageId(): string {
-    let index = Math.floor(Math.random() * 2);
-    if (index === 3) {
-        index--;
-    }
-    return zombieImages[index];
-}
+import { AnimationRow, Animator, Collision, FrameTimer, RectCollider, RigidBody } from "../../../engine";
 
 export default class ZombieSpawner implements Spawner {
     private readonly game: Game;
@@ -38,18 +29,28 @@ export default class ZombieSpawner implements Spawner {
     }
 }
 
+const Source = { imageId: "zombieGreenImg", width: 562, height: 502 };
+
 class Zombie extends Enemy {
     constructor(game: Game) {
-        super(game, { imageId: getRandomZombieImageId(), width: 562, height: 502, scale: 0.2 });
-        this.type = "zombie";
+        const scale = 0.2;
+        const width = Math.floor(Source.width * scale);
+        const height = Math.floor(Source.height * scale);
+
+        super(game, width, height);
+        this.name = "zombie";
+        this.type = "zombie"; // just to avoid player collisions, zombie is immortal
+
+        this.animator = new Animator(Source.imageId, width, height, Source.width, Source.height);
+        this.animator.fps = 30;
+        this.animator.animation = new AnimationRow(0, 10);
+        this.rigidBody = new RigidBody(2);
+        this.collider = new RectCollider(this, 10, 0, -20, 0);
+
         this.x = this.game.width + 100; // move spawn offscreen to have time until plant falls
         this.y = this.game.height - this.height - 200;
         this.vx = Math.random() * 1 + 1;
         this.vy = 0;
-        this.fps = 30;
-        this.framesCount = 10;
-        this.collider = new RectCollider(this, 10, 0, -20, 0);
-        this.rigidBody = new RigidBody(2);
     }
 
     public override update(frameTimer: FrameTimer): void {

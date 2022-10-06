@@ -54,9 +54,11 @@ export class RectCollider implements Collider {
     }
 
     public draw(context: CanvasRenderingContext2D): void {
+        context.save();
         context.lineWidth = 3;
         context.strokeStyle = "white";
         context.strokeRect(this.x, this.y, this.width, this.height);
+        context.restore();
     }
 
     public hasCollision(other: Collider): boolean {

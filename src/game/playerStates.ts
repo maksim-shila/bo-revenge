@@ -1,3 +1,4 @@
+import { Animation, AnimationRow, Global } from "../engine";
 import InputHandler from "../input/input-handler";
 import Game from "./game";
 import Player from "./player";
@@ -14,6 +15,15 @@ export type PlayerStateType =
     "dash";
 type States = { [key in PlayerStateType]: State };
 
+const Animations = {
+    Standing: new AnimationRow(0, 7),
+    Jumping: new AnimationRow(1, 7),
+    Falling: new AnimationRow(2, 7),
+    Running: new AnimationRow(3, 9),
+    Hit: new AnimationRow(4, 11),
+    Sitting: new AnimationRow(5, 5),
+    Rolling: new AnimationRow(6, 7),
+};
 export class PlayerStateManager {
     private readonly states: States;
 
@@ -43,18 +53,11 @@ export interface State {
 
 abstract class PlayerState implements State {
 
-    protected readonly game: Game;
-    protected readonly frameY: number;
-    protected readonly framesCount: number;
-
-    public readonly type: PlayerStateType;
-
-    constructor(game: Game, type: PlayerStateType, { frameY, framesCount }: { frameY: number; framesCount: number; }) {
-        this.game = game;
-        this.type = type;
-        this.frameY = frameY;
-        this.framesCount = framesCount;
-    }
+    constructor(
+        protected readonly game: Game,
+        public readonly type: PlayerStateType,
+        protected readonly animation: Animation
+    ) { }
 
     protected get player(): Player {
         return this.game.player;
@@ -62,9 +65,10 @@ abstract class PlayerState implements State {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public init(input: InputHandler): void {
-        this.player.frameY = this.frameY;
-        this.player.frameX = 0;
-        this.player.framesCount = this.framesCount;
+        if (this.player.animator) {
+            this.animation.reset();
+            this.player.animator.animation = this.animation;
+        }
     }
 
     public abstract update(input: InputHandler): void;
@@ -82,7 +86,7 @@ abstract class PlayerState implements State {
 
 class Standing extends PlayerState {
     constructor(game: Game) {
-        super(game, "standing", { frameY: 0, framesCount: 7 });
+        super(game, "standing", Animations.Standing);
     }
 
     public override init(input: InputHandler): void {
@@ -110,7 +114,7 @@ class Standing extends PlayerState {
 
 class Jumping extends PlayerState {
     constructor(game: Game) {
-        super(game, "jumping", { frameY: 1, framesCount: 7 });
+        super(game, "jumping", Animations.Jumping);
     }
 
     public override init(input: InputHandler): void {
@@ -141,7 +145,7 @@ class Jumping extends PlayerState {
 
 class Falling extends PlayerState {
     constructor(game: Game) {
-        super(game, "falling", { frameY: 2, framesCount: 7 });
+        super(game, "falling", Animations.Falling);
     }
 
     public override init(input: InputHandler): void {
@@ -164,7 +168,7 @@ class Falling extends PlayerState {
 
 class Running extends PlayerState {
     constructor(game: Game) {
-        super(game, "running", { frameY: 3, framesCount: 9 });
+        super(game, "running", Animations.Running);
     }
 
     public override init(input: InputHandler): void {
@@ -188,7 +192,7 @@ class Running extends PlayerState {
 
 class Sitting extends PlayerState {
     constructor(game: Game) {
-        super(game, "sitting", { frameY: 5, framesCount: 5 });
+        super(game, "sitting", Animations.Sitting);
     }
 
     public override init(input: InputHandler): void {
@@ -209,7 +213,7 @@ class Sitting extends PlayerState {
 
 class Rolling extends PlayerState {
     constructor(game: Game) {
-        super(game, "rolling", { frameY: 6, framesCount: 7 });
+        super(game, "rolling", Animations.Rolling);
     }
 
     public override init(input: InputHandler): void {
@@ -217,7 +221,7 @@ class Rolling extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        if (!this.game.config.unlimitedEnergy) {
+        if (!Global.cheats.unlimitedEnergy) {
             this.player.energy -= 0.5;
         }
         this.game.particles.add("fire", this.player.cx, this.player.cy);
@@ -238,7 +242,7 @@ class Rolling extends PlayerState {
 
 class Diving extends PlayerState {
     constructor(game: Game) {
-        super(game, "diving", { frameY: 6, framesCount: 7 });
+        super(game, "diving", Animations.Rolling);
     }
 
     public override init(input: InputHandler): void {
@@ -264,7 +268,7 @@ class Diving extends PlayerState {
 
 class Hit extends PlayerState {
     constructor(game: Game) {
-        super(game, "hit", { frameY: 4, framesCount: 11 });
+        super(game, "hit", Animations.Hit);
     }
 
     public override init(input: InputHandler): void {
@@ -273,7 +277,7 @@ class Hit extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        if (this.player.isMaxFrame()) {
+        if (this.animation.isMaxFrame) {
             if (this.player.onGround) {
                 this.player.setState("running", input, 1);
             } else {
@@ -293,7 +297,7 @@ class Dash extends PlayerState {
     private startY = 0;
 
     constructor(game: Game) {
-        super(game, "dash", { frameY: 6, framesCount: 7 });
+        super(game, "dash", Animations.Rolling);
     }
 
     public override init(input: InputHandler): void {

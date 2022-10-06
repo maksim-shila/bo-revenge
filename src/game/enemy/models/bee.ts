@@ -1,7 +1,7 @@
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";
-import { Collision, FrameTimer, RigidBody } from "../../../engine";
+import { AnimationRow, Animator, Collision, FrameTimer, RectCollider, RigidBody } from "../../../engine";
 
 export default class BeeSpawner implements Spawner {
     private readonly game: Game;
@@ -30,19 +30,27 @@ export default class BeeSpawner implements Spawner {
     }
 }
 
+const Source = { imageId: "enemyFlyImg", width: 60, height: 44 };
+
 class Bee extends Enemy {
     private angle: number;
     private va: number;
 
     constructor(game: Game) {
-        super(game, { imageId: "enemyFlyImg", width: 60, height: 44 });
+        super(game, Source.width, Source.height);
+        this.name = "bee";
+
+        this.animator = new Animator(Source.imageId, Source.width, Source.height);
+        this.animator.fps = 20;
+        this.animator.animation = new AnimationRow(0, 6);
+        this.rigidBody = new RigidBody();
+        this.collider = new RectCollider(this);
+
         this.x = this.game.width + Math.random() * this.game.width * 0.5;
         this.y = Math.random() * this.game.height * 0.5;
         this.vx = Math.random() + 1;
-        this.framesCount = 6;
         this.angle = 0;
         this.va = Math.random() * 0.1 + 0.1;
-        this.rigidBody = new RigidBody(0);
     }
 
     public override update(frameTimer: FrameTimer): void {

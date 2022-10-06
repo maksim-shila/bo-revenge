@@ -1,4 +1,4 @@
-import { FrameTimer, RigidBody } from "../../../engine";
+import { AnimationRow, Animator, FrameTimer, RigidBody } from "../../../engine";
 import Game from "../../game";
 import { Spawner } from "../enemy-spawner";
 import { Enemy } from "../enemy";
@@ -29,21 +29,26 @@ export default class SpiderSpawner implements Spawner {
     }
 }
 
+const Source = { imageId: "enemySpiderBigImg", width: 120, height: 144 };
+
 class Spider extends Enemy {
 
     private readonly maxVY: number;
 
     constructor(game: Game) {
-        super(game, { imageId: "enemySpiderBigImg", width: 120, height: 144 });
+        super(game, Source.width, Source.height);
         this.name = "spider";
-        this.collider = new RectCollider(this);
+
+        this.animator = new Animator(Source.imageId, Source.width, Source.height);
+        this.animator.animation = new AnimationRow(0, 6);
         this.rigidBody = new RigidBody();
+        this.collider = new RectCollider(this);
+
         this.x = this.game.width + 50;
         this.y = Math.random() * this.game.height * 0.5;
         this.vx = 0;
         this.maxVY = Math.random() > 0.5 ? 1 : -1;
         this.vy = this.maxVY;
-        this.framesCount = 6;
     }
 
     public override update(frameTimer: FrameTimer): void {
@@ -57,12 +62,18 @@ class Spider extends Enemy {
     }
 
     public override draw(context: CanvasRenderingContext2D): void {
+        super.draw(context);
+        this.drawWeb(context);
+    }
+
+    private drawWeb(context: CanvasRenderingContext2D): void {
+        context.save();
         context.beginPath();
         context.strokeStyle = "black";
         context.lineWidth = 1;
         context.moveTo(this.x + this.width * 0.5, 0);
         context.lineTo(this.x + this.width * 0.5, this.y + this.height * 0.5);
         context.stroke();
-        super.draw(context);
+        context.restore();
     }
 }

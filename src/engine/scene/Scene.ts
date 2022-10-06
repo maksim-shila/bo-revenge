@@ -1,6 +1,11 @@
 import { CollisionHandler, FrameTimer, GameObject, GameObjectContainer } from "..";
 
-export class Scene extends GameObject {
+export class Scene {
+
+    constructor(
+        public readonly width: number,
+        public readonly height: number
+    ) { }
 
     private _objects: GameObject[] = [];
     private _containers: GameObjectContainer[] = [];
