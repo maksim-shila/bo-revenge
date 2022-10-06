@@ -46,7 +46,7 @@ class Bee extends Enemy {
         this.rigidBody = new RigidBody();
         this.collider = new RectCollider(this);
 
-        this.x = this.game.width + Math.random() * this.game.width * 0.5;
+        this.x = this.game.width + Math.random() * this.game.width * 0.5 + 100;
         this.y = Math.random() * this.game.height * 0.5;
         this.vx = Math.random() + 1;
         this.angle = 0;

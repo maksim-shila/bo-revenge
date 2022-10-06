@@ -41,7 +41,7 @@ class Plant extends Enemy {
         this.rigidBody = new RigidBody(2);
         this.collider = new RectCollider(this);
 
-        this.x = this.game.width + 100; // move spawn offscreen to have time until plant falls
+        this.x = this.game.width + 200; // move spawn offscreen to have time until plant falls
         this.y = this.game.height - this.height - 100;
         this.vx = 0;
         this.vy = 0;

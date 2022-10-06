@@ -26,7 +26,7 @@ export class BrickWall extends GameObject {
         super.update(frameTimer);
         this.vx = -this.game.speed;
         if (this.rx < -50) {
-            this.x = this.game.width + 100;
+            this.x = this.game.width + 200;
         } else {
             this.x += this.vx;
         }

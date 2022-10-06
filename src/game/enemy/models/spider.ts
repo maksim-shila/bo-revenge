@@ -45,7 +45,7 @@ class Spider extends Enemy {
         this.rigidBody = new RigidBody();
         this.collider = new RectCollider(this);
 
-        this.x = this.game.width + 50;
+        this.x = this.game.width + 200;
         this.y = Math.random() * this.game.height * 0.5;
         this.vx = 0;
         this.maxVY = Math.random() > 0.5 ? 1 : -1;
@@ -54,7 +54,7 @@ class Spider extends Enemy {
 
     public override update(frameTimer: FrameTimer): void {
         if (this.onGround) {
-            this.vy = -this.maxVY;
+            this.vy = -Math.abs(this.maxVY);
         }
         super.update(frameTimer);
         if (this.isOffscreen("top")) {
