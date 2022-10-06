@@ -82,7 +82,7 @@ export default class Player extends Sprite {
         this.state.update(this.input);
         this.moveX();
         this.moveY();
-        if (this.input.keyReleased("jump") && this._onJump) {
+        if (this.input.keyReleased("jump") && this._onJump && this.state.type !== "dash") {
             if (!this.onGround && this.vy < 0) {
                 this.vy = this.vy < -5 ? -5 : this.vy;
             }
