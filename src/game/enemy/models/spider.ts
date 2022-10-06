@@ -62,8 +62,8 @@ class Spider extends Enemy {
     }
 
     public override draw(context: CanvasRenderingContext2D): void {
-        super.draw(context);
         this.drawWeb(context);
+        super.draw(context);
     }
 
     private drawWeb(context: CanvasRenderingContext2D): void {
