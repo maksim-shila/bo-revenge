@@ -13,7 +13,7 @@ window.addEventListener("load", () => {
     Global.debug = false;
 
     Global.cheats.immortal = false;
-    Global.cheats.unlimitedEnergy = true;
+    Global.cheats.unlimitedEnergy = false;
     Global.cheats.preventEnemiesSpawn = false;
 
     const input = new InputHandler();
