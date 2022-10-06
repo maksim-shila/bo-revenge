@@ -44,7 +44,7 @@ class Zombie extends Enemy {
         this.animator = new Animator(Source.imageId, width, height, Source.width, Source.height);
         this.animator.fps = 30;
         this.animator.animation = new AnimationRow(0, 10);
-        this.rigidBody = new RigidBody(2);
+        this.rigidBody = new RigidBody(1);
         this.collider = new RectCollider(this, 10, 0, -20, 0);
 
         this.x = this.game.width + 100; // move spawn offscreen to have time until plant falls

@@ -14,10 +14,11 @@ export class BrickWall extends GameObject {
     private readonly wallHeight = 5;
 
     constructor(private readonly game: Game, x: number) {
-        super("obstacle", x, 220);
+        super("obstacle", x);
         this.name = "brick_wall";
         this.width = this.brickWidth * this.wallWidht;
         this.height = this.brickHeight * this.wallHeight;
+        this.y = this.game.height - this.height - 70;
         this.collider = new RectCollider(this);
     }
 

@@ -8,12 +8,12 @@ import { Global } from "./engine";
 window.addEventListener("load", () => {
 
     Global.window.width = window.innerWidth;
-    Global.window.height = 500;
+    Global.window.height = 650;
 
     Global.debug = false;
 
-    Global.cheats.immortal = false;
-    Global.cheats.unlimitedEnergy = false;
+    Global.cheats.immortal = true;
+    Global.cheats.unlimitedEnergy = true;
     Global.cheats.preventEnemiesSpawn = false;
 
     const input = new InputHandler();

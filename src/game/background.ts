@@ -12,7 +12,7 @@ export default class Background {
         this.width = 1667;
         this.height = 500;
         this.layers = [
-            new Layer(this.game, this.width, this.height, 0, "backgroundCityImg_1"),
+            new Layer(this.game, this.width, this.game.height, 0, "backgroundCityImg_1"),
             new Layer(this.game, this.width, this.height, 0.2, "backgroundCityImg_2"),
             new Layer(this.game, this.width, this.height, 0.4, "backgroundCityImg_3"),
             new Layer(this.game, this.width, this.height, 0.6, "backgroundCityImg_4")
@@ -45,7 +45,7 @@ class Layer {
         this.speedModifier = speedModifier;
         this.image = document.getElementById(imageId) as CanvasImageSource;
         this.x = 0;
-        this.y = 0;
+        this.y = this.game.height - this.height;
     }
 
     public update(): void {
