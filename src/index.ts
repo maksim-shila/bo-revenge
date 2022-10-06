@@ -12,7 +12,7 @@ window.addEventListener("load", () => {
 
     Global.debug = false;
 
-    Global.cheats.immortal = true;
+    Global.cheats.immortal = false;
     Global.cheats.unlimitedEnergy = true;
     Global.cheats.preventEnemiesSpawn = false;
 

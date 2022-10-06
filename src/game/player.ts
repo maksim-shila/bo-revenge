@@ -140,7 +140,7 @@ export default class Player extends Sprite {
                 this.state.type === "dash") {
                 this.game.score++;
             } else {
-                if (!Global.cheats.immportal) {
+                if (!Global.cheats.immortal) {
                     this.setState("hit", this.input);
                 }
             }
