@@ -1,5 +1,5 @@
 import { FrameTimer, GameObjectContainer, Global, Scene } from "../../../engine";
-import Player from "../../player";
+import Player from "../Player";
 import { Enemy } from "./Enemy";
 import BeeSpawner from "./Bee";
 import PlantSpawner from "./Plant";

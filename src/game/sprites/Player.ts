@@ -1,9 +1,9 @@
-import { Animator, Collision, CollisionDirection, FrameTimer, GameObject, Global, RigidBody, Scene } from "../engine";
-import { RectCollider } from "../engine/collision/Collider";
-import InputHandler from "../input/input-handler";
-import Game from "./game";
-import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
-import { Enemy } from "./sprites/enemies/Enemy";
+import { Animator, Collision, CollisionDirection, FrameTimer, GameObject, Global, RigidBody, Scene } from "../../engine";
+import { RectCollider } from "../../engine/collision/Collider";
+import InputHandler from "../../input/input-handler";
+import Game from "../game";
+import { PlayerStateManager, PlayerStateType, State } from "../playerStates";
+import { Enemy } from "./enemies/Enemy";
 
 const Source = { image: "playerImg", widht: 100.3, height: 91.3 };
 

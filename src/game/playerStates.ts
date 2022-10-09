@@ -1,6 +1,6 @@
 import { Animation, AnimationRow, Global } from "../engine";
 import InputHandler from "../input/input-handler";
-import Player from "./player";
+import Player from "./sprites/Player";
 import Dust from "./sprites/particles/Dust";
 import Fire from "./sprites/particles/Fire";
 import Splash from "./sprites/particles/Splash";

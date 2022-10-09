@@ -3,7 +3,7 @@ import InputHandler from "../input/input-handler";
 import Background from "./background";
 import DebugWindow from "./debug-window";
 import EnemySpawner from "./sprites/enemies/EnemySpawner";
-import Player from "./player";
+import Player from "./sprites/Player";
 import BrickFloor from "./sprites/obstacles/BrickFloor";
 import { BrickWall } from "./sprites/obstacles/BrickWall";
 import UI from "./UI";

@@ -1,5 +1,5 @@
 import Game from "./game";
-import Player from "./player";
+import Player from "./sprites/Player";
 
 export default class UI {
 

@@ -1,6 +1,6 @@
 import { FrameTimer, Scene } from "../engine";
 import InputHandler from "../input/input-handler";
-import Player from "./player";
+import Player from "./sprites/Player";
 
 export default class DebugWindow {
 
