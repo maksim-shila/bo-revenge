@@ -1,7 +1,9 @@
 import { Animation, AnimationRow, Global } from "../engine";
 import InputHandler from "../input/input-handler";
-import Game from "./game";
 import Player from "./player";
+import Dust from "./sprites/particles/Dust";
+import Fire from "./sprites/particles/Fire";
+import Splash from "./sprites/particles/Splash";
 
 export type PlayerStateType =
     "standing" |
@@ -27,17 +29,17 @@ const Animations = {
 export class PlayerStateManager {
     private readonly states: States;
 
-    constructor(game: Game) {
+    constructor(player: Player) {
         this.states = {} as States;
-        this.states["standing"] = new Standing(game);
-        this.states["jumping"] = new Jumping(game);
-        this.states["falling"] = new Falling(game);
-        this.states["running"] = new Running(game);
-        this.states["sitting"] = new Sitting(game);
-        this.states["rolling"] = new Rolling(game);
-        this.states["diving"] = new Diving(game);
-        this.states["hit"] = new Hit(game);
-        this.states["dash"] = new Dash(game);
+        this.states["standing"] = new Standing(player);
+        this.states["jumping"] = new Jumping(player);
+        this.states["falling"] = new Falling(player);
+        this.states["running"] = new Running(player);
+        this.states["sitting"] = new Sitting(player);
+        this.states["rolling"] = new Rolling(player);
+        this.states["diving"] = new Diving(player);
+        this.states["hit"] = new Hit(player);
+        this.states["dash"] = new Dash(player);
     }
 
     public get(type: PlayerStateType): State {
@@ -55,14 +57,10 @@ export interface State {
 abstract class PlayerState implements State {
 
     constructor(
-        protected readonly game: Game,
         public readonly type: PlayerStateType,
+        protected readonly player: Player,
         protected readonly animation: Animation
     ) { }
-
-    protected get player(): Player {
-        return this.game.player;
-    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public init(input: InputHandler): void {
@@ -89,8 +87,8 @@ abstract class PlayerState implements State {
 }
 
 class Standing extends PlayerState {
-    constructor(game: Game) {
-        super(game, "standing", Animations.Standing);
+    constructor(player: Player) {
+        super("standing", player, Animations.Standing);
     }
 
     public override init(input: InputHandler): void {
@@ -117,8 +115,8 @@ class Standing extends PlayerState {
 }
 
 class Jumping extends PlayerState {
-    constructor(game: Game) {
-        super(game, "jumping", Animations.Jumping);
+    constructor(player: Player) {
+        super("jumping", player, Animations.Jumping);
     }
 
     public override init(input: InputHandler): void {
@@ -148,8 +146,8 @@ class Jumping extends PlayerState {
 }
 
 class Falling extends PlayerState {
-    constructor(game: Game) {
-        super(game, "falling", Animations.Falling);
+    constructor(player: Player) {
+        super("falling", player, Animations.Falling);
     }
 
     public override init(input: InputHandler): void {
@@ -173,8 +171,8 @@ class Falling extends PlayerState {
 }
 
 class Running extends PlayerState {
-    constructor(game: Game) {
-        super(game, "running", Animations.Running);
+    constructor(player: Player) {
+        super("running", player, Animations.Running);
     }
 
     public override init(input: InputHandler): void {
@@ -182,7 +180,7 @@ class Running extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        this.game.particles.add("dust", this.player.cx, this.player.y + this.player.height);
+        this.player.scene.add(new Dust(this.player.scene, this.player.cx, this.player.y + this.player.height));
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
             this.player.setState("dash", input, 1);
@@ -197,8 +195,8 @@ class Running extends PlayerState {
 }
 
 class Sitting extends PlayerState {
-    constructor(game: Game) {
-        super(game, "sitting", Animations.Sitting);
+    constructor(player: Player) {
+        super("sitting", player, Animations.Sitting);
     }
 
     public override init(input: InputHandler): void {
@@ -220,8 +218,8 @@ class Sitting extends PlayerState {
 }
 
 class Rolling extends PlayerState {
-    constructor(game: Game) {
-        super(game, "rolling", Animations.Rolling);
+    constructor(player: Player) {
+        super("rolling", player, Animations.Rolling);
     }
 
     public override init(input: InputHandler): void {
@@ -232,7 +230,7 @@ class Rolling extends PlayerState {
         if (!Global.cheats.unlimitedEnergy) {
             this.player.energy -= 0.5;
         }
-        this.game.particles.add("fire", this.player.cx, this.player.cy);
+        this.player.scene.add(new Fire(this.player.scene, this.player.cx, this.player.cy));
         this.allowHorizontalMovement(input);
         if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
             this.player.setState("dash", input, 1);
@@ -249,8 +247,8 @@ class Rolling extends PlayerState {
 }
 
 class Diving extends PlayerState {
-    constructor(game: Game) {
-        super(game, "diving", Animations.Rolling);
+    constructor(player: Player) {
+        super("diving", player, Animations.Rolling);
     }
 
     public override init(input: InputHandler): void {
@@ -260,7 +258,7 @@ class Diving extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        this.game.particles.add("fire", this.player.cx, this.player.cy);
+        this.player.scene.add(new Fire(this.player.scene, this.player.cx, this.player.cy));
         if (this.player.onGround) {
             if (input.keyPressed("roll") && this.player.canStartRoll && this.player.canMoveForward) {
                 this.player.setState("rolling", input, 2);
@@ -270,15 +268,15 @@ class Diving extends PlayerState {
                     this.player.setState("standing", input, 0);
             }
             for (let i = 0; i < 30; ++i) {
-                this.game.particles.add("splash", this.player.cx, this.player.y + this.player.height);
+                this.player.scene.add(new Splash(this.player.scene, this.player.cx, this.player.y + this.player.height));
             }
         }
     }
 }
 
 class Hit extends PlayerState {
-    constructor(game: Game) {
-        super(game, "hit", Animations.Hit);
+    constructor(player: Player) {
+        super("hit", player, Animations.Hit);
     }
 
     public override init(input: InputHandler): void {
@@ -306,8 +304,8 @@ class Dash extends PlayerState {
     private startX = 0;
     private startY = 0;
 
-    constructor(game: Game) {
-        super(game, "dash", Animations.Rolling);
+    constructor(player: Player) {
+        super("dash", player, Animations.Rolling);
     }
 
     public override init(input: InputHandler): void {
@@ -341,7 +339,7 @@ class Dash extends PlayerState {
     }
 
     public update(input: InputHandler): void {
-        this.game.particles.add("fire", this.player.cx, this.player.cy);
+        this.player.scene.add(new Fire(this.player.scene, this.player.cx, this.player.cy));
         if (this.player.x > this.startX + this.distanceX ||
             this.player.x < this.startX - this.distanceX ||
             this.player.y < this.startY - this.distanceY ||

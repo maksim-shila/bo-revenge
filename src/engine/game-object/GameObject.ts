@@ -1,6 +1,10 @@
-import { Animator, Collider, Collision, CollisionDirection, FrameTimer, Global, RigidBody } from "..";
+import { Animator, Collider, Collision, CollisionDirection, FrameTimer, Global, RigidBody, Scene } from "..";
+
+type Direction = "right" | "left" | "top" | "bottom";
 
 export abstract class GameObject {
+
+    public readonly GlobalType = "object";
 
     private _collider: Collider | null = null;
     private _rigidBody: RigidBody | null = null;
@@ -9,14 +13,15 @@ export abstract class GameObject {
     private _destroyActions: ((self: GameObject) => unknown)[] = [];
     private _destroyed = false;
 
+    public x = 0;
+    public y = 0;
     public vx = 0;
     public vy = 0;
     public name = "unknown";
 
     constructor(
-        public type: string,
-        public x = 0,
-        public y = 0,
+        public readonly type: string,
+        public readonly scene: Scene,
         public width = 0,
         public height = 0
     ) { }
@@ -97,4 +102,73 @@ export abstract class GameObject {
     public onCollision?(collision: Collision): void;
     public onObstacleCollisions?(directions: CollisionDirection[]): void;
     public onCollisionExit?(collision: Collision): void;
+
+    public isOffscreen(...directions: Direction[]): boolean {
+        const _isOffscreen = (direction: Direction): boolean => {
+            switch (direction) {
+                case "right":
+                    return this.x > this.scene.width;
+                case "left":
+                    return this.x < 0 - this.width;
+                case "bottom":
+                    return this.y > this.scene.height;
+                case "top":
+                    return this.y < 0 - this.height;
+            }
+        };
+        for (let i = 0; i < directions.length; ++i) {
+            if (_isOffscreen(directions[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public isTouching(...directions: Direction[]): boolean {
+        const _isTouching = (direction: Direction): boolean => {
+            switch (direction) {
+                case "right":
+                    return this.x >= this.scene.width - this.width;
+                case "left":
+                    return this.x <= 0;
+                case "bottom":
+                    return this.y >= this.scene.height - this.height;
+                case "top":
+                    return this.y <= 0;
+            }
+        };
+        for (let i = 0; i < directions.length; ++i) {
+            if (_isTouching(directions[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public resetPosition(direction: Direction): void {
+        switch (direction) {
+            case "right":
+                this.x = this.scene.width - this.width;
+                this.vx = 0;
+                break;
+            case "left":
+                this.x = 0;
+                this.vx = 0;
+                break;
+            case "bottom":
+                this.y = this.scene.height - this.height;
+                this.vy = 0;
+                break;
+            case "top":
+                this.y = 0;
+                this.vy = 0;
+                break;
+        }
+    }
+
+    public disallowOffscreen(direction: Direction): void {
+        if (this.isTouching(direction)) {
+            this.resetPosition(direction);
+        }
+    }
 }

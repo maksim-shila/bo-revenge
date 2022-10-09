@@ -1,31 +1,30 @@
-import { AnimationRow, Animator, FrameTimer, RigidBody } from "../../../engine";
-import Game from "../../game";
-import { Spawner } from "../enemy-spawner";
-import { Enemy } from "../enemy";
+import { AnimationRow, Animator, FrameTimer, RigidBody, Scene } from "../../../engine";
+import { Spawner } from "./EnemySpawner";
+import { Enemy } from "./Enemy";
 import { RectCollider } from "../../../engine/collision/Collider";
 
 export default class SpiderSpawner implements Spawner {
-    private readonly game: Game;
     private spawnFrames = 200;
     private nextSpawnFrame = this.spawnFrames;
+    private totalFrames = 0;
 
-    constructor(game: Game) {
-        this.game = game;
+    constructor(private readonly scene: Scene) { }
+
+    public update(): void {
+        this.totalFrames += -this.scene.vx;
     }
 
-    public update(): void { }
-
     public get shouldSpawn(): boolean {
-        const shouldSpawn = this.game.totalFrames > this.nextSpawnFrame;
+        const shouldSpawn = this.totalFrames > this.nextSpawnFrame;
         if (shouldSpawn) {
             const salt = Math.random() * 500 + 0;
-            this.nextSpawnFrame = this.game.totalFrames + this.spawnFrames + salt;
+            this.nextSpawnFrame = this.totalFrames + this.spawnFrames + salt;
         }
         return shouldSpawn;
     }
 
     public spawn(): Enemy {
-        return new Spider(this.game);
+        return new Spider(this.scene);
     }
 }
 
@@ -35,8 +34,8 @@ class Spider extends Enemy {
 
     private readonly maxVY: number;
 
-    constructor(game: Game) {
-        super(game, Source.width, Source.height);
+    constructor(scene: Scene) {
+        super(scene, Source.width, Source.height);
         this.name = "spider";
 
         this.animator = new Animator(Source.imageId, Source.width, Source.height);
@@ -45,18 +44,20 @@ class Spider extends Enemy {
         this.rigidBody = new RigidBody();
         this.collider = new RectCollider(this);
 
-        this.x = this.game.width + 200;
-        this.y = Math.random() * this.game.height * 0.5;
+        this.x = this.scene.width + 200;
+        this.y = Math.random() * this.scene.height * 0.5;
         this.vx = 0;
         this.maxVY = Math.random() > 0.5 ? 1 : -1;
         this.vy = this.maxVY;
     }
 
     public override update(frameTimer: FrameTimer): void {
+        super.update(frameTimer);
         if (this.onGround) {
             this.vy = -Math.abs(this.maxVY);
         }
-        super.update(frameTimer);
+        this.x += this.scene.vx;
+        this.y += this.vy;
         if (this.isOffscreen("top")) {
             this.destroy();
         }

@@ -1,10 +1,8 @@
 import { FrameTimer, Global, Scene } from "../engine";
 import InputHandler from "../input/input-handler";
 import Background from "./background";
-import CollisionAnimationFactory from "./collisionAnimation";
 import DebugWindow from "./debug-window";
-import EnemySpawner from "./enemy/enemy-spawner";
-import ParticlesFactory from "./particles";
+import EnemySpawner from "./sprites/enemies/EnemySpawner";
 import Player from "./player";
 import BrickFloor from "./sprites/obstacles/BrickFloor";
 import { BrickWall } from "./sprites/obstacles/BrickWall";
@@ -12,10 +10,6 @@ import UI from "./UI";
 
 export default class Game {
 
-    public readonly player: Player;
-    public readonly particles: ParticlesFactory;
-    public readonly collisions: CollisionAnimationFactory;
-    public readonly enemySpawner: EnemySpawner;
     public readonly background: Background;
     public readonly ui: UI;
     public readonly scene: Scene;
@@ -40,23 +34,25 @@ export default class Game {
     constructor(width: number, height: number, input: InputHandler) {
         this.width = width;
         this.height = height;
-        this.ui = new UI(this);
-        this.debugWindow = new DebugWindow(this);
-        this.player = new Player(this, input);
-        this.player.setState("sitting");
-        this.particles = new ParticlesFactory(this);
-        this.collisions = new CollisionAnimationFactory(this);
-        this.background = new Background(this);
-        this.enemySpawner = new EnemySpawner(this);
         this.soundtrack = document.getElementById("level1audio") as HTMLAudioElement;
         this.soundtrack.addEventListener("ended", () => this.playSoundtrack());
 
         this.scene = new Scene(this.width, this.height);
-        this.scene.addObject(this.player);
-        this.scene.addObject(new BrickWall(this, Math.floor(this.width / 3) * 1));
-        this.scene.addObject(new BrickWall(this, Math.floor(this.width / 3) * 2));
-        this.scene.addObject(new BrickWall(this, Math.floor(this.width / 3) * 3));
-        this.scene.addContainer(new BrickFloor(this));
+        this.scene.vx = -3;
+        this.scene.vx_default = -3;
+
+        const player = new Player(this, this.scene, input);
+        this.background = new Background(this.scene);
+
+        this.scene.add(player);
+        this.scene.add(new BrickWall(this.scene, Math.floor(this.width / 3) * 1));
+        this.scene.add(new BrickWall(this.scene, Math.floor(this.width / 3) * 2));
+        this.scene.add(new BrickWall(this.scene, Math.floor(this.width / 3) * 3));
+        this.scene.add(new BrickFloor(this.scene));
+        this.scene.add(new EnemySpawner(player, this.scene));
+
+        this.ui = new UI(this, player);
+        this.debugWindow = new DebugWindow(player, this.scene);
     }
 
     public get running(): boolean {
@@ -86,18 +82,15 @@ export default class Game {
         if (!this.paused) {
             this.background.update();
             this.scene.update(frameTimer);
-            this.particles.update();
-            this.enemySpawner.update(frameTimer);
-            this.collisions.update(frameTimer);
         }
-        this.debugWindow.update(input, frameTimer);
+        if (Global.debug) {
+            this.debugWindow.update(input, frameTimer);
+        }
     }
 
     public draw(context: CanvasRenderingContext2D): void {
         this.background.draw(context);
         this.scene.draw(context);
-        this.collisions.draw(context);
-        this.particles.draw(context);
         this.ui.draw(context);
         if (Global.debug) {
             this.debugWindow.draw(context);

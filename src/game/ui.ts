@@ -1,12 +1,12 @@
 import Game from "./game";
+import Player from "./player";
 
 export default class UI {
 
-    private readonly game: Game;
-
-    constructor(game: Game) {
-        this.game = game;
-    }
+    constructor(
+        private readonly game: Game,
+        private readonly player: Player
+    ) { }
 
     public draw(context: CanvasRenderingContext2D): void {
         context.save();
@@ -20,12 +20,11 @@ export default class UI {
         context.fillStyle = "black";
         context.fillText(`Score: ${this.game.score}`, 20, 50);
 
-        const player = this.game.player;
         const maxEnergyWidth = 200;
-        const energyWidth = maxEnergyWidth * player.energy / player.maxEnergy;
+        const energyWidth = maxEnergyWidth * this.player.energy / this.player.maxEnergy;
         context.strokeStyle = "black";
         context.strokeRect(20, 70, maxEnergyWidth, 10);
-        context.fillStyle = player.energy > player.minEnergy ? "black" : "gray";
+        context.fillStyle = this.player.energy > this.player.minEnergy ? "black" : "gray";
         context.fillRect(20, 70, energyWidth, 10);
         context.restore();
     }

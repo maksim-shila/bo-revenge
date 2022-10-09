@@ -2,25 +2,43 @@ import { CollisionHandler, FrameTimer, GameObject, GameObjectContainer } from ".
 
 export class Scene {
 
+    private _objects: GameObject[] = [];
+    private _containers: GameObjectContainer[] = [];
+    private _colliders = new CollisionHandler();
+
+    public vx = 0;
+    public vx_default = 0;
+
     constructor(
         public readonly width: number,
         public readonly height: number
     ) { }
 
-    private _objects: GameObject[] = [];
-    private _containers: GameObjectContainer[] = [];
-    private _colliders = new CollisionHandler();
-
     public get colliders(): CollisionHandler {
         return this._colliders;
     }
 
+    public get particles(): GameObject[] {
+        return this._objects.filter(o => o.type === "particle");
+    }
+
     public get sprites(): GameObject[] {
-        return this._objects.filter(o => o.type !== "obstacle");
+        return this._objects.filter(o => ["enemy", "player"].includes(o.type));
     }
 
     public get obstacles(): GameObject[] {
         return this._objects.filter(o => o.type === "obstacle");
+    }
+
+    public add(object: GameObject | GameObjectContainer): void {
+        switch (object.GlobalType) {
+            case "object":
+                this.addObject(object);
+                break;
+            case "container":
+                this.addContainer(object);
+                break;
+        }
     }
 
     public addObject(object: GameObject): void {
@@ -31,15 +49,15 @@ export class Scene {
                 this._colliders.watch(this.sprites, [object]);
                 break;
             default:
-                this._colliders.watch([object], this.obstacles);
+                if (object.rigidBody) {
+                    this._colliders.watch([object], this.obstacles);
+                }
                 break;
         }
     }
 
     public addContainer(container: GameObjectContainer): void {
         this._containers.push(container);
-        this._objects.push(...container.objects);
-        container.onSpawn(object => this.addObject(object));
     }
 
     public update(frameTimer: FrameTimer): void {

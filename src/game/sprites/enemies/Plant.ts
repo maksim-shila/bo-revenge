@@ -1,38 +1,37 @@
-import Game from "../../game";
-import { Spawner } from "../enemy-spawner";
-import { Enemy } from "../enemy";
-import { AnimationRow, Animator, FrameTimer, RectCollider, RigidBody } from "../../../engine";
+import { Spawner } from "./EnemySpawner";
+import { Enemy } from "./Enemy";
+import { AnimationRow, Animator, FrameTimer, RectCollider, RigidBody, Scene } from "../../../engine";
 
 export default class PlantSpawner implements Spawner {
-    private readonly game: Game;
     private spawnFrames = 300;
     private nextSpawnFrame = this.spawnFrames;
+    private totalFrames = 0;
 
-    constructor(game: Game) {
-        this.game = game;
+    constructor(private readonly scene: Scene) { }
+
+    public update(): void {
+        this.totalFrames += -this.scene.vx;
     }
 
-    public update(): void { }
-
     public get shouldSpawn(): boolean {
-        const shouldSpawn = this.game.totalFrames > this.nextSpawnFrame;
+        const shouldSpawn = this.totalFrames > this.nextSpawnFrame;
         if (shouldSpawn) {
             const salt = Math.random() * 500 + 0;
-            this.nextSpawnFrame = this.game.totalFrames + this.spawnFrames + salt;
+            this.nextSpawnFrame = this.totalFrames + this.spawnFrames + salt;
         }
         return shouldSpawn;
     }
 
     public spawn(): Enemy {
-        return new Plant(this.game);
+        return new Plant(this.scene);
     }
 }
 
 const Source = { imageId: "enemyPlantImg", width: 60, height: 87 };
 
 class Plant extends Enemy {
-    constructor(game: Game) {
-        super(game, Source.width, Source.height);
+    constructor(scene: Scene) {
+        super(scene, Source.width, Source.height);
         this.name = "plant";
 
         this.animator = new Animator(Source.imageId, Source.width, Source.height);
@@ -41,8 +40,8 @@ class Plant extends Enemy {
         this.rigidBody = new RigidBody(2);
         this.collider = new RectCollider(this);
 
-        this.x = this.game.width + 200; // move spawn offscreen to have time until plant falls
-        this.y = this.game.height - this.height - 100;
+        this.x = this.scene.width + 200; // move spawn offscreen to have time until plant falls
+        this.y = this.scene.height - this.height - 100;
         this.vx = 0;
         this.vy = 0;
     }
@@ -51,6 +50,11 @@ class Plant extends Enemy {
         super.update(frameTimer);
         if (!this.onGround) {
             this.vy += this.weight;
+        }
+        this.x += this.scene.vx;
+        this.y += this.vy;
+        if (this.isOffscreen("left")) {
+            this.destroy();
         }
     }
 }

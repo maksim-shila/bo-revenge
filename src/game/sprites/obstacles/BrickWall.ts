@@ -1,34 +1,28 @@
-import { FrameTimer, GameObject, Global, RectCollider } from "../../../engine";
-import Game from "../../game";
+import { FrameTimer, GameObject, Global, RectCollider, Scene } from "../../../engine";
+import SpriteDimension from "../../../engine/utils/SpriteDimension";
+
+const Brick = new SpriteDimension("brickImg", 239, 224, 0.2);
 
 export class BrickWall extends GameObject {
-
-    private readonly brickSw = 239;
-    private readonly brickSh = 224;
-    private readonly scale = 0.2;
-    private readonly brickWidth = Math.ceil(this.brickSw * this.scale);
-    private readonly brickHeight = Math.ceil(this.brickSh * this.scale);
-    private readonly brickImage = document.getElementById("brickImg") as CanvasImageSource;
 
     private readonly wallWidht = 2;
     private readonly wallHeight = 5;
 
-    constructor(private readonly game: Game, x: number) {
-        super("obstacle", x);
+    constructor(scene: Scene, x: number) {
+        super("obstacle", scene);
         this.name = "brick_wall";
-        this.width = this.brickWidth * this.wallWidht;
-        this.height = this.brickHeight * this.wallHeight;
-        this.y = this.game.height - this.height - 70;
+        this.width = Brick.width * this.wallWidht;
+        this.height = Brick.height * this.wallHeight;
+        this.x = x;
+        this.y = this.scene.height - this.height - 70;
         this.collider = new RectCollider(this);
     }
 
     public override update(frameTimer: FrameTimer): void {
         super.update(frameTimer);
-        this.vx = -this.game.speed;
+        this.x += this.scene.vx;
         if (this.rx < -50) {
-            this.x = this.game.width + 200;
-        } else {
-            this.x += this.vx;
+            this.x = this.scene.width + 200;
         }
     }
 
@@ -36,15 +30,15 @@ export class BrickWall extends GameObject {
         for (let i = 0; i < this.wallWidht; ++i) {
             for (let j = 0; j < this.wallHeight; ++j) {
                 context.drawImage(
-                    this.brickImage,
+                    Brick.image,
                     0,
                     0,
-                    this.brickSw,
-                    this.brickSh,
-                    this.x + this.brickWidth * i,
-                    this.y + this.brickHeight * j,
-                    this.brickWidth,
-                    this.brickHeight);
+                    Brick.sw,
+                    Brick.sh,
+                    this.x + Brick.width * i,
+                    this.y + Brick.height * j,
+                    Brick.width,
+                    Brick.height);
             }
         }
         if (Global.debug) {

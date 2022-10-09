@@ -1,23 +1,22 @@
-import Game from "../../game";
-import { Spawner } from "../enemy-spawner";
-import { Enemy } from "../enemy";
-import { AnimationRow, Animator, Collision, FrameTimer, RectCollider, RigidBody } from "../../../engine";
+import { Spawner } from "./EnemySpawner";
+import { Enemy } from "./Enemy";
+import { AnimationRow, Animator, Collision, FrameTimer, RectCollider, RigidBody, Scene } from "../../../engine";
 
 export default class ZombieSpawner implements Spawner {
-    private readonly game: Game;
     private nextSpawnFrame = 2000;
+    private totalFrames = 0;
 
-    constructor(game: Game) {
-        this.game = game;
+    constructor(private readonly scene: Scene) { }
+
+    public update(): void {
+        this.totalFrames += -this.scene.vx;
     }
 
-    public update(): void { }
-
     public get shouldSpawn(): boolean {
-        const shouldSpawn = this.game.totalFrames > this.nextSpawnFrame;
+        const shouldSpawn = this.totalFrames > this.nextSpawnFrame;
         if (shouldSpawn) {
             const spawnFrames = Math.random() * 3000 + 1000;
-            this.nextSpawnFrame = this.game.totalFrames + spawnFrames;
+            this.nextSpawnFrame = this.totalFrames + spawnFrames;
         } else {
             this.nextSpawnFrame -= Math.random() * 1 + 1; // Affected by zombie speed
         }
@@ -25,21 +24,20 @@ export default class ZombieSpawner implements Spawner {
     }
 
     public spawn(): Enemy {
-        return new Zombie(this.game);
+        return new Zombie(this.scene);
     }
 }
 
 const Source = { imageId: "zombieGreenImg", width: 562, height: 502 };
 
 class Zombie extends Enemy {
-    constructor(game: Game) {
+    constructor(scene: Scene) {
         const scale = 0.2;
         const width = Math.floor(Source.width * scale);
         const height = Math.floor(Source.height * scale);
 
-        super(game, width, height);
+        super(scene, width, height, "zombie");
         this.name = "zombie";
-        this.type = "zombie"; // just to avoid player collisions, zombie is immortal
 
         this.animator = new Animator(Source.imageId, width, height, Source.width, Source.height);
         this.animator.fps = 30;
@@ -47,17 +45,19 @@ class Zombie extends Enemy {
         this.rigidBody = new RigidBody(1);
         this.collider = new RectCollider(this, 10, 0, -20, 0);
 
-        this.x = this.game.width + 200; // move spawn offscreen to have time until plant falls
-        this.y = this.game.height - this.height - 200;
-        this.vx = Math.random() * 1 + 1;
+        this.x = this.scene.width + 200; // move spawn offscreen to have time until plant falls
+        this.y = this.scene.height - this.height - 200;
+        this.vx = -(Math.random() * 1 + 1);
         this.vy = 0;
     }
 
     public override update(frameTimer: FrameTimer): void {
+        super.update(frameTimer);
         if (!this.onGround) {
             this.vy += this.weight;
         }
-        super.update(frameTimer);
+        this.x += this.vx + this.scene.vx;
+        this.y += this.vy;
     }
 
     public override onCollisionEnter(collision: Collision) {

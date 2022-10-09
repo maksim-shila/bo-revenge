@@ -1,24 +1,23 @@
-import Game from "../../game";
-import { Spawner } from "../enemy-spawner";
-import { Enemy } from "../enemy";
-import { AnimationRow, Animator, Collision, FrameTimer, RectCollider, RigidBody } from "../../../engine";
+import { Spawner } from "./EnemySpawner";
+import { Enemy } from "./Enemy";
+import { AnimationRow, Animator, Collision, FrameTimer, RectCollider, RigidBody, Scene } from "../../../engine";
 
 export default class BeeSpawner implements Spawner {
-    private readonly game: Game;
     private readonly spawnFrames = 150;
+    private totalFrames = 0;
     private nextSpawnFrame = this.spawnFrames;
 
-    constructor(game: Game) {
-        this.game = game;
+    constructor(private readonly scene: Scene) { }
+
+    public update(): void {
+        this.totalFrames += -this.scene.vx;
     }
 
-    public update(): void { }
-
     public get shouldSpawn(): boolean {
-        const shouldSpawn = this.game.totalFrames > this.nextSpawnFrame;
+        const shouldSpawn = this.totalFrames > this.nextSpawnFrame;
         if (shouldSpawn) {
             const salt = Math.random() * 200 + 100;
-            this.nextSpawnFrame = this.game.totalFrames + this.spawnFrames + salt;
+            this.nextSpawnFrame = this.totalFrames + this.spawnFrames + salt;
         } else {
             this.nextSpawnFrame -= Math.random() + 1; // Affected by bee speed
         }
@@ -26,7 +25,7 @@ export default class BeeSpawner implements Spawner {
     }
 
     public spawn(): Enemy {
-        return new Bee(this.game);
+        return new Bee(this.scene);
     }
 }
 
@@ -36,8 +35,8 @@ class Bee extends Enemy {
     private angle: number;
     private va: number;
 
-    constructor(game: Game) {
-        super(game, Source.width, Source.height);
+    constructor(scene: Scene) {
+        super(scene, Source.width, Source.height);
         this.name = "bee";
 
         this.animator = new Animator(Source.imageId, Source.width, Source.height);
@@ -46,9 +45,9 @@ class Bee extends Enemy {
         this.rigidBody = new RigidBody();
         this.collider = new RectCollider(this);
 
-        this.x = this.game.width + Math.random() * this.game.width * 0.5 + 100;
-        this.y = Math.random() * this.game.height * 0.5;
-        this.vx = Math.random() + 1;
+        this.x = this.scene.width + Math.random() * this.scene.width * 0.5 + 100;
+        this.y = Math.random() * this.scene.height * 0.5;
+        this.vx = -(Math.random() + 1);
         this.angle = 0;
         this.va = Math.random() * 0.1 + 0.1;
     }
@@ -56,12 +55,16 @@ class Bee extends Enemy {
     public override update(frameTimer: FrameTimer): void {
         super.update(frameTimer);
         this.angle += this.va;
+        this.x += this.vx + this.scene.vx;
         this.y += Math.sin(this.angle);
+        if (this.isOffscreen("left")) {
+            this.destroy();
+        }
     }
 
     public override onCollisionEnter(collision: Collision) {
         if (collision.other(this).type === "obstacle" && collision.direction === "left") {
-            this.vy = -this.vx;
+            this.vy = this.vx;
         } else {
             this.vy = 0;
         }

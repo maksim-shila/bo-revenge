@@ -1,54 +1,43 @@
-import { Animator, FrameTimer, GameObject, GameObjectContainer, RectCollider } from "../../../engine";
-import Game from "../../game";
+import { Animator, FrameTimer, GameObject, GameObjectContainer, Global, RectCollider, Scene } from "../../../engine";
 
 export default class BrickFloor extends GameObjectContainer {
 
-    private readonly maxBlocksSize = 5;
+    private lastBlock: BrickFloorBlock | null = null;
 
-    constructor(private game: Game) {
-        super();
+    constructor(scene: Scene) {
+        super(scene);
     }
 
     public override update(frameTimer: FrameTimer): void {
         super.update(frameTimer);
-        let lastBlock: GameObject | null = this.objects.length > 0 ? this.objects[this.objects.length - 1] : null;
-        while ((lastBlock?.rx ?? 0) < this.game.width) {
-            if (this.objects.length > this.maxBlocksSize) {
-                throw new Error("Looks like you have infinited cycle while building BrickFloor");
-            }
-
-            const block = new BrickFloorBlock(this.game);
-            block.x = lastBlock?.rx ?? 0;
-            block.y = this.game.height - block.height;
-            this.spawn(block);
-            lastBlock = block;
+        while ((this.lastBlock?.rx ?? 0) < Global.window.width) {
+            const block = new BrickFloorBlock(this.scene);
+            block.x = this.lastBlock?.rx ?? 0;
+            block.y = this.scene.height - block.height;
+            this.lastBlock = block;
+            this.scene.add(block);
         }
     }
 }
 
-const Source = { imageId: "brickFloorImg", width: 6946, height: 354 };
-
 class BrickFloorBlock extends GameObject {
 
-    private readonly game: Game;
-
-    constructor(game: Game) {
+    constructor(scene: Scene) {
+        const source = { imageId: "brickFloorImg", width: 6946, height: 354 };
         const scale = 0.2;
-        const width = Math.floor(Source.width * scale);
-        const height = Math.floor(Source.height * scale);
+        const width = Math.floor(source.width * scale);
+        const height = Math.floor(source.height * scale);
 
-        super("obstacle", 0, 0, width, height);
-        this.game = game;
-
-        this.animator = new Animator(Source.imageId, width, height, Source.width, Source.height);
+        super("obstacle", scene, width, height);
+        this.animator = new Animator(source.imageId, width, height, source.width, source.height);
         this.collider = new RectCollider(this);
     }
 
     public override update(frameTimer: FrameTimer): void {
         super.update(frameTimer);
+        this.x += this.scene.vx;
         if (this.rx < 0) {
             this.destroy();
         }
-        this.x -= this.game.speed;
     }
 }

@@ -1,12 +1,14 @@
 interface GlobalConfig {
     debug: boolean,
-    window: {
-        width: number,
-        height: number
-    }
+    window: GameWindow,
     cheats: {
         [key: string]: unknown
     }
+}
+
+export interface GameWindow {
+    width: number,
+    height: number
 }
 
 export const Global: GlobalConfig = {

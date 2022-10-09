@@ -1,16 +1,16 @@
-import { Animator, Collision, CollisionDirection, FrameTimer, Global, RigidBody } from "../engine";
+import { Animator, Collision, CollisionDirection, FrameTimer, GameObject, Global, RigidBody, Scene } from "../engine";
 import { RectCollider } from "../engine/collision/Collider";
 import InputHandler from "../input/input-handler";
-import Sprite from "./core/sprite";
 import Game from "./game";
 import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
+import { Enemy } from "./sprites/enemies/Enemy";
 
 const Source = { image: "playerImg", widht: 100.3, height: 91.3 };
 
-export default class Player extends Sprite {
+export default class Player extends GameObject {
 
     public stateManager: PlayerStateManager;
-    public state!: State; // Initialized on Game class constructor
+    public state: State;
 
     public readonly maxVX = 10;
     public readonly maxVY = 30;
@@ -30,16 +30,19 @@ export default class Player extends Sprite {
     public canMoveForward = true;
     private readonly input: InputHandler;
 
-    constructor(game: Game, input: InputHandler) {
-        super("player", game, Source.widht, Source.height);
+    constructor(private readonly game: Game, scene: Scene, input: InputHandler) {
+        super("player", scene, Source.widht, Source.height);
         this.input = input;
-        this.stateManager = new PlayerStateManager(this.game);
         this.collider = new RectCollider(this, 10, 10, -20, -10);
         this.rigidBody = new RigidBody(2);
         this.animator = new Animator(Source.image, Source.widht, Source.height);
 
         this.x = 0;
-        this.y = this.game.height - this.height - 200;
+        this.y = this.scene.height - this.height - 200;
+
+        this.stateManager = new PlayerStateManager(this);
+        this.state = this.stateManager.get("sitting");
+        this.state.init();
     }
 
     public get energy(): number {
@@ -80,8 +83,23 @@ export default class Player extends Sprite {
     public override update(frameTimer: FrameTimer): void {
         super.update(frameTimer);
         this.state.update(this.input);
-        this.moveX();
-        this.moveY();
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        this.disallowOffscreen("left");
+        this.disallowOffscreen("right");
+        if (this.isOffscreen("bottom")) {
+            this.x = 0;
+            this.y = 100;
+        }
+
+        if (!this.onGround && !this.noGravity) {
+            this.vy += this.weight;
+        } else if (this.onGround && !this._onJump) {
+            this._jumps = 0;
+        }
+
         if (this.input.keyReleased("jump") && this._onJump && this.state.type !== "dash") {
             if (!this.onGround && this.vy < 0) {
                 this.vy = this.vy < -5 ? -5 : this.vy;
@@ -91,15 +109,11 @@ export default class Player extends Sprite {
         if (this.state.type !== "rolling") {
             this.energy += 0.1;
         }
-        if (this.isOffscreen("left", "right", "bottom")) {
-            this.x = 0;
-            this.y = 100;
-        }
     }
 
     public setState(type: PlayerStateType, input?: InputHandler, speedMultiplier = 0): void {
         this.state = this.stateManager.get(type);
-        this.game.speed = this.game.maxSpeed * speedMultiplier;
+        this.scene.vx = this.scene.vx_default * speedMultiplier;
         this.state.init(input);
     }
 
@@ -114,27 +128,11 @@ export default class Player extends Sprite {
         }
     }
 
-    private moveX(): void {
-        this.x += this.vx;
-        this.disallowOffscreen("left");
-        this.disallowOffscreen("right");
-    }
-
-    private moveY(): void {
-        this.y += this.vy;
-        if (!this.onGround && !this.noGravity) {
-            this.vy += this.weight;
-        } else if (this.onGround && !this._onJump) {
-            this._jumps = 0;
-        }
-    }
-
     public override onCollisionEnter(collision: Collision): void {
         const other = collision.other(this);
         if (other.type === "enemy") {
-            const enemy = other;
-            enemy.destroy();
-            this.game.collisions.add(enemy.cx, enemy.cy);
+            const enemy = other as Enemy;
+            enemy.die();
             if (this.state.type === "rolling" ||
                 this.state.type === "diving" ||
                 this.state.type === "dash") {
