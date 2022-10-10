@@ -5,7 +5,7 @@ import DebugWindow from "./debug-window";
 import EnemySpawner from "./sprites/enemies/EnemySpawner";
 import Player from "./sprites/Player";
 import BrickFloor from "./sprites/obstacles/BrickFloor";
-import { BrickWall, BrickWallSpawner } from "./sprites/obstacles/BrickWall";
+import { BrickWallSpawner } from "./sprites/obstacles/BrickWall";
 import UI from "./UI";
 
 export default class Game {
