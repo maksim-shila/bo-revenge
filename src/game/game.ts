@@ -5,7 +5,7 @@ import DebugWindow from "./debug-window";
 import EnemySpawner from "./sprites/enemies/EnemySpawner";
 import Player from "./sprites/Player";
 import BrickFloor from "./sprites/obstacles/BrickFloor";
-import { BrickWall } from "./sprites/obstacles/BrickWall";
+import { BrickWall, BrickWallSpawner } from "./sprites/obstacles/BrickWall";
 import UI from "./UI";
 
 export default class Game {
@@ -45,10 +45,8 @@ export default class Game {
         this.background = new Background(this.scene);
 
         this.scene.add(player);
-        this.scene.add(new BrickWall(this.scene, Math.floor(this.width / 3) * 1));
-        this.scene.add(new BrickWall(this.scene, Math.floor(this.width / 3) * 2));
-        this.scene.add(new BrickWall(this.scene, Math.floor(this.width / 3) * 3));
         this.scene.add(new BrickFloor(this.scene));
+        this.scene.add(new BrickWallSpawner(this.scene));
         this.scene.add(new EnemySpawner(player, this.scene));
 
         this.ui = new UI(this, player);

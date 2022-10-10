@@ -1,9 +1,9 @@
-import { Animation, AnimationRow, Global } from "../engine";
-import InputHandler from "../input/input-handler";
-import Player from "./sprites/Player";
-import Dust from "./sprites/particles/Dust";
-import Fire from "./sprites/particles/Fire";
-import Splash from "./sprites/particles/Splash";
+import { Animation, AnimationRow, Global, Hitbox, RectCollider } from "../../engine";
+import InputHandler from "../../input/input-handler";
+import Player from "./Player";
+import Dust from "./particles/Dust";
+import Fire from "./particles/Fire";
+import Splash from "./particles/Splash";
 
 export type PlayerStateType =
     "standing" |
@@ -93,6 +93,11 @@ class Standing extends PlayerState {
 
     public override init(input: InputHandler): void {
         super.init(input);
+
+        this.player.hitbox = new Hitbox();
+        this.player.hitbox.add(new RectCollider(this.player, 50, 25, -65, -60), "head");
+        this.player.hitbox.add(new RectCollider(this.player, 25, 50, -60, -65), "body");
+
         this.player.vx = 0;
     }
 
@@ -121,6 +126,11 @@ class Jumping extends PlayerState {
 
     public override init(input: InputHandler): void {
         super.init(input);
+
+        this.player.hitbox = new Hitbox();
+        this.player.hitbox.add(new RectCollider(this.player, 50, 25, -65, -60), "head");
+        this.player.hitbox.add(new RectCollider(this.player, 25, 50, -60, -65), "body");
+
         if (this.player.jumps === 0) {
             this.player.dashInCD = false;
         }
@@ -152,6 +162,10 @@ class Falling extends PlayerState {
 
     public override init(input: InputHandler): void {
         super.init(input);
+
+        this.player.hitbox = new Hitbox();
+        this.player.hitbox.add(new RectCollider(this.player, 50, 25, -65, -60), "head");
+        this.player.hitbox.add(new RectCollider(this.player, 25, 50, -60, -65), "body");
     }
 
     public update(input: InputHandler): void {
@@ -177,6 +191,10 @@ class Running extends PlayerState {
 
     public override init(input: InputHandler): void {
         super.init(input);
+
+        this.player.hitbox = new Hitbox();
+        this.player.hitbox.add(new RectCollider(this.player, 50, 25, -65, -60), "head");
+        this.player.hitbox.add(new RectCollider(this.player, 25, 50, -60, -65), "body");
     }
 
     public update(input: InputHandler): void {
@@ -201,6 +219,11 @@ class Sitting extends PlayerState {
 
     public override init(input: InputHandler): void {
         super.init(input);
+
+        this.player.hitbox = new Hitbox();
+        this.player.hitbox.add(new RectCollider(this.player, 50, 37, -65, -60), "head");
+        this.player.hitbox.add(new RectCollider(this.player, 25, 62, -60, -65), "body");
+
         this.player.vx = 0;
     }
 
@@ -224,6 +247,9 @@ class Rolling extends PlayerState {
 
     public override init(input: InputHandler): void {
         super.init(input);
+
+        this.player.hitbox = new Hitbox();
+        this.player.hitbox.add(new RectCollider(this.player, 25, 35, -50, -40));
     }
 
     public update(input: InputHandler): void {
@@ -253,6 +279,10 @@ class Diving extends PlayerState {
 
     public override init(input: InputHandler): void {
         super.init(input);
+
+        this.player.hitbox = new Hitbox();
+        this.player.hitbox.add(new RectCollider(this.player, 25, 35, -50, -40));
+
         this.player.vx = 0;
         this.player.vy = 15;
     }
@@ -281,6 +311,8 @@ class Hit extends PlayerState {
 
     public override init(input: InputHandler): void {
         super.init(input);
+
+        this.player.hitbox = null;
         this.player.vx = 0;
     }
 
@@ -310,6 +342,10 @@ class Dash extends PlayerState {
 
     public override init(input: InputHandler): void {
         super.init(input);
+
+        this.player.hitbox = new Hitbox();
+        this.player.hitbox.add(new RectCollider(this.player, 25, 35, -50, -40));
+
         if (!input) {
             return;
         }

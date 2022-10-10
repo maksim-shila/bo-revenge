@@ -36,7 +36,7 @@ class Zombie extends Enemy {
         const width = Math.floor(Source.width * scale);
         const height = Math.floor(Source.height * scale);
 
-        super(scene, width, height, "zombie");
+        super(scene, width, height);
         this.name = "zombie";
 
         this.animator = new Animator(Source.imageId, width, height, Source.width, Source.height);

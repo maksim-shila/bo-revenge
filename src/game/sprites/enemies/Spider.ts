@@ -1,4 +1,4 @@
-import { AnimationRow, Animator, FrameTimer, RigidBody, Scene } from "../../../engine";
+import { AnimationRow, Animator, FrameTimer, Hitbox, RigidBody, Scene } from "../../../engine";
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
 import { RectCollider } from "../../../engine/collision/Collider";
@@ -43,6 +43,8 @@ class Spider extends Enemy {
         this.animator.animation = new AnimationRow(0, 6);
         this.rigidBody = new RigidBody();
         this.collider = new RectCollider(this);
+        this.hitbox = new Hitbox();
+        this.hitbox.add(new RectCollider(this, 30, 30, -60, -60));
 
         this.x = this.scene.width + 200;
         this.y = Math.random() * this.scene.height * 0.5;

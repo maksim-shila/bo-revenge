@@ -2,7 +2,7 @@ import { Animator, Collision, CollisionDirection, FrameTimer, GameObject, Global
 import { RectCollider } from "../../engine/collision/Collider";
 import InputHandler from "../../input/input-handler";
 import Game from "../game";
-import { PlayerStateManager, PlayerStateType, State } from "../playerStates";
+import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
 import { Enemy } from "./enemies/Enemy";
 
 const Source = { image: "playerImg", widht: 100.3, height: 91.3 };
@@ -128,18 +128,20 @@ export default class Player extends GameObject {
         }
     }
 
-    public override onCollisionEnter(collision: Collision): void {
+    public override onCollision(collision: Collision): void {
         const other = collision.other(this);
         if (other.type === "enemy") {
             const enemy = other as Enemy;
-            enemy.die();
-            if (this.state.type === "rolling" ||
-                this.state.type === "diving" ||
-                this.state.type === "dash") {
-                this.game.score++;
-            } else {
-                if (!Global.cheats.immortal) {
-                    this.setState("hit", this.input);
+            if (this.hitbox?.hasCollision(enemy.hitbox)) {
+                enemy.die();
+                if (this.state.type === "rolling" ||
+                    this.state.type === "diving" ||
+                    this.state.type === "dash") {
+                    this.game.score++;
+                } else {
+                    if (!Global.cheats.immortal) {
+                        this.setState("hit", this.input);
+                    }
                 }
             }
         }

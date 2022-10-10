@@ -1,6 +1,6 @@
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
-import { AnimationRow, Animator, FrameTimer, RectCollider, RigidBody, Scene } from "../../../engine";
+import { AnimationRow, Animator, FrameTimer, Hitbox, RectCollider, RigidBody, Scene } from "../../../engine";
 
 export default class PlantSpawner implements Spawner {
     private spawnFrames = 300;
@@ -39,6 +39,7 @@ class Plant extends Enemy {
         this.animator.animation = new AnimationRow(0, 2);
         this.rigidBody = new RigidBody(2);
         this.collider = new RectCollider(this);
+        this.hitbox = new Hitbox(this);
 
         this.x = this.scene.width + 200; // move spawn offscreen to have time until plant falls
         this.y = this.scene.height - this.height - 100;

@@ -1,4 +1,4 @@
-import { Animator, Collider, Collision, CollisionDirection, FrameTimer, Global, RigidBody, Scene } from "..";
+import { Animator, Collider, Collision, CollisionDirection, FrameTimer, Global, Hitbox, RigidBody, Scene } from "..";
 
 type Direction = "right" | "left" | "top" | "bottom";
 
@@ -9,6 +9,7 @@ export abstract class GameObject {
     private _collider: Collider | null = null;
     private _rigidBody: RigidBody | null = null;
     private _animator: Animator | null = null;
+    private _hitbox: Hitbox | null = null;
 
     private _destroyActions: ((self: GameObject) => unknown)[] = [];
     private _destroyed = false;
@@ -25,6 +26,14 @@ export abstract class GameObject {
         public width = 0,
         public height = 0
     ) { }
+
+    public get hitbox(): Hitbox | null {
+        return this._hitbox;
+    }
+
+    public set hitbox(value: Hitbox | null) {
+        this._hitbox = value;
+    }
 
     public get collider(): Collider | null {
         return this._collider;
@@ -95,6 +104,7 @@ export abstract class GameObject {
         this._animator?.draw(context, this.x, this.y);
         if (Global.debug) {
             this._collider?.draw(context);
+            this._hitbox?.draw(context);
         }
     }
 

@@ -1,7 +1,30 @@
-import { FrameTimer, GameObject, Global, RectCollider, Scene } from "../../../engine";
+import { FrameTimer, GameObject, GameObjectContainer, Global, RectCollider, Scene } from "../../../engine";
 import SpriteDimension from "../../../engine/utils/SpriteDimension";
 
 const Brick = new SpriteDimension("brickImg", 239, 224, 0.2);
+
+export class BrickWallSpawner extends GameObjectContainer {
+
+    private readonly distance = 700;
+    private lastWall: BrickWall;
+
+    constructor(scene: Scene) {
+        super(scene);
+        this.lastWall = new BrickWall(this.scene, this.distance);
+        this.scene.add(this.lastWall);
+        while (this.lastWall.x < this.scene.width) {
+            this.lastWall = new BrickWall(this.scene, this.lastWall.rx + this.distance);
+            this.scene.add(this.lastWall);
+        }
+    }
+
+    public override update(): void {
+        if (this.lastWall.x < this.scene.width) {
+            this.lastWall = new BrickWall(this.scene, this.lastWall.rx + this.distance);
+            this.scene.add(this.lastWall);
+        }
+    }
+}
 
 export class BrickWall extends GameObject {
 
@@ -22,7 +45,7 @@ export class BrickWall extends GameObject {
         super.update(frameTimer);
         this.x += this.scene.vx;
         if (this.rx < -50) {
-            this.x = this.scene.width + 200;
+            this.destroy();
         }
     }
 

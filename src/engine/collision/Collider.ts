@@ -9,7 +9,7 @@ export interface Collider {
     width: number;
     height: number;
     hasCollision(other: Collider): boolean;
-    draw(context: CanvasRenderingContext2D): void;
+    draw(context: CanvasRenderingContext2D, color?: string): void;
 }
 
 export class RectCollider implements Collider {
@@ -53,10 +53,10 @@ export class RectCollider implements Collider {
         return this.parent.height + this.offsetHeight;
     }
 
-    public draw(context: CanvasRenderingContext2D): void {
+    public draw(context: CanvasRenderingContext2D, color = "white"): void {
         context.save();
-        context.lineWidth = 3;
-        context.strokeStyle = "white";
+        context.lineWidth = 2;
+        context.strokeStyle = color;
         context.strokeRect(this.x, this.y, this.width, this.height);
         context.restore();
     }

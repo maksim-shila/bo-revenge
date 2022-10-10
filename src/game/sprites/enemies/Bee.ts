@@ -1,6 +1,6 @@
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
-import { AnimationRow, Animator, Collision, FrameTimer, RectCollider, RigidBody, Scene } from "../../../engine";
+import { AnimationRow, Animator, Collision, FrameTimer, Hitbox, RectCollider, RigidBody, Scene } from "../../../engine";
 
 export default class BeeSpawner implements Spawner {
     private readonly spawnFrames = 150;
@@ -44,6 +44,7 @@ class Bee extends Enemy {
         this.animator.animation = new AnimationRow(0, 6);
         this.rigidBody = new RigidBody();
         this.collider = new RectCollider(this);
+        this.hitbox = new Hitbox(this);
 
         this.x = this.scene.width + Math.random() * this.scene.width * 0.5 + 100;
         this.y = Math.random() * this.scene.height * 0.5;
