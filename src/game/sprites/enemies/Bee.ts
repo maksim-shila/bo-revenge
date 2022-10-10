@@ -1,6 +1,6 @@
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
-import { AnimationRow, Animator, Collision, FrameTimer, Hitbox, RectCollider, RigidBody, Scene } from "../../../engine";
+import { AnimationRow, Animator, Collision, CollisionDirection, FrameTimer, Hitbox, RectCollider, RigidBody, Scene } from "../../../engine";
 
 export default class BeeSpawner implements Spawner {
     private readonly spawnFrames = 150;
@@ -57,17 +57,13 @@ class Bee extends Enemy {
         super.update(frameTimer);
         this.angle += this.va;
         this.x += this.vx + this.scene.vx;
-        this.y += Math.sin(this.angle);
+        this.y += Math.sin(this.angle) + this.vy;
         if (this.isOffscreen("left")) {
             this.destroy();
         }
     }
 
-    public override onCollisionEnter(collision: Collision) {
-        if (collision.other(this).type === "obstacle" && collision.direction === "left") {
-            this.vy = this.vx;
-        } else {
-            this.vy = 0;
-        }
+    public override onObstacleCollisions(directions: CollisionDirection[]) {
+        this.vy = directions.includes("left") ? -Math.abs(this.vx) : 0;
     }
 }

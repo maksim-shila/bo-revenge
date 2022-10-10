@@ -42,7 +42,7 @@ class Plant extends Enemy {
         this.hitbox = new Hitbox(this);
 
         this.x = this.scene.width + 200; // move spawn offscreen to have time until plant falls
-        this.y = this.scene.height - this.height - 100;
+        this.y = this.scene.height - this.height - 90;
         this.vx = 0;
         this.vy = 0;
     }

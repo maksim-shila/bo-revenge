@@ -10,7 +10,8 @@ export default class BrickFloor extends GameObjectContainer {
 
     public override update(frameTimer: FrameTimer): void {
         super.update(frameTimer);
-        while ((this.lastBlock?.rx ?? 0) < Global.window.width) {
+        // add '+ (this.lastBlock?.width ?? 0)' to add additional offscreen platform for enemies spawn
+        while ((this.lastBlock?.rx ?? 0) < this.scene.width + (this.lastBlock?.width ?? 0)) {
             const block = new BrickFloorBlock(this.scene);
             block.x = this.lastBlock?.rx ?? 0;
             block.y = this.scene.height - block.height;

@@ -46,7 +46,7 @@ class Zombie extends Enemy {
         this.collider = new RectCollider(this, 10, 0, -20, 0);
 
         this.x = this.scene.width + 200; // move spawn offscreen to have time until plant falls
-        this.y = this.scene.height - this.height - 200;
+        this.y = this.scene.height - this.height - 90;
         this.vx = -(Math.random() * 1 + 1);
         this.vy = 0;
     }
