@@ -1,4 +1,4 @@
-import { Animator, FrameTimer, GameObject, GameObjectContainer, Global, RectCollider, Scene } from "../../../engine";
+import { Animator, FrameTimer, GameObject, GameObjectContainer, RectCollider, Scene } from "../../../engine";
 
 export default class BrickFloor extends GameObjectContainer {
 

@@ -1,6 +1,6 @@
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
-import { AnimationRow, Animator, Collision, CollisionDirection, FrameTimer, Hitbox, RectCollider, RigidBody, Scene } from "../../../engine";
+import { AnimationRow, Animator, CollisionDirection, FrameTimer, Hitbox, RectCollider, RigidBody, Scene } from "../../../engine";
 
 export default class BeeSpawner implements Spawner {
     private readonly spawnFrames = 150;
