@@ -116,7 +116,7 @@ export class CollisionHandler {
             });
 
             const sprite = collider.parent;
-            if (directions.some(d => d === "bottom")) {
+            if (directions.some(d => d === "bottom") && sprite.vy >= 0) {
                 sprite.rigidBody!.onGround = true;
                 sprite.vy = 0;
             } else {

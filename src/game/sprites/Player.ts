@@ -153,7 +153,7 @@ export default class Player extends GameObject {
         }
         if (directions.includes("right")) {
             this.canMoveForward = false;
-            if (!["standing", "jumping", "falling", "sitting", "diving"].includes(this.state.type)) {
+            if (!["standing", "jumping", "falling", "sitting", "diving"].includes(this.state.type) && !this._onJump) {
                 this.setState("standing", this.input, 0);
             }
         } else {
