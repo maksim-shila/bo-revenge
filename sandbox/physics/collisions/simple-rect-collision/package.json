@@ -1,0 +1,40 @@
+{
+  "name": "lets-do-it",
+  "version": "0.0.1",
+  "main": "src/electron.js",
+  "author": "",
+  "license": "ISC",
+  "targets": {
+    "main": false
+  },
+  "scripts": {
+    "dev": "parcel -p 3000 src/index.html --dist-dir build-dev",
+    "dev:electron": "electron src/electron.dev.js",
+    "build": "parcel build src/index.html --dist-dir build --public-url ./",
+    "build:win": "npm run build && electron-builder -w"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.23",
+    "electron": "^21.0.1",
+    "electron-builder": "^23.3.3",
+    "parcel": "^2.7.0",
+    "typescript": "^4.8.4"
+  },
+  "build": {
+    "appId": "lets.do.it",
+    "files": ["src/electron.js", "build/**/*"],
+    "mac": {
+      "target": "dmg",
+      "icon": "src/assets/logo.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/logo.png"
+    },
+    "linux": {
+      "target": "deb",
+      "icon": "src/assets/logo.png",
+      "category": "Development"
+    }
+  }
+}
