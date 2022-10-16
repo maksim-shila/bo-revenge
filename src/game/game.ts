@@ -46,6 +46,12 @@ export default class Game {
     public stop(): void {
         this._running = false;
         this.scene?.destroy();
+        this.scene = null;
+    }
+
+    public restart(): void {
+        this.stop();
+        this.start();
     }
 
     public pause(): void {

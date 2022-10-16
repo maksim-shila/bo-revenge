@@ -18,14 +18,10 @@ window.addEventListener("load", () => {
 
     const input = new InputHandler();
     const canvas = new Canvas(Global.window.width, Global.window.height);
-    let game = newGame();
 
-    function newGame(): Game {
-        const game = new Game(Global.window.width, Global.window.height, input);
-        game.onPause = (): void => gameMenu.show();
-        game.onContinue = (): void => gameMenu.hide();
-        return game;
-    }
+    const game = new Game(Global.window.width, Global.window.height, input);
+    game.onPause = (): void => gameMenu.show();
+    game.onContinue = (): void => gameMenu.hide();
 
     const mainMenu = new MainMenu({
         onStartNewGame: (): void => {
@@ -42,14 +38,11 @@ window.addEventListener("load", () => {
             game.continue();
         },
         onRestart: (): void => {
-            game.stop();
-            game = newGame();
-            game.start();
+            game.restart();
             gameMenu.hide();
         },
         onExit: (): void => {
             game.stop();
-            game = newGame();
             canvas.hide();
             gameMenu.hide();
             mainMenu.show();
