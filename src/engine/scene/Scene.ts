@@ -69,4 +69,7 @@ export class Scene {
     public draw(context: CanvasRenderingContext2D): void {
         this._objects.forEach(object => object.draw(context));
     }
+
+    public destroy() {
+    }
 }

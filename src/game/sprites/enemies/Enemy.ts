@@ -1,5 +1,5 @@
 import { GameObject, Scene } from "../../../engine";
-import EnemyDieAnimation from "./EnemyDieAnimation";
+import EnemyDieAnimation from "./animation/EnemyDieAnimation";
 
 export abstract class Enemy extends GameObject {
 

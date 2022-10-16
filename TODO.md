@@ -7,3 +7,5 @@
 - [ ] Add charge to rolling
 - [ ] Add dash around a wall
 - [ ] Add left-down and right-down dashes
+- [ ] Add lives and game over menu
+- [ ] There are frame drops, need to fix

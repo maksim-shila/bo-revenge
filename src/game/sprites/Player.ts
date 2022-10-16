@@ -36,10 +36,6 @@ export default class Player extends GameObject {
         this.collider = new RectCollider(this, 10, 10, -20, -10);
         this.rigidBody = new RigidBody(2);
         this.animator = new Animator(Source.image, Source.widht, Source.height);
-
-        this.x = 0;
-        this.y = this.scene.height - this.height - 200;
-
         this.stateManager = new PlayerStateManager(this);
         this.state = this.stateManager.get("sitting");
         this.state.init();

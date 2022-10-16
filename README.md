@@ -7,13 +7,13 @@
 - [EsLint VSCode extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
 ## Local development:
+
 - yarn install
 - yarn dev
-- open http://localhost:3000
+- open http://localhost:3000/ or run _yarn dev:electron_ to run desktop version attached to localhost
 
-## Run desktop version:
-- yarn dev
-- yarn dev:electron
+## Pack:
+- yarn build:win (:mac)
 
 ## Notes
 Fill free to do anything you want
