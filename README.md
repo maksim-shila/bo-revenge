@@ -19,3 +19,6 @@
 Fill free to do anything you want
 
 Use sandbox to see/add useful samples
+
+## Useful Links
+- [Kanban Board](https://miro.com/app/board/uXjVPLaA6Ac=/)
