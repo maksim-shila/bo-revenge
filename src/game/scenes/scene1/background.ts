@@ -1,4 +1,4 @@
-import { Scene } from "../engine";
+import { Scene } from "../../../engine";
 
 export default class Background {
 

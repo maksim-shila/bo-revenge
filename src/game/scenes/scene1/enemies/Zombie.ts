@@ -1,6 +1,6 @@
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
-import { AnimationRow, Animator, CollisionDirection, FrameTimer, RectCollider, RigidBody, Scene } from "../../../engine";
+import { AnimationRow, Animator, CollisionDirection, FrameTimer, RectCollider, RigidBody, Scene } from "../../../../engine";
 
 export default class ZombieSpawner implements Spawner {
     private nextSpawnFrame = 2000;
@@ -58,6 +58,10 @@ class Zombie extends Enemy {
         }
         this.x += this.vx + this.scene.vx;
         this.y += this.vy;
+
+        if (this.isOffscreen(["left", "bottom"])) {
+            this.destroy();
+        }
     }
 
     public override onObstacleCollisions(directions: CollisionDirection[]) {

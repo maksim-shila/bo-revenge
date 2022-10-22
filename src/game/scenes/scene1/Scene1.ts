@@ -1,11 +1,11 @@
 import { FrameTimer, Scene } from "../../../engine";
 import InputHandler from "../../../input/input-handler";
-import Background from "../../background";
+import Background from "./background";
 import Game from "../../game";
-import EnemySpawner from "../../sprites/enemies/EnemySpawner";
-import BrickFloor from "../../sprites/obstacles/BrickFloor";
-import { BrickWallSpawner } from "../../sprites/obstacles/BrickWall";
-import Player from "../../sprites/Player";
+import EnemySpawner from "./enemies/EnemySpawner";
+import BrickFloor from "./obstacles/BrickFloor";
+import { BrickWallSpawner } from "./obstacles/BrickWall";
+import Player from "../../common/Player";
 
 export default class Scene1 extends Scene {
 
@@ -16,6 +16,9 @@ export default class Scene1 extends Scene {
 
     constructor(game: Game, input: InputHandler) {
         super(game.width, game.height);
+
+        this.vx_default = -3;
+        this.vx = this.vx_default;
 
         this.player = new Player(game, this, input);
         this.player.x = 0;

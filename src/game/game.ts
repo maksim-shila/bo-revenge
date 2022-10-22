@@ -3,6 +3,7 @@ import InputHandler from "../input/input-handler";
 import DebugWindow from "./debug-window";
 import UI from "./UI";
 import Scene1 from "./scenes/scene1/Scene1";
+import Scene2 from "./scenes/scene2/Scene2";
 
 export default class Game {
 
@@ -93,9 +94,13 @@ export default class Game {
 
     private startScene1() {
         const scene = new Scene1(this, this.input);
-        scene.vx = -3;
-        scene.vx_default = -3;
+        this.scene = scene;
+        this.ui = new UI(this, scene.player);
+        this.debugWindow = new DebugWindow(scene.player, scene);
+    }
 
+    private startScene2() {
+        const scene = new Scene2(this, this.input);
         this.scene = scene;
         this.ui = new UI(this, scene.player);
         this.debugWindow = new DebugWindow(scene.player, scene);

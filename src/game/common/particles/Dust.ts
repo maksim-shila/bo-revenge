@@ -17,7 +17,7 @@ export default class Dust extends Particle {
 
     public override draw(context: CanvasRenderingContext2D): void {
         context.beginPath();
-        context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        context.arc(this.drawX, this.drawY, this.size, 0, Math.PI * 2);
         context.fillStyle = this.color;
         context.fill();
     }

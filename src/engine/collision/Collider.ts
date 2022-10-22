@@ -45,6 +45,14 @@ export class RectCollider implements Collider {
         return this.y + this.height;
     }
 
+    public get drawX(): number {
+        return this.parent.drawX + this.offsetX;
+    }
+
+    public get drawY(): number {
+        return this.parent.drawY + this.offsetY;
+    }
+
     public get width(): number {
         return this.parent.width + this.offsetWidth;
     }
@@ -57,7 +65,7 @@ export class RectCollider implements Collider {
         context.save();
         context.lineWidth = 2;
         context.strokeStyle = color;
-        context.strokeRect(this.x, this.y, this.width, this.height);
+        context.strokeRect(this.drawX, this.drawY, this.width, this.height);
         context.restore();
     }
 

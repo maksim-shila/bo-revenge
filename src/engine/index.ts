@@ -11,5 +11,6 @@ export * from "./game-object/GameObjectContainer";
 export * from "./game-object/RigidBody";
 
 export * from "./scene/Scene";
+export * from "./scene/camera/Camera";
 
 export * from "./utils/FrameTimer";

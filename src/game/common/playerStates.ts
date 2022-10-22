@@ -1,9 +1,9 @@
-import { Animation, AnimationRow, Global, Hitbox, RectCollider } from "../../engine";
+import { AnimationRow, Animation, Hitbox, RectCollider, Global } from "../../engine";
 import InputHandler from "../../input/input-handler";
-import Player from "./Player";
 import Dust from "./particles/Dust";
 import Fire from "./particles/Fire";
 import Splash from "./particles/Splash";
+import Player from "./Player";
 
 export type PlayerStateType =
     "standing" |
