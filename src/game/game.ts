@@ -46,6 +46,10 @@ export default class Game {
 
     public stop(): void {
         this._running = false;
+        this.paused = false;
+        this.debugWindow = null;
+        this.ui = null;
+        this.score = 0;
         this.scene?.destroy();
         this.scene = null;
     }

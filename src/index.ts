@@ -60,10 +60,11 @@ window.addEventListener("load", () => {
             lastTime = timeStamp;
             if (game.paused) {
                 gameMenu.update(input);
+            } else {
+                canvas.clear();
+                game.update(input, { timeStamp, deltaTime });
+                game.draw(canvas.context);
             }
-            canvas.clear();
-            game.update(input, { timeStamp, deltaTime });
-            game.draw(canvas.context);
         }
 
         requestAnimationFrame(animate);
