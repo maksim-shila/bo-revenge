@@ -1,7 +1,7 @@
-import { AnimationRow, Animator, FrameTimer, Hitbox, RigidBody, Scene } from "../../../engine";
+import { AnimationRow, Animator, FrameTimer, Hitbox, RigidBody, Scene } from "../../../../engine";
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
-import { RectCollider } from "../../../engine/collision/Collider";
+import { RectCollider } from "../../../../engine/collision/Collider";
 
 export default class SpiderSpawner implements Spawner {
     private spawnFrames = 200;
@@ -60,7 +60,7 @@ class Spider extends Enemy {
         }
         this.x += this.scene.vx;
         this.y += this.vy;
-        if (this.isOffscreen("top")) {
+        if (this.isOffscreen(["left", "top"])) {
             this.destroy();
         }
     }
@@ -75,8 +75,8 @@ class Spider extends Enemy {
         context.beginPath();
         context.strokeStyle = "black";
         context.lineWidth = 1;
-        context.moveTo(this.x + this.width * 0.5, 0);
-        context.lineTo(this.x + this.width * 0.5, this.y + this.height * 0.5);
+        context.moveTo(this.drawX + this.width * 0.5, 0);
+        context.lineTo(this.drawX + this.width * 0.5, this.drawY + this.height * 0.5);
         context.stroke();
         context.restore();
     }

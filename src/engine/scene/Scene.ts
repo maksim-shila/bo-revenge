@@ -1,10 +1,11 @@
-import { CollisionHandler, FrameTimer, GameObject, GameObjectContainer } from "..";
+import { CollisionHandler, FrameTimer, GameObject, GameObjectContainer, Camera } from "..";
 
-export class Scene {
+export abstract class Scene {
 
     private _objects: GameObject[] = [];
     private _containers: GameObjectContainer[] = [];
     private _colliders = new CollisionHandler();
+    private _camera: Camera;
 
     public vx = 0;
     public vx_default = 0;
@@ -12,7 +13,9 @@ export class Scene {
     constructor(
         public readonly width: number,
         public readonly height: number
-    ) { }
+    ) {
+        this._camera = new Camera(0, 0, width, height);
+    }
 
     public get colliders(): CollisionHandler {
         return this._colliders;
@@ -20,6 +23,14 @@ export class Scene {
 
     public get particles(): GameObject[] {
         return this._objects.filter(o => o.type === "particle");
+    }
+
+    public get camera(): Camera {
+        return this._camera;
+    }
+
+    protected set camera(value: Camera) {
+        this._camera = value;
     }
 
     public get sprites(): GameObject[] {
@@ -64,6 +75,7 @@ export class Scene {
         this._containers.forEach(container => container.update(frameTimer));
         this._objects.forEach(object => object.update(frameTimer));
         this._colliders.update();
+        this._camera.update();
     }
 
     public draw(context: CanvasRenderingContext2D): void {

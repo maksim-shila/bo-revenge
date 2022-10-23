@@ -1,5 +1,5 @@
-import { FrameTimer, GameObject, GameObjectContainer, Global, RectCollider, Scene } from "../../../engine";
-import SpriteDimension from "../../../engine/utils/SpriteDimension";
+import { FrameTimer, GameObject, GameObjectContainer, Global, RectCollider, Scene } from "../../../../engine";
+import SpriteDimension from "../../../../engine/utils/SpriteDimension";
 
 const Brick = new SpriteDimension("brickImg", 239, 224, 0.2);
 
@@ -58,8 +58,8 @@ export class BrickWall extends GameObject {
                     0,
                     Brick.sw,
                     Brick.sh,
-                    this.x + Brick.width * i,
-                    this.y + Brick.height * j,
+                    this.drawX + Brick.width * i,
+                    this.drawY + Brick.height * j,
                     Brick.width,
                     Brick.height);
             }

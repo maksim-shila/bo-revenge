@@ -3,7 +3,7 @@ import { RectCollider } from "../../engine/collision/Collider";
 import InputHandler from "../../input/input-handler";
 import Game from "../game";
 import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
-import { Enemy } from "./enemies/Enemy";
+import { Enemy } from "../scenes/scene1/enemies/Enemy";
 
 const Source = { image: "playerImg", widht: 100.3, height: 91.3 };
 
@@ -85,7 +85,7 @@ export default class Player extends GameObject {
 
         this.disallowOffscreen("left");
         this.disallowOffscreen("right");
-        if (this.isOffscreen("bottom")) {
+        if (this.isOffscreen(["bottom"])) {
             this.x = 0;
             this.y = 100;
         }

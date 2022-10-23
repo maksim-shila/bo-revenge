@@ -1,4 +1,4 @@
-import { AnimationRow, Animator, FrameTimer, GameObject, Scene } from "../../../../engine";
+import { AnimationRow, Animator, FrameTimer, GameObject, Scene } from "../../../../../engine";
 
 const Source = { imageId: "boomImg", width: 100, height: 90 };
 

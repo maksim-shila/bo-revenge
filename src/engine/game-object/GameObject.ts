@@ -83,6 +83,14 @@ export abstract class GameObject {
         return this.y + this.height * 0.5;
     }
 
+    public get drawX(): number {
+        return this.x - (this.scene.camera?.x ?? 0);
+    }
+
+    public get drawY(): number {
+        return this.y - (this.scene.camera?.y ?? 0);
+    }
+
     public get destroyed(): boolean {
         return this._destroyed;
     }
@@ -101,7 +109,7 @@ export abstract class GameObject {
     }
 
     public draw(context: CanvasRenderingContext2D): void {
-        this._animator?.draw(context, this.x, this.y);
+        this._animator?.draw(context, this.drawX, this.drawY);
         if (Global.debug) {
             this._collider?.draw(context);
             this._hitbox?.draw(context);
@@ -113,17 +121,17 @@ export abstract class GameObject {
     public onObstacleCollisions?(directions: CollisionDirection[]): void;
     public onCollisionExit?(collision: Collision): void;
 
-    public isOffscreen(...directions: Direction[]): boolean {
+    public isOffscreen(directions: Direction[] = ["top", "bottom", "left", "right"]): boolean {
         const _isOffscreen = (direction: Direction): boolean => {
             switch (direction) {
                 case "right":
-                    return this.x > this.scene.width;
+                    return this.x > this.scene.camera.rx;
                 case "left":
-                    return this.x < 0 - this.width;
+                    return this.x < this.scene.camera.x - this.width;
                 case "bottom":
-                    return this.y > this.scene.height;
+                    return this.y > this.scene.camera.ry;
                 case "top":
-                    return this.y < 0 - this.height;
+                    return this.y < this.scene.camera.y - this.height;
             }
         };
         for (let i = 0; i < directions.length; ++i) {
@@ -138,13 +146,13 @@ export abstract class GameObject {
         const _isTouching = (direction: Direction): boolean => {
             switch (direction) {
                 case "right":
-                    return this.x >= this.scene.width - this.width;
+                    return this.x >= this.scene.camera.rx - this.width;
                 case "left":
-                    return this.x <= 0;
+                    return this.x <= this.scene.camera.x;
                 case "bottom":
-                    return this.y >= this.scene.height - this.height;
+                    return this.y >= this.scene.camera.ry - this.height;
                 case "top":
-                    return this.y <= 0;
+                    return this.y <= this.scene.camera.y;
             }
         };
         for (let i = 0; i < directions.length; ++i) {
@@ -158,19 +166,19 @@ export abstract class GameObject {
     public resetPosition(direction: Direction): void {
         switch (direction) {
             case "right":
-                this.x = this.scene.width - this.width;
+                this.x = this.scene.camera.rx - this.width;
                 this.vx = 0;
                 break;
             case "left":
-                this.x = 0;
+                this.x = this.scene.camera.x;
                 this.vx = 0;
                 break;
             case "bottom":
-                this.y = this.scene.height - this.height;
+                this.y = this.scene.camera.ry - this.height;
                 this.vy = 0;
                 break;
             case "top":
-                this.y = 0;
+                this.y = this.scene.camera.y;
                 this.vy = 0;
                 break;
         }

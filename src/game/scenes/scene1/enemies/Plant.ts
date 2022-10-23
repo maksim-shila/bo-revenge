@@ -1,6 +1,6 @@
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
-import { AnimationRow, Animator, FrameTimer, Hitbox, RectCollider, RigidBody, Scene } from "../../../engine";
+import { AnimationRow, Animator, FrameTimer, Hitbox, RectCollider, RigidBody, Scene } from "../../../../engine";
 
 export default class PlantSpawner implements Spawner {
     private spawnFrames = 300;
@@ -54,7 +54,7 @@ class Plant extends Enemy {
         }
         this.x += this.scene.vx;
         this.y += this.vy;
-        if (this.isOffscreen("left")) {
+        if (this.isOffscreen(["left", "bottom"])) {
             this.destroy();
         }
     }

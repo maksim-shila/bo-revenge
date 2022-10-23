@@ -1,6 +1,6 @@
 import { FrameTimer, Scene } from "../engine";
 import InputHandler from "../input/input-handler";
-import Player from "./sprites/Player";
+import Player from "./common/Player";
 
 export default class DebugWindow {
 
@@ -72,9 +72,11 @@ export default class DebugWindow {
         this.show(context, "Particles", `${this.scene.particles.length}`, 2, 10);
 
         const colliders = this.scene.colliders;
+        const offscreenObjects = colliders.watchObjects.filter(o => o.isOffscreen());
         this.show(context, "Watch objects", `${colliders.watchObjects.length}`, 2, 12);
-        this.show(context, "Colliders", `${colliders.watchPairs.length}`, 2, 13);
-        this.show(context, "Collisions", `${colliders.collisions.length}`, 2, 14);
+        this.show(context, "Offscreen Objects", `${offscreenObjects.length}`, 2, 13);
+        this.show(context, "Colliders", `${colliders.watchPairs.length}`, 2, 14);
+        this.show(context, "Collisions", `${colliders.collisions.length}`, 2, 15);
         context.restore();
     }
 

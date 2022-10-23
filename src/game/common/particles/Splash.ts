@@ -23,6 +23,6 @@ export default class Splash extends Particle {
     }
 
     public override draw(context: CanvasRenderingContext2D): void {
-        context.drawImage(this.image, this.x, this.y, this.size, this.size);
+        context.drawImage(this.image, this.drawX, this.drawY, this.size, this.size);
     }
 }
