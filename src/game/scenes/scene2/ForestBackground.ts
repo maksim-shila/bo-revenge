@@ -2,18 +2,14 @@ import { Scene } from "../../../engine";
 
 export default class ForestBackground {
 
-    private readonly width: number;
-    private readonly height: number;
     private readonly layers: Layer[];
 
     constructor(private readonly scene: Scene) {
-        this.width = 1667;
-        this.height = 500;
         this.layers = [
-            new Layer(this.scene, this.width, this.height, 0, "forestImg_1"),
-            new Layer(this.scene, this.width, this.height, 0.2, "forestImg_2"),
-            new Layer(this.scene, this.width, this.height, 0.6, "forestImg_3"),
-            new Layer(this.scene, this.width, this.height, 0.6, "forestImg_4")
+            new Layer(this.scene, 0.7, "forestImg_1"),
+            new Layer(this.scene, 0.8, "forestImg_2"),
+            new Layer(this.scene, 1, "forestImg_3"),
+            new Layer(this.scene, 1, "forestImg_4")
         ];
     }
 
@@ -26,39 +22,44 @@ export default class ForestBackground {
     }
 }
 
+const Source = { width: 1667, height: 500, scale: 1.35 };
 class Layer {
 
-    private readonly scale = 1.35;
     private readonly image: CanvasImageSource;
+    private readonly width: number;
+    private readonly height: number;
     private x: number;
     private y: number;
 
     constructor(
         private readonly scene: Scene,
-        private readonly width: number,
-        private readonly height: number,
         private readonly speedModifier: number,
         imageId: string
     ) {
         this.image = document.getElementById(imageId) as CanvasImageSource;
-        this.x = 0;
+        this.width = Source.width * Source.scale;
+        this.height = Source.height * Source.scale;
+        this.x = this.scene.camera.x;
         this.y = 0;
     }
 
     public update(): void {
-        this.x -= Math.floor(this.scene.camera.dx * this.speedModifier);
+        this.x = -1 * (this.scene.camera.x % (this.width / this.speedModifier)) * this.speedModifier;
     }
 
     public draw(context: CanvasRenderingContext2D): void {
-        context.drawImage(
-            this.image,
-            0,
-            0,
-            this.width,
-            this.height,
-            this.x,
-            this.y,
-            this.width * this.scale,
-            this.height * this.scale);
+        for (let i = 0; i < Math.ceil(this.scene.width / this.width) + 1; ++i) {
+            context.drawImage(
+                this.image,
+                0,
+                0,
+                Source.width,
+                Source.height,
+                this.x + this.width * i - i,
+                this.y,
+                this.width,
+                this.height);
+        }
+
     }
 }
