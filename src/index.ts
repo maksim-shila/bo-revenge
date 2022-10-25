@@ -5,8 +5,7 @@ import Canvas from "./utils/canvas";
 import InputHandler from "./input/input-handler";
 import { Global } from "./engine";
 
-window.addEventListener("load", () => {
-
+window.addEventListener("load", (loadEvent) => {
     Global.window.width = window.innerWidth;
     Global.window.height = 650;
 
@@ -49,26 +48,29 @@ window.addEventListener("load", () => {
         }
     });
 
-    let lastTime = 0;
+    let updateTime = loadEvent.timeStamp;
+    requestAnimationFrame(animate);
+
     function animate(timeStamp: number): void {
+        requestAnimationFrame(animate);
         input.update();
+
         if (!game.running) {
             mainMenu.update(input);
-        }
-        else {
-            const deltaTime = timeStamp - lastTime;
-            lastTime = timeStamp;
-            if (game.paused) {
-                gameMenu.update(input);
-            } else {
-                canvas.clear();
-                game.update(input, { timeStamp, deltaTime });
-                game.draw(canvas.context);
-            }
+            return;
         }
 
-        requestAnimationFrame(animate);
+        if (game.paused) {
+            gameMenu.update(input);
+            return;
+        }
+        
+        while (updateTime < timeStamp) {
+            updateTime += Global.physicsUpdateMs;
+            game.update(input, { timeStamp: updateTime, deltaTime: Global.physicsUpdateMs });
+        }
+
+        canvas.clear();
+        game.draw(canvas.context);
     }
-
-    animate(0);
 });
