@@ -1,4 +1,4 @@
-import { Scene } from "../../../engine";
+import * as Bad from "bad-engine";
 
 export default class Background {
 
@@ -6,7 +6,7 @@ export default class Background {
     private readonly height: number;
     private readonly layers: Layer[];
 
-    constructor(private readonly scene: Scene) {
+    constructor(private readonly scene: Bad.Scene) {
         this.width = 1667;
         this.height = 500;
         this.layers = [
@@ -33,7 +33,7 @@ class Layer {
     private y: number;
 
     constructor(
-        private readonly scene: Scene,
+        private readonly scene: Bad.Scene,
         private readonly width: number,
         private readonly height: number,
         private readonly speedModifier: number,

@@ -1,10 +1,10 @@
-import { GameObject, Scene } from "../../../engine";
+import * as Bad from "bad-engine";
 
-export default abstract class Particle extends GameObject {
+export default abstract class Particle extends Bad.GameObject {
 
     protected size = 1;
 
-    constructor(scene: Scene) {
+    constructor(scene: Bad.Scene) {
         super("particle", scene);
     }
 

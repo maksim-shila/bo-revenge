@@ -1,4 +1,4 @@
-import { AnimationRow, Animation, Hitbox, RectCollider, Global } from "../../engine";
+import * as Bad from "bad-engine";
 import InputHandler from "../../input/input-handler";
 import Dust from "./particles/Dust";
 import Fire from "./particles/Fire";
@@ -18,13 +18,13 @@ export type PlayerStateType =
 type States = { [key in PlayerStateType]: State };
 
 const Animations = {
-    Standing: new AnimationRow(0, 7),
-    Jumping: new AnimationRow(1, 7),
-    Falling: new AnimationRow(2, 7),
-    Running: new AnimationRow(3, 9),
-    Hit: new AnimationRow(4, 11),
-    Sitting: new AnimationRow(5, 5),
-    Rolling: new AnimationRow(6, 7),
+    Standing: new Bad.AnimationRow(0, 7),
+    Jumping: new Bad.AnimationRow(1, 7),
+    Falling: new Bad.AnimationRow(2, 7),
+    Running: new Bad.AnimationRow(3, 9),
+    Hit: new Bad.AnimationRow(4, 11),
+    Sitting: new Bad.AnimationRow(5, 5),
+    Rolling: new Bad.AnimationRow(6, 7),
 };
 export class PlayerStateManager {
     private readonly states: States;
@@ -59,7 +59,7 @@ abstract class PlayerState implements State {
     constructor(
         public readonly type: PlayerStateType,
         protected readonly player: Player,
-        protected readonly animation: Animation
+        protected readonly animation: Bad.Animation
     ) { }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -94,9 +94,9 @@ class Standing extends PlayerState {
     public override init(input: InputHandler): void {
         super.init(input);
 
-        this.player.hitbox = new Hitbox();
-        this.player.hitbox.add(new RectCollider(this.player, 50, 25, -65, -60), "head");
-        this.player.hitbox.add(new RectCollider(this.player, 25, 50, -60, -65), "body");
+        this.player.hitbox = new Bad.Hitbox();
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 50, 25, -65, -60), "head");
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 50, -60, -65), "body");
 
         this.player.vx = 0;
     }
@@ -127,9 +127,9 @@ class Jumping extends PlayerState {
     public override init(input: InputHandler): void {
         super.init(input);
 
-        this.player.hitbox = new Hitbox();
-        this.player.hitbox.add(new RectCollider(this.player, 50, 25, -65, -60), "head");
-        this.player.hitbox.add(new RectCollider(this.player, 25, 50, -60, -65), "body");
+        this.player.hitbox = new Bad.Hitbox();
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 50, 25, -65, -60), "head");
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 50, -60, -65), "body");
 
         if (this.player.jumps === 0) {
             this.player.dashInCD = false;
@@ -163,9 +163,9 @@ class Falling extends PlayerState {
     public override init(input: InputHandler): void {
         super.init(input);
 
-        this.player.hitbox = new Hitbox();
-        this.player.hitbox.add(new RectCollider(this.player, 50, 25, -65, -60), "head");
-        this.player.hitbox.add(new RectCollider(this.player, 25, 50, -60, -65), "body");
+        this.player.hitbox = new Bad.Hitbox();
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 50, 25, -65, -60), "head");
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 50, -60, -65), "body");
     }
 
     public update(input: InputHandler): void {
@@ -192,9 +192,9 @@ class Running extends PlayerState {
     public override init(input: InputHandler): void {
         super.init(input);
 
-        this.player.hitbox = new Hitbox();
-        this.player.hitbox.add(new RectCollider(this.player, 50, 25, -65, -60), "head");
-        this.player.hitbox.add(new RectCollider(this.player, 25, 50, -60, -65), "body");
+        this.player.hitbox = new Bad.Hitbox();
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 50, 25, -65, -60), "head");
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 50, -60, -65), "body");
     }
 
     public update(input: InputHandler): void {
@@ -220,9 +220,9 @@ class Sitting extends PlayerState {
     public override init(input: InputHandler): void {
         super.init(input);
 
-        this.player.hitbox = new Hitbox();
-        this.player.hitbox.add(new RectCollider(this.player, 50, 37, -65, -60), "head");
-        this.player.hitbox.add(new RectCollider(this.player, 25, 62, -60, -65), "body");
+        this.player.hitbox = new Bad.Hitbox();
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 50, 37, -65, -60), "head");
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 62, -60, -65), "body");
 
         this.player.vx = 0;
     }
@@ -248,12 +248,12 @@ class Rolling extends PlayerState {
     public override init(input: InputHandler): void {
         super.init(input);
 
-        this.player.hitbox = new Hitbox();
-        this.player.hitbox.add(new RectCollider(this.player, 25, 35, -50, -40));
+        this.player.hitbox = new Bad.Hitbox();
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 35, -50, -40));
     }
 
     public update(input: InputHandler): void {
-        if (!Global.cheats.unlimitedEnergy) {
+        if (!Bad.Global.cheats.unlimitedEnergy) {
             this.player.energy -= 0.5;
         }
         this.player.scene.add(new Fire(this.player.scene, this.player.cx, this.player.cy));
@@ -280,8 +280,8 @@ class Diving extends PlayerState {
     public override init(input: InputHandler): void {
         super.init(input);
 
-        this.player.hitbox = new Hitbox();
-        this.player.hitbox.add(new RectCollider(this.player, 25, 35, -50, -40));
+        this.player.hitbox = new Bad.Hitbox();
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 35, -50, -40));
 
         this.player.vx = 0;
         this.player.vy = 15;
@@ -343,8 +343,8 @@ class Dash extends PlayerState {
     public override init(input: InputHandler): void {
         super.init(input);
 
-        this.player.hitbox = new Hitbox();
-        this.player.hitbox.add(new RectCollider(this.player, 25, 35, -50, -40));
+        this.player.hitbox = new Bad.Hitbox();
+        this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 35, -50, -40));
 
         if (!input) {
             return;

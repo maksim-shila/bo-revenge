@@ -1,7 +1,7 @@
+import * as Bad from "bad-engine";
 import Gamepad from "./gamepad/gamepad";
 import Keyboard from "./keyboard/keyboard";
 import { KeyAction } from "./key-action";
-import { Global } from "../engine";
 
 export default class InputHandler {
 
@@ -49,7 +49,7 @@ class Cheats {
 
     public apply(): void {
         if (this._keyboard.getSequence().endsWith("debug")) {
-            Global.debug = !Global.debug;
+            Bad.Global.debug = !Bad.Global.debug;
             this._keyboard.clearSequence();
         }
     }

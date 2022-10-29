@@ -1,25 +1,25 @@
+import * as Bad from "bad-engine";
 import Game from "./game/game";
 import MainMenu from "./menu/mainMenu";
 import GameMenu from "./game/gameMenu";
 import Canvas from "./utils/canvas";
 import InputHandler from "./input/input-handler";
-import { Global } from "./engine";
 
 window.addEventListener("load", () => {
 
-    Global.window.width = window.innerWidth;
-    Global.window.height = 650;
+    Bad.Global.window.width = window.innerWidth;
+    Bad.Global.window.height = 650;
 
-    Global.debug = false;
+    Bad.Global.debug = false;
 
-    Global.cheats.immortal = true;
-    Global.cheats.unlimitedEnergy = true;
-    Global.cheats.preventEnemiesSpawn = false;
+    Bad.Global.cheats.immortal = true;
+    Bad.Global.cheats.unlimitedEnergy = true;
+    Bad.Global.cheats.preventEnemiesSpawn = false;
 
     const input = new InputHandler();
-    const canvas = new Canvas(Global.window.width, Global.window.height);
+    const canvas = new Canvas(Bad.Global.window.width, Bad.Global.window.height);
 
-    const game = new Game(Global.window.width, Global.window.height, input);
+    const game = new Game(Bad.Global.window.width, Bad.Global.window.height, input);
     game.onPause = (): void => gameMenu.show();
     game.onContinue = (): void => gameMenu.hide();
 

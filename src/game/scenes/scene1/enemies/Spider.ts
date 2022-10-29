@@ -1,14 +1,13 @@
-import { AnimationRow, Animator, FrameTimer, Hitbox, RigidBody, Scene } from "../../../../engine";
+import * as Bad from "bad-engine";
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
-import { RectCollider } from "../../../../engine/collision/Collider";
 
 export default class SpiderSpawner implements Spawner {
     private spawnFrames = 200;
     private nextSpawnFrame = this.spawnFrames;
     private totalFrames = 0;
 
-    constructor(private readonly scene: Scene) { }
+    constructor(private readonly scene: Bad.Scene) { }
 
     public update(): void {
         this.totalFrames += -this.scene.vx;
@@ -34,17 +33,17 @@ class Spider extends Enemy {
 
     private readonly maxVY: number;
 
-    constructor(scene: Scene) {
+    constructor(scene: Bad.Scene) {
         super(scene, Source.width, Source.height);
         this.name = "spider";
 
-        this.animator = new Animator(Source.imageId, Source.width, Source.height);
+        this.animator = new Bad.Animator(Source.imageId, Source.width, Source.height);
         this.animator.fps = 20;
-        this.animator.animation = new AnimationRow(0, 6);
-        this.rigidBody = new RigidBody();
-        this.collider = new RectCollider(this);
-        this.hitbox = new Hitbox();
-        this.hitbox.add(new RectCollider(this, 30, 30, -60, -60));
+        this.animator.animation = new Bad.AnimationRow(0, 6);
+        this.rigidBody = new Bad.RigidBody();
+        this.collider = new Bad.RectCollider(this);
+        this.hitbox = new Bad.Hitbox();
+        this.hitbox.add(new Bad.RectCollider(this, 30, 30, -60, -60));
 
         this.x = this.scene.width + 200;
         this.y = Math.random() * this.scene.height * 0.5;
@@ -53,7 +52,7 @@ class Spider extends Enemy {
         this.vy = this.maxVY;
     }
 
-    public override update(frameTimer: FrameTimer): void {
+    public override update(frameTimer: Bad.FrameTimer): void {
         super.update(frameTimer);
         if (this.onGround) {
             this.vy = -Math.abs(this.maxVY);

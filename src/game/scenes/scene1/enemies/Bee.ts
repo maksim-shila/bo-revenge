@@ -1,13 +1,13 @@
+import * as Bad from "bad-engine";
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
-import { AnimationRow, Animator, CollisionDirection, FrameTimer, Hitbox, RectCollider, RigidBody, Scene } from "../../../../engine";
 
 export default class BeeSpawner implements Spawner {
     private readonly spawnFrames = 150;
     private totalFrames = 0;
     private nextSpawnFrame = this.spawnFrames;
 
-    constructor(private readonly scene: Scene) { }
+    constructor(private readonly scene: Bad.Scene) { }
 
     public update(): void {
         this.totalFrames += -this.scene.vx;
@@ -35,16 +35,16 @@ class Bee extends Enemy {
     private angle: number;
     private va: number;
 
-    constructor(scene: Scene) {
+    constructor(scene: Bad.Scene) {
         super(scene, Source.width, Source.height);
         this.name = "bee";
 
-        this.animator = new Animator(Source.imageId, Source.width, Source.height);
+        this.animator = new Bad.Animator(Source.imageId, Source.width, Source.height);
         this.animator.fps = 20;
-        this.animator.animation = new AnimationRow(0, 6);
-        this.rigidBody = new RigidBody();
-        this.collider = new RectCollider(this);
-        this.hitbox = new Hitbox(this);
+        this.animator.animation = new Bad.AnimationRow(0, 6);
+        this.rigidBody = new Bad.RigidBody();
+        this.collider = new Bad.RectCollider(this);
+        this.hitbox = new Bad.Hitbox(this);
 
         this.x = this.scene.width + Math.random() * this.scene.width * 0.5 + 100;
         this.y = Math.random() * this.scene.height * 0.5;
@@ -53,7 +53,7 @@ class Bee extends Enemy {
         this.va = Math.random() * 0.1 + 0.1;
     }
 
-    public override update(frameTimer: FrameTimer): void {
+    public override update(frameTimer: Bad.FrameTimer): void {
         super.update(frameTimer);
         this.angle += this.va;
         this.x += this.vx + this.scene.vx;
@@ -63,7 +63,7 @@ class Bee extends Enemy {
         }
     }
 
-    public override onObstacleCollisions(directions: CollisionDirection[]) {
+    public override onObstacleCollisions(directions: Bad.CollisionDirection[]) {
         this.vy = directions.includes("left") ? -Math.abs(this.vx) : 0;
     }
 }

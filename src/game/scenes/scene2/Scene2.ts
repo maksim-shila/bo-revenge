@@ -1,11 +1,11 @@
-import { Camera, FrameTimer, Scene } from "../../../engine";
+import * as Bad from "bad-engine";
 import InputHandler from "../../../input/input-handler";
 import Player from "../../common/Player";
 import Game from "../../game";
 import ForestBackground from "./ForestBackground";
 import Ground from "./obstacles/Ground";
 
-export default class Scene2 extends Scene {
+export default class Scene2 extends Bad.Scene {
 
     public readonly player: Player;
     private readonly background: ForestBackground;
@@ -17,7 +17,7 @@ export default class Scene2 extends Scene {
         this.player.x = 0;
         this.player.y = this.height - this.player.height - 200;
 
-        this.camera = new Camera(0, 0, this.width, this.height);
+        this.camera = new Bad.Camera(0, 0, this.width, this.height);
         this.camera.follow(this.player);
         this.camera.deadZone.x = 0;
         this.camera.deadZone.y = 0;
@@ -31,7 +31,7 @@ export default class Scene2 extends Scene {
         this.add(this.player);
     }
 
-    public override update(frameTimer: FrameTimer): void {
+    public override update(frameTimer: Bad.FrameTimer): void {
         this.background.update();
         super.update(frameTimer);
     }

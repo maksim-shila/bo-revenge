@@ -1,10 +1,10 @@
-import { Scene } from "../../../engine";
+import * as Bad from "bad-engine";
 
 export default class ForestBackground {
 
     private readonly layers: Layer[];
 
-    constructor(private readonly scene: Scene) {
+    constructor(private readonly scene: Bad.Scene) {
         this.layers = [
             new Layer(this.scene, 0.7, "forestImg_1"),
             new Layer(this.scene, 0.8, "forestImg_2"),
@@ -32,7 +32,7 @@ class Layer {
     private y: number;
 
     constructor(
-        private readonly scene: Scene,
+        private readonly scene: Bad.Scene,
         private readonly speedModifier: number,
         imageId: string
     ) {

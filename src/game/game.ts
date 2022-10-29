@@ -1,4 +1,4 @@
-import { FrameTimer, Global, Scene } from "../engine";
+import * as Bad from "bad-engine";
 import InputHandler from "../input/input-handler";
 import DebugWindow from "./debug-window";
 import UI from "./UI";
@@ -7,7 +7,7 @@ import Scene2 from "./scenes/scene2/Scene2";
 
 export default class Game {
 
-    private scene: Scene | null = null;
+    private scene: Bad.Scene | null = null;
     private ui: UI | null = null;
     private debugWindow: DebugWindow | null = null;
 
@@ -69,7 +69,7 @@ export default class Game {
         this.onContinue();
     }
 
-    public update(input: InputHandler, frameTimer: FrameTimer): void {
+    public update(input: InputHandler, frameTimer: Bad.FrameTimer): void {
         if (this.scene === null || this.debugWindow === null || this.ui === null) {
             throw new Error("Couldn't call game.update() since scene not ready");
         }
@@ -80,7 +80,7 @@ export default class Game {
         if (!this.paused) {
             this.scene.update(frameTimer);
         }
-        if (Global.debug) {
+        if (Bad.Global.debug) {
             this.debugWindow.update(input, frameTimer);
         }
     }
@@ -91,7 +91,7 @@ export default class Game {
         }
         this.scene.draw(context);
         this.ui.draw(context);
-        if (Global.debug) {
+        if (Bad.Global.debug) {
             this.debugWindow.draw(context);
         }
     }

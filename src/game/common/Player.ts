@@ -1,5 +1,4 @@
-import { Animator, Collision, CollisionDirection, FrameTimer, GameObject, Global, RigidBody, Scene } from "../../engine";
-import { RectCollider } from "../../engine/collision/Collider";
+import * as Bad from "bad-engine";
 import InputHandler from "../../input/input-handler";
 import Game from "../game";
 import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
@@ -7,7 +6,7 @@ import { Enemy } from "../scenes/scene1/enemies/Enemy";
 
 const Source = { image: "playerImg", widht: 100.3, height: 91.3 };
 
-export default class Player extends GameObject {
+export default class Player extends Bad.GameObject {
 
     public stateManager: PlayerStateManager;
     public state: State;
@@ -30,12 +29,12 @@ export default class Player extends GameObject {
     public canMoveForward = true;
     private readonly input: InputHandler;
 
-    constructor(private readonly game: Game, scene: Scene, input: InputHandler) {
+    constructor(private readonly game: Game, scene: Bad.Scene, input: InputHandler) {
         super("player", scene, Source.widht, Source.height);
         this.input = input;
-        this.collider = new RectCollider(this, 10, 10, -20, -10);
-        this.rigidBody = new RigidBody(2);
-        this.animator = new Animator(Source.image, Source.widht, Source.height);
+        this.collider = new Bad.RectCollider(this, 10, 10, -20, -10);
+        this.rigidBody = new Bad.RigidBody(2);
+        this.animator = new Bad.Animator(Source.image, Source.widht, Source.height);
         this.stateManager = new PlayerStateManager(this);
         this.state = this.stateManager.get("sitting");
         this.state.init();
@@ -76,7 +75,7 @@ export default class Player extends GameObject {
         }
     }
 
-    public override update(frameTimer: FrameTimer): void {
+    public override update(frameTimer: Bad.FrameTimer): void {
         super.update(frameTimer);
         this.state.update(this.input);
 
@@ -124,7 +123,7 @@ export default class Player extends GameObject {
         }
     }
 
-    public override onCollision(collision: Collision): void {
+    public override onCollision(collision: Bad.Collision): void {
         const other = collision.other(this);
         if (other.type === "enemy") {
             const enemy = other as Enemy;
@@ -135,7 +134,7 @@ export default class Player extends GameObject {
                     this.state.type === "dash") {
                     this.game.score++;
                 } else {
-                    if (!Global.cheats.immortal) {
+                    if (!Bad.Global.cheats.immortal) {
                         this.setState("hit", this.input);
                     }
                 }
@@ -143,7 +142,7 @@ export default class Player extends GameObject {
         }
     }
 
-    public override onObstacleCollisions(directions: CollisionDirection[]): void {
+    public override onObstacleCollisions(directions: Bad.CollisionDirection[]): void {
         if (this.state.type === "dash" && (directions.includes("right") || directions.includes("left"))) {
             this.state.exit(this.input);
         }
