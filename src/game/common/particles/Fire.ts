@@ -1,4 +1,4 @@
-import { Scene } from "../../../engine";
+import * as Bad from "bad-engine";
 import Particle from "./Particle";
 
 export default class Fire extends Particle {
@@ -6,7 +6,7 @@ export default class Fire extends Particle {
     private angle: number;
     private va: number;
 
-    constructor(scene: Scene, x: number, y: number) {
+    constructor(scene: Bad.Scene, x: number, y: number) {
         super(scene);
         this.image = document.getElementById("fireImg") as CanvasImageSource;
         this.x = x;

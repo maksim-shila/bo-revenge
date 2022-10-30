@@ -15,6 +15,9 @@
     "build:win": "npm run build && electron-builder -w",
     "build:mac": "npm run build && electron-builder -m"
   },
+  "dependencies": {
+    "bad-engine": "0.0.1"
+  },
   "devDependencies": {
     "@types/node": "^18.7.15",
     "@typescript-eslint/eslint-plugin": "^5.36.2",

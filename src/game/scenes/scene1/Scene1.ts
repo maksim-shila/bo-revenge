@@ -1,4 +1,4 @@
-import { FrameTimer, Scene } from "../../../engine";
+import { FrameTimer, Scene } from "bad-engine";
 import InputHandler from "../../../input/input-handler";
 import Background from "./background";
 import Game from "../../game";

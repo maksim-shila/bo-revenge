@@ -1,12 +1,12 @@
+import * as Bad from "bad-engine";
 import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
-import { AnimationRow, Animator, CollisionDirection, FrameTimer, RectCollider, RigidBody, Scene } from "../../../../engine";
 
 export default class ZombieSpawner implements Spawner {
     private nextSpawnFrame = 2000;
     private totalFrames = 0;
 
-    constructor(private readonly scene: Scene) { }
+    constructor(private readonly scene: Bad.Scene) { }
 
     public update(): void {
         this.totalFrames += -this.scene.vx;
@@ -31,7 +31,7 @@ export default class ZombieSpawner implements Spawner {
 const Source = { imageId: "zombieGreenImg", width: 562, height: 502 };
 
 class Zombie extends Enemy {
-    constructor(scene: Scene) {
+    constructor(scene: Bad.Scene) {
         const scale = 0.2;
         const width = Math.floor(Source.width * scale);
         const height = Math.floor(Source.height * scale);
@@ -39,11 +39,11 @@ class Zombie extends Enemy {
         super(scene, width, height);
         this.name = "zombie";
 
-        this.animator = new Animator(Source.imageId, width, height, Source.width, Source.height);
+        this.animator = new Bad.Animator(Source.imageId, width, height, Source.width, Source.height);
         this.animator.fps = 30;
-        this.animator.animation = new AnimationRow(0, 10);
-        this.rigidBody = new RigidBody(0.8);
-        this.collider = new RectCollider(this, 10, 0, -20, 0);
+        this.animator.animation = new Bad.AnimationRow(0, 10);
+        this.rigidBody = new Bad.RigidBody(0.8);
+        this.collider = new Bad.RectCollider(this, 10, 0, -20, 0);
 
         this.x = this.scene.width + 200; // move spawn offscreen to have time until plant falls
         this.y = this.scene.height - this.height - 90;
@@ -51,7 +51,7 @@ class Zombie extends Enemy {
         this.vy = 0;
     }
 
-    public override update(frameTimer: FrameTimer): void {
+    public override update(frameTimer: Bad.FrameTimer): void {
         super.update(frameTimer);
         if (!this.onGround) {
             this.vy += this.weight;
@@ -64,7 +64,7 @@ class Zombie extends Enemy {
         }
     }
 
-    public override onObstacleCollisions(directions: CollisionDirection[]) {
+    public override onObstacleCollisions(directions: Bad.CollisionDirection[]) {
         if (directions.includes("left")) {
             this.jump();
         }

@@ -1,4 +1,4 @@
-import { FrameTimer, Scene } from "../engine";
+import * as Bad from "bad-engine";
 import InputHandler from "../input/input-handler";
 import Player from "./common/Player";
 
@@ -11,7 +11,7 @@ export default class DebugWindow {
     private readonly frameTimerUpdateRate = 500;
     private frameTimerLastUpdate = 0;
     private readonly frameTimerStoreSize = 100;
-    private readonly frameTimers: FrameTimer[] = [];
+    private readonly frameTimers: Bad.FrameTimer[] = [];
     private deltaTime = 0;
     private fps = 0;
 
@@ -23,12 +23,12 @@ export default class DebugWindow {
 
     constructor(
         private readonly player: Player,
-        private readonly scene: Scene
+        private readonly scene: Bad.Scene
     ) {
         this.startX = scene.width - 800;
     }
 
-    public update(input: InputHandler, frameTimer: FrameTimer): void {
+    public update(input: InputHandler, frameTimer: Bad.FrameTimer): void {
         this.keyboardKeysPressed = input.keyboard.keys;
         this.gamepadConnected = input.gamepad.connected;
         this.gamepadKeysPressed = input.gamepad.keys;

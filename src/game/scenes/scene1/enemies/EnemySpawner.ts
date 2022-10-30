@@ -1,4 +1,4 @@
-import { FrameTimer, GameObjectContainer, Global, Scene } from "../../../../engine";
+import * as Bad from "bad-engine";
 import Player from "../../../common/Player";
 import { Enemy } from "./Enemy";
 import BeeSpawner from "./Bee";
@@ -6,11 +6,11 @@ import PlantSpawner from "./Plant";
 import SpiderSpawner from "./Spider";
 import ZombieSpawner from "./Zombie";
 
-export default class EnemySpawner extends GameObjectContainer {
+export default class EnemySpawner extends Bad.GameObjectContainer {
 
     private readonly spawners: Spawner[];
 
-    constructor(private readonly player: Player, scene: Scene) {
+    constructor(private readonly player: Player, scene: Bad.Scene) {
         super(scene);
         this.spawners = [
             new BeeSpawner(this.scene),
@@ -20,10 +20,10 @@ export default class EnemySpawner extends GameObjectContainer {
         ];
     }
 
-    public override update(frameTimer: FrameTimer): void {
+    public override update(frameTimer: Bad.FrameTimer): void {
         this.spawners.forEach(spawner => {
             spawner.update(frameTimer);
-            if (spawner.shouldSpawn && !Global.cheats.preventEnemiesSpawn) {
+            if (spawner.shouldSpawn && !Bad.Global.cheats.preventEnemiesSpawn) {
                 const enemy = spawner.spawn();
                 this.scene.addObject(enemy);
                 this.scene.colliders.watch([this.player], [enemy]);
@@ -34,6 +34,6 @@ export default class EnemySpawner extends GameObjectContainer {
 
 export interface Spawner {
     shouldSpawn: boolean;
-    update(frameTimer: FrameTimer): void;
+    update(frameTimer: Bad.FrameTimer): void;
     spawn(): Enemy;
 }

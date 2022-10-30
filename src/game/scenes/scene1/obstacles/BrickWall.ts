@@ -1,14 +1,13 @@
-import { FrameTimer, GameObject, GameObjectContainer, Global, RectCollider, Scene } from "../../../../engine";
-import SpriteDimension from "../../../../engine/utils/SpriteDimension";
+import * as Bad from "bad-engine";
 
-const Brick = new SpriteDimension("brickImg", 239, 224, 0.2);
+const Brick = new Bad.SpriteDimension("brickImg", 239, 224, 0.2);
 
-export class BrickWallSpawner extends GameObjectContainer {
+export class BrickWallSpawner extends Bad.GameObjectContainer {
 
     private readonly distance = 700;
     private lastWall: BrickWall;
 
-    constructor(scene: Scene) {
+    constructor(scene: Bad.Scene) {
         super(scene);
         this.lastWall = new BrickWall(this.scene, this.distance);
         this.scene.add(this.lastWall);
@@ -26,22 +25,22 @@ export class BrickWallSpawner extends GameObjectContainer {
     }
 }
 
-export class BrickWall extends GameObject {
+export class BrickWall extends Bad.GameObject {
 
     private readonly wallWidht = 2;
     private readonly wallHeight = 5;
 
-    constructor(scene: Scene, x: number) {
+    constructor(scene: Bad.Scene, x: number) {
         super("obstacle", scene);
         this.name = "brick_wall";
         this.width = Brick.width * this.wallWidht;
         this.height = Brick.height * this.wallHeight;
         this.x = x;
         this.y = this.scene.height - this.height - 70;
-        this.collider = new RectCollider(this);
+        this.collider = new Bad.RectCollider(this);
     }
 
-    public override update(frameTimer: FrameTimer): void {
+    public override update(frameTimer: Bad.FrameTimer): void {
         super.update(frameTimer);
         this.x += this.scene.vx;
         if (this.rx < -50) {
@@ -64,7 +63,7 @@ export class BrickWall extends GameObject {
                     Brick.height);
             }
         }
-        if (Global.debug) {
+        if (Bad.Global.debug) {
             this.collider?.draw(context);
         }
     }

@@ -1,11 +1,11 @@
-import { Scene } from "../../../engine";
+import * as Bad from "bad-engine";
 import Particle from "./Particle";
 
 export default class Splash extends Particle {
     private readonly image: CanvasImageSource;
     private gravity: number;
 
-    constructor(scene: Scene, x: number, y: number) {
+    constructor(scene: Bad.Scene, x: number, y: number) {
         super(scene);
         this.image = document.getElementById("fireImg") as CanvasImageSource;
         this.size = Math.random() * 100 + 100;
