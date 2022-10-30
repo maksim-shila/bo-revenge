@@ -1,12 +1,9 @@
 import * as Bad from "bad-engine";
-import InputHandler from "../input/input-handler";
 import Player from "./common/Player";
 
 export default class DebugWindow {
 
-    private keyboardKeysPressed: unknown[] = [];
-    private gamepadKeysPressed: unknown[] = [];
-    private gamepadConnected = false;
+    private keysPressed: string[] = [];
 
     private readonly frameTimerUpdateRate = 500;
     private frameTimerLastUpdate = 0;
@@ -28,10 +25,8 @@ export default class DebugWindow {
         this.startX = scene.width - 800;
     }
 
-    public update(input: InputHandler, frameTimer: Bad.FrameTimer): void {
-        this.keyboardKeysPressed = input.keyboard.keys;
-        this.gamepadConnected = input.gamepad.connected;
-        this.gamepadKeysPressed = input.gamepad.keys;
+    public update(input: () => Bad.Input, frameTimer: Bad.FrameTimer): void {
+        this.keysPressed = input().pressed;
 
         const frameTimersLength = this.frameTimers.unshift(frameTimer);
         if (frameTimersLength > this.frameTimerStoreSize) {
@@ -59,11 +54,9 @@ export default class DebugWindow {
         this.show(context, "PlayerVY", `${this.player.vy}`, 1, 5);
         this.show(context, "PlayerWeight", `${this.player.weight}`, 1, 6);
         this.show(context, "PlayerOnGround", `${this.player.onGround}`, 1, 7);
+        this.show(context, "Player State", `${this.player.state.type}`, 1, 8);
 
-        this.show(context, "Keyboard keys", this.keyboardKeysPressed.join(), 2, 1);
-        this.show(context, "Gamepad connected", `${this.gamepadConnected}`, 2, 2);
-        this.show(context, "Gamepad keys", this.gamepadKeysPressed.join(), 2, 3);
-
+        this.show(context, "Keys", this.keysPressed.join(), 2, 1);
         this.show(context, "FPS", `${Math.round(this.fps * 100) / 100}`, 2, 5);
         this.show(context, "Delta time", `${Math.round(this.deltaTime * 100) / 100}`, 2, 6);
 

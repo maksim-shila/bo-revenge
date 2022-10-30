@@ -1,4 +1,5 @@
-import InputHandler from "../input/input-handler";
+import * as Bad from "bad-engine";
+import { Actions } from "../input/Controls";
 import MenuList from "../menu/menuList";
 
 type GameMenuEvents = {
@@ -27,8 +28,8 @@ export default class GameMenu {
         exitBtn.addEventListener("click", events.onExit);
     }
 
-    public update(input: InputHandler): void {
-        if (input.keyPressedOnce("back")) {
+    public update(input: () => Bad.Input): void {
+        if (input().keyDownOnce(Actions.Back)) {
             this.continueBtn.click();
         }
         this.menuList.update(input);

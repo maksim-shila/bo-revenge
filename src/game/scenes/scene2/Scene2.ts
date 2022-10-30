@@ -1,5 +1,4 @@
 import * as Bad from "bad-engine";
-import InputHandler from "../../../input/input-handler";
 import Player from "../../common/Player";
 import Game from "../../game";
 import ForestBackground from "./ForestBackground";
@@ -10,7 +9,7 @@ export default class Scene2 extends Bad.Scene {
     public readonly player: Player;
     private readonly background: ForestBackground;
 
-    constructor(game: Game, input: InputHandler) {
+    constructor(game: Game, input: () => Bad.Input) {
         super(game.width, game.height);
 
         this.player = new Player(game, this, input);

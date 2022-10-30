@@ -1,8 +1,8 @@
 import * as Bad from "bad-engine";
-import InputHandler from "../../input/input-handler";
 import Game from "../game";
 import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
 import { Enemy } from "../scenes/scene1/enemies/Enemy";
+import { Actions } from "../../input/Controls";
 
 const Source = { image: "playerImg", widht: 100.3, height: 91.3 };
 
@@ -27,9 +27,9 @@ export default class Player extends Bad.GameObject {
 
     public canMoveBackward = true;
     public canMoveForward = true;
-    private readonly input: InputHandler;
+    private readonly input: () => Bad.Input;
 
-    constructor(private readonly game: Game, scene: Bad.Scene, input: InputHandler) {
+    constructor(private readonly game: Game, scene: Bad.Scene, input: () => Bad.Input) {
         super("player", scene, Source.widht, Source.height);
         this.input = input;
         this.collider = new Bad.RectCollider(this, 10, 10, -20, -10);
@@ -95,7 +95,7 @@ export default class Player extends Bad.GameObject {
             this._jumps = 0;
         }
 
-        if (this.input.keyReleased("jump") && this._onJump && this.state.type !== "dash") {
+        if (this.input().keyUp(Actions.Jump) && this._onJump && this.state.type !== "dash") {
             if (!this.onGround && this.vy < 0) {
                 this.vy = this.vy < -5 ? -5 : this.vy;
             }
@@ -106,7 +106,7 @@ export default class Player extends Bad.GameObject {
         }
     }
 
-    public setState(type: PlayerStateType, input?: InputHandler, speedMultiplier = 0): void {
+    public setState(type: PlayerStateType, input?: () => Bad.Input, speedMultiplier = 0): void {
         this.state = this.stateManager.get(type);
         this.scene.vx = this.scene.vx_default * speedMultiplier;
         this.state.init(input);
