@@ -3,7 +3,7 @@ import Game from "./game/game";
 import MainMenu from "./menu/mainMenu";
 import GameMenu from "./game/gameMenu";
 import Canvas from "./utils/canvas";
-import InputHandler from "./input/input-handler";
+import { InputHandler } from "./input/Controls";
 
 window.addEventListener("load", () => {
 
@@ -16,10 +16,9 @@ window.addEventListener("load", () => {
     Bad.Global.cheats.unlimitedEnergy = true;
     Bad.Global.cheats.preventEnemiesSpawn = false;
 
-    const input = new InputHandler();
     const canvas = new Canvas(Bad.Global.window.width, Bad.Global.window.height);
 
-    const game = new Game(Bad.Global.window.width, Bad.Global.window.height, input);
+    const game = new Game(Bad.Global.window.width, Bad.Global.window.height, InputHandler);
     game.onPause = (): void => gameMenu.show();
     game.onContinue = (): void => gameMenu.hide();
 
@@ -51,18 +50,19 @@ window.addEventListener("load", () => {
 
     let lastTime = 0;
     function animate(timeStamp: number): void {
-        input.update();
+        Bad.Inputs.Gamepads.update();
+
         if (!game.running) {
-            mainMenu.update(input);
+            mainMenu.update(InputHandler);
         }
         else {
             const deltaTime = timeStamp - lastTime;
             lastTime = timeStamp;
             if (game.paused) {
-                gameMenu.update(input);
+                gameMenu.update(InputHandler);
             } else {
                 canvas.clear();
-                game.update(input, { timeStamp, deltaTime });
+                game.update(InputHandler, { timeStamp, deltaTime });
                 game.draw(canvas.context);
             }
         }

@@ -1,5 +1,4 @@
-import { FrameTimer, Scene } from "bad-engine";
-import InputHandler from "../../../input/input-handler";
+import * as Bad from "bad-engine";
 import Background from "./background";
 import Game from "../../game";
 import EnemySpawner from "./enemies/EnemySpawner";
@@ -7,14 +6,14 @@ import BrickFloor from "./obstacles/BrickFloor";
 import { BrickWallSpawner } from "./obstacles/BrickWall";
 import Player from "../../common/Player";
 
-export default class Scene1 extends Scene {
+export default class Scene1 extends Bad.Scene {
 
     public readonly player: Player;
 
     private readonly background: Background;
     private readonly soundtrack: HTMLAudioElement;
 
-    constructor(game: Game, input: InputHandler) {
+    constructor(game: Game, input: () => Bad.Input) {
         super(game.width, game.height);
 
         this.vx_default = -3;
@@ -36,7 +35,7 @@ export default class Scene1 extends Scene {
         this.soundtrack.play();
     }
 
-    public override update(frameTimer: FrameTimer): void {
+    public override update(frameTimer: Bad.FrameTimer): void {
         this.background.update();
         super.update(frameTimer);
     }

@@ -1,4 +1,5 @@
-import InputHandler from "../input/input-handler";
+import * as Bad from "bad-engine";
+import { Actions } from "../input/Controls";
 import MenuList from "./menuList";
 
 type MainMenuEvents = {
@@ -50,7 +51,7 @@ export default class MainMenu {
         this.shown = false;
     }
 
-    public update(input: InputHandler): void {
+    public update(input: () => Bad.Input): void {
         this.shown && this.menuList.update(input);
         this.controls.shown && this.controls.update(input);
         this.highscores.shown && this.highscores.update(input);
@@ -85,8 +86,8 @@ class InnerMenu {
         this.shown = false;
     }
 
-    public update(input: InputHandler): void {
-        if (input.keyPressed("back")) {
+    public update(input: () => Bad.Input): void {
+        if (input().keyDown(Actions.Back)) {
             this.hide();
         }
     }

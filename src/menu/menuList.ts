@@ -1,4 +1,5 @@
-import InputHandler from "../input/input-handler";
+import * as Bad from "bad-engine";
+import { Actions } from "../input/Controls";
 
 export default class MenuList {
 
@@ -17,9 +18,9 @@ export default class MenuList {
         this.setActive(this.defaultBtn);
     }
 
-    public update(input: InputHandler): void {
+    public update(input: () => Bad.Input): void {
         this.changeActiveBtn(input);
-        if (input.keyPressedOnce("select")) {
+        if (input().keyDownOnce(Actions.Select)) {
             this.activeBtn?.click();
             this.setActive(this.defaultBtn);
         }
@@ -33,13 +34,13 @@ export default class MenuList {
         btn.classList.add("menu-item-active");
     }
 
-    private changeActiveBtn(input: InputHandler): void {
+    private changeActiveBtn(input: () => Bad.Input): void {
         if (!this.activeBtn) {
             this.activeBtn = this.menuButtons[0];
             return;
         }
-        const upPressed = input.keyPressedOnce("up");
-        const downPressed = input.keyPressedOnce("down");
+        const upPressed = input().keyDownOnce(Actions.Up);
+        const downPressed = input().keyDownOnce(Actions.Down);
         if (upPressed || downPressed) {
             const activeBtnIndex = this.menuButtons.indexOf(this.activeBtn);
             const newIndex = downPressed

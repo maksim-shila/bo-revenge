@@ -1,5 +1,5 @@
 import * as Bad from "bad-engine";
-import InputHandler from "../../input/input-handler";
+import { Actions } from "../../input/Controls";
 import Dust from "./particles/Dust";
 import Fire from "./particles/Fire";
 import Splash from "./particles/Splash";
@@ -49,9 +49,9 @@ export class PlayerStateManager {
 
 export interface State {
     type: PlayerStateType;
-    init(input?: InputHandler): void;
-    exit(input?: InputHandler): void;
-    update(input: InputHandler): void;
+    init(input?: () => Bad.Input): void;
+    exit(input?: () => Bad.Input): void;
+    update(input: () => Bad.Input): void;
 }
 
 abstract class PlayerState implements State {
@@ -63,7 +63,7 @@ abstract class PlayerState implements State {
     ) { }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public init(input: InputHandler): void {
+    public init(input: () => Bad.Input): void {
         if (this.player.animator) {
             this.animation.reset();
             this.player.animator.animation = this.animation;
@@ -71,16 +71,16 @@ abstract class PlayerState implements State {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public exit(input: InputHandler): void { }
+    public exit(input: () => Bad.Input): void { }
 
-    public abstract update(input: InputHandler): void;
+    public abstract update(input: () => Bad.Input): void;
 
-    protected allowHorizontalMovement(input: InputHandler): void {
-        if (input.keyPressed("left") && this.player.canMoveBackward) {
+    protected allowHorizontalMovement(input: () => Bad.Input): void {
+        if (input().keyDown(Actions.Left) && this.player.canMoveBackward) {
             this.player.vx = -this.player.maxVX;
-        } else if (input.keyPressed("right") && this.player.canMoveForward) {
+        } else if (input().keyDown(Actions.Right) && this.player.canMoveForward) {
             this.player.vx = this.player.maxVX;
-        } else if (input.keyReleased("left") || input.keyReleased("right")) {
+        } else if (input().keyUp(Actions.Left) || input().keyUp(Actions.Right)) {
             this.player.vx = 0;
         }
     }
@@ -91,7 +91,7 @@ class Standing extends PlayerState {
         super("standing", player, Animations.Standing);
     }
 
-    public override init(input: InputHandler): void {
+    public override init(input: () => Bad.Input): void {
         super.init(input);
 
         this.player.hitbox = new Bad.Hitbox();
@@ -101,19 +101,19 @@ class Standing extends PlayerState {
         this.player.vx = 0;
     }
 
-    public update(input: InputHandler): void {
+    public update(input: () => Bad.Input): void {
         this.allowHorizontalMovement(input);
-        if (input.keyPressedOnce("dash") && !this.player.dashInCD && this.player.canMoveForward) {
+        if (input().keyDownOnce(Actions.Dash) && !this.player.dashInCD && this.player.canMoveForward) {
             this.player.setState("dash", input, 1);
-        } else if (input.keyPressed("right") && this.player.canMoveForward) {
+        } else if (input().keyDown(Actions.Right) && this.player.canMoveForward) {
             this.player.setState("running", input, 1);
-        } else if (input.keyPressed("left") && this.player.canMoveBackward) {
+        } else if (input().keyDown(Actions.Left) && this.player.canMoveBackward) {
             this.player.setState("running", input, 1);
-        } else if (input.keyPressed("down")) {
+        } else if (input().keyDown(Actions.Down)) {
             this.player.setState("sitting", input, 0);
-        } else if (input.keyPressedOnce("jump")) {
+        } else if (input().keyDownOnce(Actions.Jump)) {
             this.player.setState("jumping", input, this.player.canMoveForward ? 1 : 0);
-        } else if (input.keyPressed("roll") && this.player.canStartRoll && this.player.canMoveForward) {
+        } else if (input().keyDown(Actions.Roll) && this.player.canStartRoll && this.player.canMoveForward) {
             this.player.setState("rolling", input, 2);
         }
     }
@@ -124,7 +124,7 @@ class Jumping extends PlayerState {
         super("jumping", player, Animations.Jumping);
     }
 
-    public override init(input: InputHandler): void {
+    public override init(input: () => Bad.Input): void {
         super.init(input);
 
         this.player.hitbox = new Bad.Hitbox();
@@ -137,17 +137,17 @@ class Jumping extends PlayerState {
         this.player.jump();
     }
 
-    public update(input: InputHandler): void {
+    public update(input: () => Bad.Input): void {
         this.allowHorizontalMovement(input);
-        if (input.keyPressedOnce("dash") && !this.player.dashInCD && this.player.canMoveForward) {
+        if (input().keyDownOnce(Actions.Dash) && !this.player.dashInCD && this.player.canMoveForward) {
             this.player.setState("dash", input, 1);
         } else if (this.player.vy > this.player.weight) {
             this.player.setState("falling", input, this.player.canMoveForward ? 1 : 0);
-        } else if (input.keyPressed("roll") && this.player.canStartRoll && this.player.canMoveForward) {
+        } else if (input().keyDown(Actions.Roll) && this.player.canStartRoll && this.player.canMoveForward) {
             this.player.setState("rolling", input, 2);
-        } else if (input.keyPressed("down")) {
+        } else if (input().keyDown(Actions.Down)) {
             this.player.setState("diving", input, 0);
-        } else if (input.keyPressedOnce("jump")) {
+        } else if (input().keyDownOnce(Actions.Jump)) {
             this.player.jump();
         } else if (this.player.onGround) {
             this.player.setState("running", input, 1);
@@ -160,7 +160,7 @@ class Falling extends PlayerState {
         super("falling", player, Animations.Falling);
     }
 
-    public override init(input: InputHandler): void {
+    public override init(input: () => Bad.Input): void {
         super.init(input);
 
         this.player.hitbox = new Bad.Hitbox();
@@ -168,17 +168,17 @@ class Falling extends PlayerState {
         this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 50, -60, -65), "body");
     }
 
-    public update(input: InputHandler): void {
+    public update(input: () => Bad.Input): void {
         this.allowHorizontalMovement(input);
-        if (input.keyPressedOnce("dash") && !this.player.dashInCD && this.player.canMoveForward) {
+        if (input().keyDownOnce(Actions.Dash) && !this.player.dashInCD && this.player.canMoveForward) {
             this.player.setState("dash", input, 1);
         } else if (this.player.onGround) {
             this.player.canMoveForward ?
                 this.player.setState("running", input, 1) :
                 this.player.setState("standing", input, 0);
-        } else if (input.keyPressed("down")) {
+        } else if (input().keyDown(Actions.Down)) {
             this.player.setState("diving", input, 0);
-        } else if (input.keyPressedOnce("jump")) {
+        } else if (input().keyDownOnce(Actions.Jump)) {
             this.player.setState("jumping", input, this.player.canMoveForward ? 1 : 0);
         }
     }
@@ -189,7 +189,7 @@ class Running extends PlayerState {
         super("running", player, Animations.Running);
     }
 
-    public override init(input: InputHandler): void {
+    public override init(input: () => Bad.Input): void {
         super.init(input);
 
         this.player.hitbox = new Bad.Hitbox();
@@ -197,16 +197,16 @@ class Running extends PlayerState {
         this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 50, -60, -65), "body");
     }
 
-    public update(input: InputHandler): void {
+    public update(input: () => Bad.Input): void {
         this.player.scene.add(new Dust(this.player.scene, this.player.cx, this.player.y + this.player.height));
         this.allowHorizontalMovement(input);
-        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+        if (input().keyDownOnce(Actions.Dash) && !this.player.dashInCD) {
             this.player.setState("dash", input, 1);
-        } else if (input.keyPressed("down")) {
+        } else if (input().keyDown(Actions.Down)) {
             this.player.setState("sitting", input, 0);
-        } else if (input.keyPressedOnce("jump")) {
+        } else if (input().keyDownOnce(Actions.Jump)) {
             this.player.setState("jumping", input, 1);
-        } else if (input.keyPressed("roll") && this.player.canStartRoll) {
+        } else if (input().keyDown(Actions.Roll) && this.player.canStartRoll) {
             this.player.setState("rolling", input, 2);
         }
     }
@@ -217,7 +217,7 @@ class Sitting extends PlayerState {
         super("sitting", player, Animations.Sitting);
     }
 
-    public override init(input: InputHandler): void {
+    public override init(input: () => Bad.Input): void {
         super.init(input);
 
         this.player.hitbox = new Bad.Hitbox();
@@ -227,14 +227,14 @@ class Sitting extends PlayerState {
         this.player.vx = 0;
     }
 
-    public update(input: InputHandler): void {
-        if (input.keyPressedOnce("dash") && !this.player.dashInCD && this.player.canMoveForward) {
+    public update(input: () => Bad.Input): void {
+        if (input().keyDownOnce(Actions.Dash) && !this.player.dashInCD && this.player.canMoveForward) {
             this.player.setState("dash", input, 1);
-        } else if (input.keyReleased("down")) {
+        } else if (input().keyUp(Actions.Down)) {
             this.player.canMoveForward ?
                 this.player.setState("running", input, 1) :
                 this.player.setState("standing", input, 0);
-        } else if (input.keyPressed("roll") && this.player.canStartRoll && this.player.canMoveForward) {
+        } else if (input().keyDown(Actions.Roll) && this.player.canStartRoll && this.player.canMoveForward) {
             this.player.setState("rolling", input, 2);
         }
     }
@@ -245,28 +245,28 @@ class Rolling extends PlayerState {
         super("rolling", player, Animations.Rolling);
     }
 
-    public override init(input: InputHandler): void {
+    public override init(input: () => Bad.Input): void {
         super.init(input);
 
         this.player.hitbox = new Bad.Hitbox();
         this.player.hitbox.add(new Bad.RectCollider(this.player, 25, 35, -50, -40));
     }
 
-    public update(input: InputHandler): void {
+    public update(input: () => Bad.Input): void {
         if (!Bad.Global.cheats.unlimitedEnergy) {
             this.player.energy -= 0.5;
         }
         this.player.scene.add(new Fire(this.player.scene, this.player.cx, this.player.cy));
         this.allowHorizontalMovement(input);
-        if (input.keyPressedOnce("dash") && !this.player.dashInCD) {
+        if (input().keyDownOnce(Actions.Dash) && !this.player.dashInCD) {
             this.player.setState("dash", input, 1);
-        } else if ((input.keyReleased("roll") || this.player.energy === 0) && this.player.onGround) {
+        } else if ((input().keyUp(Actions.Roll) || this.player.energy === 0) && this.player.onGround) {
             this.player.setState("running", input, 1);
-        } else if ((input.keyReleased("roll") || this.player.energy === 0) && !this.player.onGround) {
+        } else if ((input().keyUp(Actions.Roll) || this.player.energy === 0) && !this.player.onGround) {
             this.player.setState("falling", input, 1);
-        } else if (input.keyPressedOnce("jump")) {
+        } else if (input().keyDownOnce(Actions.Jump)) {
             this.player.jump();
-        } else if (!this.player.onGround && input.keyPressed("down")) {
+        } else if (!this.player.onGround && input().keyDown(Actions.Down)) {
             this.player.setState("diving", input, 0);
         }
     }
@@ -277,7 +277,7 @@ class Diving extends PlayerState {
         super("diving", player, Animations.Rolling);
     }
 
-    public override init(input: InputHandler): void {
+    public override init(input: () => Bad.Input): void {
         super.init(input);
 
         this.player.hitbox = new Bad.Hitbox();
@@ -287,10 +287,10 @@ class Diving extends PlayerState {
         this.player.vy = 15;
     }
 
-    public update(input: InputHandler): void {
+    public update(input: () => Bad.Input): void {
         this.player.scene.add(new Fire(this.player.scene, this.player.cx, this.player.cy));
         if (this.player.onGround) {
-            if (input.keyPressed("roll") && this.player.canStartRoll && this.player.canMoveForward) {
+            if (input().keyDown(Actions.Roll) && this.player.canStartRoll && this.player.canMoveForward) {
                 this.player.setState("rolling", input, 2);
             } else {
                 this.player.canMoveForward ?
@@ -309,14 +309,14 @@ class Hit extends PlayerState {
         super("hit", player, Animations.Hit);
     }
 
-    public override init(input: InputHandler): void {
+    public override init(input: () => Bad.Input): void {
         super.init(input);
 
         this.player.hitbox = null;
         this.player.vx = 0;
     }
 
-    public update(input: InputHandler): void {
+    public update(input: () => Bad.Input): void {
         if (this.animation.isMaxFrame) {
             if (this.player.onGround) {
                 this.player.setState("running", input, 1);
@@ -340,7 +340,7 @@ class Dash extends PlayerState {
         super("dash", player, Animations.Rolling);
     }
 
-    public override init(input: InputHandler): void {
+    public override init(input: () => Bad.Input): void {
         super.init(input);
 
         this.player.hitbox = new Bad.Hitbox();
@@ -354,16 +354,16 @@ class Dash extends PlayerState {
         this.player.dashInCD = true;
         this.startX = this.player.x;
         this.startY = this.player.y;
-        if (input.keyPressed("up") || input.keyPressed("right") || input.keyPressed("left")) {
-            if (input.keyPressed("up")) {
+        if (input().anyKeyDown([Actions.Up, Actions.Right, Actions.Left])) {
+            if (input().keyDown(Actions.Up)) {
                 this.player.vy = -this.speedY;
             } else {
                 this.player.vy = 0;
             }
 
-            if (input.keyPressed("right")) {
+            if (input().keyDown(Actions.Right)) {
                 this.player.vx = this.speedX;
-            } else if (input.keyPressed("left")) {
+            } else if (input().keyDown(Actions.Left)) {
                 this.player.vx = -this.speedX;
             } else {
                 this.player.vx = 0;
@@ -374,7 +374,7 @@ class Dash extends PlayerState {
         }
     }
 
-    public update(input: InputHandler): void {
+    public update(input: () => Bad.Input): void {
         this.player.scene.add(new Fire(this.player.scene, this.player.cx, this.player.cy));
         if (this.player.x > this.startX + this.distanceX ||
             this.player.x < this.startX - this.distanceX ||
@@ -385,7 +385,7 @@ class Dash extends PlayerState {
         }
     }
 
-    public override exit(input: InputHandler) {
+    public override exit(input: () => Bad.Input) {
         this.player.noGravity = false;
         this.player.vy = this.player.weight;
         if (this.player.onGround) {

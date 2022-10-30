@@ -1,9 +1,9 @@
 import * as Bad from "bad-engine";
-import InputHandler from "../input/input-handler";
 import DebugWindow from "./debug-window";
 import UI from "./UI";
 import Scene1 from "./scenes/scene1/Scene1";
 import Scene2 from "./scenes/scene2/Scene2";
+import { Actions } from "../input/Controls";
 
 export default class Game {
 
@@ -11,7 +11,7 @@ export default class Game {
     private ui: UI | null = null;
     private debugWindow: DebugWindow | null = null;
 
-    private readonly input: InputHandler;
+    private readonly input: () => Bad.Input;
 
     public readonly width: number;
     public readonly height: number;
@@ -25,7 +25,7 @@ export default class Game {
 
     private _totalFrames = 0;
 
-    constructor(width: number, height: number, input: InputHandler) {
+    constructor(width: number, height: number, input: () => Bad.Input) {
         this.width = width;
         this.height = height;
         this.input = input;
@@ -69,12 +69,12 @@ export default class Game {
         this.onContinue();
     }
 
-    public update(input: InputHandler, frameTimer: Bad.FrameTimer): void {
+    public update(input: () => Bad.Input, frameTimer: Bad.FrameTimer): void {
         if (this.scene === null || this.debugWindow === null || this.ui === null) {
             throw new Error("Couldn't call game.update() since scene not ready");
         }
         this._totalFrames += Math.abs(this.scene.vx); // Used as condition for enemies spawn. Not good place for it
-        if (input.keyPressedOnce("pause")) {
+        if (input().keyDownOnce(Actions.Pause)) {
             this.paused ? this.continue() : this.pause();
         }
         if (!this.paused) {
