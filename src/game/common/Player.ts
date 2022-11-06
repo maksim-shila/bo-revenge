@@ -79,6 +79,12 @@ export default class Player extends Bad.GameObject {
         super.update(frameTimer);
         this.state.update(this.input);
 
+        if (!this.onGround && !this.noGravity) {
+            this.vy += this.weight;
+        } else if (this.onGround && !this._onJump) {
+            this._jumps = 0;
+        }
+
         this.x += this.vx;
         this.y += this.vy;
 
@@ -87,12 +93,6 @@ export default class Player extends Bad.GameObject {
         if (this.isOffscreen(["bottom"])) {
             this.x = 0;
             this.y = 100;
-        }
-
-        if (!this.onGround && !this.noGravity) {
-            this.vy += this.weight;
-        } else if (this.onGround && !this._onJump) {
-            this._jumps = 0;
         }
 
         if (this.input().keyUp(Actions.Jump) && this._onJump && this.state.type !== "dash") {
