@@ -69,7 +69,7 @@ export default class Game {
         this.onContinue();
     }
 
-    public update(input: () => Bad.Input, frameTimer: Bad.FrameTimer): void {
+    public update(input: () => Bad.Input, frame: Bad.Frame): void {
         if (this.scene === null || this.debugWindow === null || this.ui === null) {
             throw new Error("Couldn't call game.update() since scene not ready");
         }
@@ -78,10 +78,10 @@ export default class Game {
             this.paused ? this.continue() : this.pause();
         }
         if (!this.paused) {
-            this.scene.update(frameTimer);
+            this.scene.update(frame);
         }
         if (Bad.Global.debug) {
-            this.debugWindow.update(input, frameTimer);
+            this.debugWindow.update(input, frame);
         }
     }
 

@@ -8,8 +8,8 @@ export default class BrickFloor extends Bad.GameObjectContainer {
         super(scene);
     }
 
-    public override update(frameTimer: Bad.FrameTimer): void {
-        super.update(frameTimer);
+    public override update(frame: Bad.Frame): void {
+        super.update(frame);
         // add '+ (this.lastBlock?.width ?? 0)' to add additional offscreen platform for enemies spawn
         while ((this.lastBlock?.rx ?? 0) < this.scene.width + (this.lastBlock?.width ?? 0)) {
             const block = new BrickFloorBlock(this.scene);
@@ -34,8 +34,8 @@ class BrickFloorBlock extends Bad.GameObject {
         this.collider = new Bad.RectCollider(this);
     }
 
-    public override update(frameTimer: Bad.FrameTimer): void {
-        super.update(frameTimer);
+    public override update(frame: Bad.Frame): void {
+        super.update(frame);
         this.x += this.scene.vx;
         if (this.rx < 0) {
             this.destroy();

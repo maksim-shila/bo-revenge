@@ -47,8 +47,8 @@ class Plant extends Enemy {
         this.vy = 0;
     }
 
-    public override update(frameTimer: Bad.FrameTimer): void {
-        super.update(frameTimer);
+    public override update(frame: Bad.Frame): void {
+        super.update(frame);
         if (!this.onGround) {
             this.vy += this.weight;
         }

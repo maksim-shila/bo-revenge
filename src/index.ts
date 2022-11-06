@@ -48,27 +48,22 @@ window.addEventListener("load", () => {
         }
     });
 
-    let lastTime = 0;
-    function animate(timeStamp: number): void {
-        Bad.Inputs.Gamepads.update();
+    const gameCycle = new Bad.GameCycle();
 
+    gameCycle.tick = (frame: Bad.Frame) => {
         if (!game.running) {
             mainMenu.update(InputHandler);
         }
         else {
-            const deltaTime = timeStamp - lastTime;
-            lastTime = timeStamp;
             if (game.paused) {
                 gameMenu.update(InputHandler);
             } else {
                 canvas.clear();
-                game.update(InputHandler, { timeStamp, deltaTime });
+                game.update(InputHandler, frame);
                 game.draw(canvas.context);
             }
         }
+    };
 
-        requestAnimationFrame(animate);
-    }
-
-    animate(0);
+    gameCycle.start();
 });

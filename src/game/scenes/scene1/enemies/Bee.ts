@@ -53,8 +53,8 @@ class Bee extends Enemy {
         this.va = Math.random() * 0.1 + 0.1;
     }
 
-    public override update(frameTimer: Bad.FrameTimer): void {
-        super.update(frameTimer);
+    public override update(frame: Bad.Frame): void {
+        super.update(frame);
         this.angle += this.va;
         this.x += this.vx + this.scene.vx;
         this.y += Math.sin(this.angle) + this.vy;

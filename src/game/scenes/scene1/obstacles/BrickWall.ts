@@ -67,8 +67,8 @@ export class BrickWall extends Bad.GameObject {
         this.collider = new Bad.RectCollider(this);
     }
 
-    public override update(frameTimer: Bad.FrameTimer): void {
-        super.update(frameTimer);
+    public override update(frame: Bad.Frame): void {
+        super.update(frame);
         this.x += this.scene.vx;
         if (this.rx < -50) {
             this.destroy();

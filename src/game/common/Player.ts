@@ -75,8 +75,8 @@ export default class Player extends Bad.GameObject {
         }
     }
 
-    public override update(frameTimer: Bad.FrameTimer): void {
-        super.update(frameTimer);
+    public override update(frame: Bad.Frame): void {
+        super.update(frame);
         this.state.update(this.input);
 
         if (!this.onGround && !this.noGravity) {
