@@ -4,12 +4,16 @@ import UI from "./UI";
 import Scene1 from "./scenes/scene1/Scene1";
 import Scene2 from "./scenes/scene2/Scene2";
 import { Actions } from "../input/Controls";
+import Canvas from "../utils/canvas";
+import GameMenu from "./gameMenu";
 
 export default class Game {
 
     private scene: Bad.Scene | null = null;
     private ui: UI | null = null;
     private debugWindow: DebugWindow | null = null;
+    private canvas: Canvas;
+    private menu: GameMenu;
 
     private readonly input: () => Bad.Input;
 
@@ -20,15 +24,16 @@ export default class Game {
     public paused = false;
     private _running = false;
 
-    public onPause: () => unknown = () => { };
-    public onContinue: () => unknown = () => { };
+    public onStop: () => unknown = () => { };
 
     private _totalFrames = 0;
 
     constructor(width: number, height: number, input: () => Bad.Input) {
         this.width = width;
         this.height = height;
+        this.canvas = new Canvas(width, height);
         this.input = input;
+        this.menu = new GameMenu(this);
     }
 
     public get running(): boolean {
@@ -40,11 +45,13 @@ export default class Game {
     }
 
     public start(): void {
+        this.canvas.show();
         this.startScene1();
         this._running = true;
     }
 
-    public stop(): void {
+    public reset(): void {
+        this.canvas.hide();
         this._running = false;
         this.paused = false;
         this.debugWindow = null;
@@ -54,45 +61,62 @@ export default class Game {
         this.scene = null;
     }
 
+    public stop(): void {
+        this.reset();
+        this.onStop();
+    }
+
     public restart(): void {
-        this.stop();
+        this.reset();
         this.start();
     }
 
     public pause(): void {
         this.paused = true;
-        this.onPause();
+        this.menu.show();
     }
 
     public continue(): void {
         this.paused = false;
-        this.onContinue();
+        this.menu.hide();
     }
 
     public update(input: () => Bad.Input, frame: Bad.Frame): void {
+        if (!this._running) {
+            return;
+        }
         if (this.scene === null || this.debugWindow === null || this.ui === null) {
             throw new Error("Couldn't call game.update() since scene not ready");
         }
+        if (this.paused) {
+            this.menu.update(input);
+            return;
+        }
         this._totalFrames += Math.abs(this.scene.vx); // Used as condition for enemies spawn. Not good place for it
-        if (input().keyDownOnce(Actions.Pause)) {
-            this.paused ? this.continue() : this.pause();
-        }
-        if (!this.paused) {
-            this.scene.update(frame);
-        }
+        this.scene.update(frame);
         if (Bad.Global.debug) {
             this.debugWindow.update(input, frame);
         }
+        if (input().keyDownOnce(Actions.Pause)) {
+            this.pause();
+        }
     }
 
-    public draw(context: CanvasRenderingContext2D): void {
+    public draw(): void {
+        if (!this._running) {
+            return;
+        }
         if (this.scene === null || this.debugWindow === null || this.ui === null) {
             throw new Error("Couldn't call game.draw() since scene not ready");
         }
-        this.scene.draw(context);
-        this.ui.draw(context);
+        if (this.paused) {
+            return;
+        }
+        this.canvas.clear();
+        this.scene.draw(this.canvas.context);
+        this.ui.draw(this.canvas.context);
         if (Bad.Global.debug) {
-            this.debugWindow.draw(context);
+            this.debugWindow.draw(this.canvas.context);
         }
     }
 
