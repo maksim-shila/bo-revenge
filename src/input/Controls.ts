@@ -1,7 +1,7 @@
 import * as Bad from "bad-engine";
 
 let inputHandler: Bad.Input = Bad.Inputs.Keyboard;
-export function InputHandler(): Bad.Input { return inputHandler };
+export function InputHandler(): Bad.Input { return inputHandler; }
 
 Bad.Inputs.Gamepads.onGamepadConnected = () => {
     inputHandler = Bad.Inputs.Gamepads.first() ?? Bad.Inputs.Keyboard;

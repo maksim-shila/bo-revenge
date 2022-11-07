@@ -18,8 +18,8 @@ export default class EnemyDieAnimation extends Bad.GameObject {
         this.animator.animation = new Bad.AnimationRow(0, 5);
     }
 
-    public override update(frameTimer: Bad.FrameTimer): void {
-        super.update(frameTimer);
+    public override update(frame: Bad.Frame): void {
+        super.update(frame);
         this.x += this.scene.vx;
         if (this.animator?.animation?.isMaxFrame) {
             this.destroy();

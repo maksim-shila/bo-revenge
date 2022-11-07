@@ -35,9 +35,9 @@ export default class Scene1 extends Bad.Scene {
         this.soundtrack.play();
     }
 
-    public override update(frameTimer: Bad.FrameTimer): void {
+    public override update(frame: Bad.Frame): void {
         this.background.update();
-        super.update(frameTimer);
+        super.update(frame);
     }
 
     public override draw(context: CanvasRenderingContext2D): void {

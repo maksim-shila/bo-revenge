@@ -52,8 +52,8 @@ class Spider extends Enemy {
         this.vy = this.maxVY;
     }
 
-    public override update(frameTimer: Bad.FrameTimer): void {
-        super.update(frameTimer);
+    public override update(frame: Bad.Frame): void {
+        super.update(frame);
         if (this.onGround) {
             this.vy = -Math.abs(this.maxVY);
         }

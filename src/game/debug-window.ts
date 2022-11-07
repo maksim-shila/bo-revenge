@@ -8,7 +8,7 @@ export default class DebugWindow {
     private readonly frameTimerUpdateRate = 500;
     private frameTimerLastUpdate = 0;
     private readonly frameTimerStoreSize = 100;
-    private readonly frameTimers: Bad.FrameTimer[] = [];
+    private readonly frameTimers: Bad.Frame[] = [];
     private deltaTime = 0;
     private fps = 0;
 
@@ -25,15 +25,15 @@ export default class DebugWindow {
         this.startX = scene.width - 800;
     }
 
-    public update(input: () => Bad.Input, frameTimer: Bad.FrameTimer): void {
+    public update(input: () => Bad.Input, frame: Bad.Frame): void {
         this.keysPressed = input().pressed;
 
-        const frameTimersLength = this.frameTimers.unshift(frameTimer);
+        const frameTimersLength = this.frameTimers.unshift(frame);
         if (frameTimersLength > this.frameTimerStoreSize) {
             this.frameTimers.length = this.frameTimerStoreSize;
         }
-        if (frameTimer.timeStamp - this.frameTimerLastUpdate > this.frameTimerUpdateRate) {
-            this.frameTimerLastUpdate = frameTimer.timeStamp;
+        if (frame.timeStamp - this.frameTimerLastUpdate > this.frameTimerUpdateRate) {
+            this.frameTimerLastUpdate = frame.timeStamp;
             const totalTime = this.frameTimers.map(ft => ft.deltaTime).reduce((a, b) => a + b, 0);
             const avgDeltaTime = totalTime / this.frameTimers.length;
             this.deltaTime = Math.round(avgDeltaTime * 100) / 100;

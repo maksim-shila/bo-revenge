@@ -1,10 +1,7 @@
 import * as Bad from "bad-engine";
+import Game from "../game/game";
 import { Actions } from "../input/Controls";
 import MenuList from "./menuList";
-
-type MainMenuEvents = {
-    onStartNewGame: () => unknown;
-}
 
 export default class MainMenu {
 
@@ -15,7 +12,7 @@ export default class MainMenu {
     private readonly soundtrack: HTMLAudioElement;
     public shown = false;
 
-    constructor(events: MainMenuEvents) {
+    constructor(game: Game) {
         this.menu = document.getElementById("mainMenu")!;
         this.soundtrack = document.getElementById("mainMenuAudio") as HTMLAudioElement;
         this.soundtrack.addEventListener("ended", () => this.playSoundtrack());
@@ -29,13 +26,20 @@ export default class MainMenu {
 
         this.menuList = new MenuList(menuButtons, startBtn);
 
-        startBtn.addEventListener("click", events.onStartNewGame);
+        game.onStop = () => this.show();
+        startBtn.addEventListener("click", () => {
+            game.start();
+            this.hide();
+        });
         controlsBtn.addEventListener("click", () => this.controls.show());
         highscoresBtn.addEventListener("click", () => this.highscores.show());
         exitBtn.addEventListener("click", () => window.close());
     }
 
     public show(): void {
+        if (this.shown) {
+            return;
+        }
         if (this.soundtrack.paused) {
             this.playSoundtrack();
         }

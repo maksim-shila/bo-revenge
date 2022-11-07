@@ -1,12 +1,8 @@
 import * as Bad from "bad-engine";
 import { Actions } from "../input/Controls";
 import MenuList from "../menu/menuList";
+import Game from "./game";
 
-type GameMenuEvents = {
-    onContinue: () => unknown,
-    onRestart: () => unknown,
-    onExit: () => unknown
-}
 export default class GameMenu {
 
     private readonly menu: HTMLElement;
@@ -14,7 +10,7 @@ export default class GameMenu {
     private shown = false;
     private continueBtn: HTMLButtonElement;
 
-    constructor(events: GameMenuEvents) {
+    constructor(game: Game) {
         this.menu = document.getElementById("gameMenu") as HTMLElement;
 
         this.continueBtn = document.getElementById("gameMenu_continue") as HTMLButtonElement;
@@ -23,9 +19,18 @@ export default class GameMenu {
         const menuButtons = [this.continueBtn, restartBtn, exitBtn];
         this.menuList = new MenuList(menuButtons, this.continueBtn);
 
-        this.continueBtn.addEventListener("click", events.onContinue);
-        restartBtn.addEventListener("click", events.onRestart);
-        exitBtn.addEventListener("click", events.onExit);
+        this.continueBtn.addEventListener("click", () => {
+            game.continue();
+            this.hide();
+        });
+        restartBtn.addEventListener("click", () => {
+            game.restart();
+            this.hide();
+        });
+        exitBtn.addEventListener("click", () => {
+            game.stop();
+            this.hide();
+        });
     }
 
     public update(input: () => Bad.Input): void {
