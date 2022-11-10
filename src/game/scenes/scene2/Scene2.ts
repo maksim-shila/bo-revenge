@@ -1,5 +1,6 @@
 import * as Bad from "bad-engine";
 import Player from "../../common/Player";
+import AbilityPowerUp from "../../common/powerups/AbilityPowerUp";
 import Game from "../../game";
 import ForestBackground from "./ForestBackground";
 import Ground from "./obstacles/Ground";
@@ -28,6 +29,10 @@ export default class Scene2 extends Bad.Scene {
             this.add(new Ground(this, i * Ground.Width - i));
         }
         this.add(this.player);
+
+        const powerup = new AbilityPowerUp(this, 300, 300);
+        this.add(powerup);
+        this.colliders.watch([this.player], [powerup]);
     }
 
     public override update(frame: Bad.Frame): void {
