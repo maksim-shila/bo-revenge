@@ -18,14 +18,14 @@ export default class UI {
         context.font = "30px Helvetica";
         context.textAlign = "left";
         context.fillStyle = "black";
-        context.fillText(`Score: ${this.game.score}`, 20, 50);
+        context.fillText(`Score: ${this.game.score}`, this.game.width - 300, 50);
 
         const maxEnergyWidth = 200;
         const energyWidth = maxEnergyWidth * this.player.energy / this.player.maxEnergy;
         context.strokeStyle = "black";
-        context.strokeRect(20, 70, maxEnergyWidth, 10);
+        context.strokeRect(this.game.width - 300, 70, maxEnergyWidth, 10);
         context.fillStyle = this.player.energy > this.player.minEnergy ? "black" : "gray";
-        context.fillRect(20, 70, energyWidth, 10);
+        context.fillRect(this.game.width - 300, 70, energyWidth, 10);
         context.restore();
     }
 }

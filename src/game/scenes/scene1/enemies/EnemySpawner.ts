@@ -6,12 +6,12 @@ import PlantSpawner from "./Plant";
 import SpiderSpawner from "./Spider";
 import ZombieSpawner from "./Zombie";
 
-export default class EnemySpawner extends Bad.GameObjectContainer {
+export default class EnemySpawner extends Bad.GameObject {
 
     private readonly spawners: Spawner[];
 
     constructor(private readonly player: Player, scene: Bad.Scene) {
-        super(scene);
+        super("enemySpawner", scene);
         this.spawners = [
             new BeeSpawner(this.scene),
             new PlantSpawner(this.scene),
@@ -24,7 +24,7 @@ export default class EnemySpawner extends Bad.GameObjectContainer {
         this.spawners.forEach(spawner => {
             if (spawner.shouldSpawn && !Bad.Global.cheats.preventEnemiesSpawn) {
                 const enemy = spawner.spawn();
-                this.scene.addObject(enemy);
+                this.scene.add(enemy, this.order);
                 this.scene.colliders.watch([this.player], [enemy]);
             }
         });

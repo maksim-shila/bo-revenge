@@ -2,13 +2,13 @@ import * as Bad from "bad-engine";
 
 const Brick = new Bad.SpriteDimension("brickImg", 239, 224, 0.2);
 
-export class BrickWallSpawner extends Bad.GameObjectContainer {
+export class BrickWallSpawner extends Bad.GameObject {
 
     private readonly distance = 700;
     private lastWall: BrickWall | null = null;
 
     constructor(scene: Bad.Scene) {
-        super(scene);
+        super("brickWall", scene);
         this.lastWall = this.createWall();
         while (this.lastWall.x < this.scene.camera.rx) {
             this.spawn();
@@ -44,7 +44,7 @@ export class BrickWallSpawner extends Bad.GameObjectContainer {
         const x = (this.lastWall?.rx ?? 0) + Math.random() * 100 + 200;
         const y = Math.random() * 300 + 100;
         const wall = new BrickWall(this.scene, x, y, blocksX, blocksY);
-        this.scene.add(wall);
+        this.scene.add(wall, this.order);
         return wall;
     }
 }
@@ -89,8 +89,6 @@ export class BrickWall extends Bad.GameObject {
                     Brick.height);
             }
         }
-        if (Bad.Global.debug) {
-            this.collider?.draw(context);
-        }
+        super.draw(context);
     }
 }

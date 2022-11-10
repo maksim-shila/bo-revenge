@@ -22,7 +22,7 @@ export default class DebugWindow {
         private readonly player: Player,
         private readonly scene: Bad.Scene
     ) {
-        this.startX = scene.width - 800;
+        this.startX = 100;
     }
 
     public update(input: () => Bad.Input, frame: Bad.Frame): void {

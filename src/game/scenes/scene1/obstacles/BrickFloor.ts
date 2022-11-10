@@ -1,11 +1,11 @@
 import * as Bad from "bad-engine";
 
-export default class BrickFloor extends Bad.GameObjectContainer {
+export default class BrickFloor extends Bad.GameObject {
 
     private lastBlock: BrickFloorBlock | null = null;
 
     constructor(scene: Bad.Scene) {
-        super(scene);
+        super("brickFloor", scene);
     }
 
     public override update(frame: Bad.Frame): void {
@@ -16,7 +16,7 @@ export default class BrickFloor extends Bad.GameObjectContainer {
             block.x = this.lastBlock?.rx ?? 0;
             block.y = this.scene.height - block.height;
             this.lastBlock = block;
-            this.scene.add(block);
+            this.scene.add(block, this.order);
         }
     }
 }

@@ -6,6 +6,7 @@ import BrickFloor from "./obstacles/BrickFloor";
 import { BrickWallSpawner } from "./obstacles/BrickWall";
 import Player from "../../common/Player";
 import { FollowStrategy } from "bad-engine";
+import SpikeWall from "./obstacles/SpikeWall";
 
 export default class Scene1 extends Bad.Scene {
 
@@ -23,15 +24,18 @@ export default class Scene1 extends Bad.Scene {
         this.add(this.player);
 
         this.camera = new Bad.Camera(0, 0, this.width, this.height);
-        this.camera.vx = 3;
+        this.camera.vx = 4;
         this.camera.followStrategy = FollowStrategy.Static;
         this.camera.follow(this.player);
 
-        this.add(new BrickFloor(this));
-        this.add(new BrickWallSpawner(this));
-        this.add(new EnemySpawner(this.player, this));
-
         this.background = new Background(this);
+
+        this.add(new BrickFloor(this), 0);
+        this.add(new BrickWallSpawner(this), 1);
+        this.add(new EnemySpawner(this.player, this), 2);
+
+        const spikeWall = new SpikeWall(this);
+        this.add(spikeWall, 3);
 
         this.soundtrack = document.getElementById("level1audio") as HTMLAudioElement;
         this.soundtrack.addEventListener("ended", () => this.soundtrack.play());
