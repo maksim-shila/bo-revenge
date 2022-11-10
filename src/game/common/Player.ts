@@ -1,12 +1,18 @@
 import * as Bad from "bad-engine";
 import Game from "../game";
-import { PlayerStateManager, PlayerStateType, State } from "./playerStates";
 import { Enemy } from "../scenes/scene1/enemies/Enemy";
 import { Actions } from "../../input/Controls";
-
-const Source = { image: "playerImg", widht: 100.3, height: 91.3 };
+import { State, PlayerStateType } from "./player-states/PlayerState";
+import { PlayerStateManager } from "./player-states/PlayerStateManager";
 
 export default class Player extends Bad.GameObject {
+
+    public static Image = {
+        leftId: "playerLeftImg",
+        rightId: "playerRightImg",
+        sw: 100.3,
+        sh: 91.3
+    };
 
     public stateManager: PlayerStateManager;
     public state: State;
@@ -30,11 +36,10 @@ export default class Player extends Bad.GameObject {
     private readonly input: () => Bad.Input;
 
     constructor(private readonly game: Game, scene: Bad.Scene, input: () => Bad.Input) {
-        super("player", scene, Source.widht, Source.height);
+        super("player", scene, Player.Image.sw, Player.Image.sh);
         this.input = input;
         this.collider = new Bad.RectCollider(this, 10, 10, -20, -10);
         this.rigidBody = new Bad.RigidBody(2);
-        this.animator = new Bad.Animator(Source.image, Source.widht, Source.height);
         this.stateManager = new PlayerStateManager(this);
         this.state = this.stateManager.get("sitting");
         this.state.init();
@@ -77,7 +82,7 @@ export default class Player extends Bad.GameObject {
 
     public override update(frame: Bad.Frame): void {
         super.update(frame);
-        this.state.update(this.input);
+        this.state.update(this.input());
 
         if (!this.onGround && !this.noGravity) {
             this.vy += this.weight;
@@ -106,10 +111,11 @@ export default class Player extends Bad.GameObject {
         }
     }
 
-    public setState(type: PlayerStateType, input?: () => Bad.Input, speedMultiplier = 0): void {
+    public setState(type: PlayerStateType): void {
+        const direction = this.state.direction;
         this.state = this.stateManager.get(type);
-        this.scene.vx = this.scene.vx_default * speedMultiplier;
-        this.state.init(input);
+        this.state.init(this.input());
+        this.state.direction = direction;
     }
 
     public jump(): void {
@@ -135,7 +141,7 @@ export default class Player extends Bad.GameObject {
                     this.game.score++;
                 } else {
                     if (!Bad.Global.cheats.immortal) {
-                        this.setState("hit", this.input);
+                        this.setState("hit");
                     }
                 }
             }
@@ -144,12 +150,12 @@ export default class Player extends Bad.GameObject {
 
     public override onObstacleCollisions(directions: Bad.CollisionDirection[]): void {
         if (this.state.type === "dash" && (directions.includes("right") || directions.includes("left"))) {
-            this.state.exit(this.input);
+            this.state.exit(this.input());
         }
         if (directions.includes("right")) {
             this.canMoveForward = false;
             if (!["standing", "jumping", "falling", "sitting", "diving"].includes(this.state.type) && !this._onJump) {
-                this.setState("standing", this.input, 0);
+                this.setState("standing");
             }
         } else {
             this.canMoveForward = true;

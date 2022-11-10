@@ -1168,10 +1168,10 @@ at-least-node@^1.0.0:
   resolved "https://registry.npmjs.org/at-least-node/-/at-least-node-1.0.0.tgz"
   integrity sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==
 
-bad-engine@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/bad-engine/-/bad-engine-0.0.4.tgz#0f070c912f17b13940d403ce77e90111b74c4d30"
-  integrity sha512-ukMr2i/Lex84qCDDA2SuvnhUKYYmHiCH1WDohVUD70sVd+BqAOos9stlwK8HXOvKsVwHePgpX1s/2Ek6F3/L2g==
+bad-engine@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/bad-engine/-/bad-engine-0.0.5.tgz#8808a90a2f4a641c984c13c187e015c56503e004"
+  integrity sha512-pvy7/b3Gjd8LSqRJmMhr4AKaeGVjnC+B0E8ssD2eTN4SY8DtgAKhkZsbJYESsOOKwIdSF6epmGUT+4sGkhN0SQ==
 
 balanced-match@^1.0.0:
   version "1.0.2"
