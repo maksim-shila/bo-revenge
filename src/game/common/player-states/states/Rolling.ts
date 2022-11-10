@@ -5,10 +5,20 @@ import Player from "../../Player";
 import { PlayerState, Animations } from "../PlayerState";
 
 export class Rolling extends PlayerState {
+
+    private readonly speedMultiplier = 1.7;
+    private playerDefaultVX = 0;
+
     constructor(player: Player) {
         super("rolling", player, Animations.Rolling);
         this.hitbox = new Bad.Hitbox();
         this.hitbox.add(new Bad.RectCollider(this.player, 25, 35, -50, -40));
+    }
+
+    public override init(input: Bad.Input): void {
+        super.init(input);
+        this.playerDefaultVX = this.player.maxVX;
+        this.player.maxVX = this.player.maxVX * this.speedMultiplier;
     }
 
     public update(input: Bad.Input): void {
@@ -28,5 +38,9 @@ export class Rolling extends PlayerState {
         } else if (!this.player.onGround && input.keyDown(Actions.Down)) {
             this.player.setState("diving");
         }
+    }
+
+    public override cleanUp() {
+        this.player.maxVX = this.playerDefaultVX;
     }
 }

@@ -15,7 +15,9 @@ export class Running extends PlayerState {
     public update(input: Bad.Input): void {
         this.player.scene.add(new Dust(this.player.scene, this.player.cx, this.player.y + this.player.height));
         this.allowHorizontalMovement(input);
-        if (input.keyDownOnce(Actions.Dash) && !this.player.dashInCD) {
+        if (this.direction === "left" && input.keyUp(Actions.Left) || this.direction === "right" && input.keyUp(Actions.Right)) {
+            this.player.setState("standing");
+        } else if (input.keyDownOnce(Actions.Dash) && !this.player.dashInCD) {
             this.player.setState("dash");
         } else if (input.keyDown(Actions.Down)) {
             this.player.setState("sitting");

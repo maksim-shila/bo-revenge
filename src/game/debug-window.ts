@@ -55,6 +55,7 @@ export default class DebugWindow {
         this.show(context, "PlayerWeight", `${this.player.weight}`, 1, 6);
         this.show(context, "PlayerOnGround", `${this.player.onGround}`, 1, 7);
         this.show(context, "Player State", `${this.player.state.type}`, 1, 8);
+        this.show(context, "Player Direction", `${this.player.state.direction}`, 1, 9);
 
         this.show(context, "Keys", this.keysPressed.join(), 2, 1);
         this.show(context, "FPS", `${Math.round(this.fps * 100) / 100}`, 2, 5);

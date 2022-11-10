@@ -29,6 +29,7 @@ export interface State {
     type: PlayerStateType;
     direction: Direction,
     init(input?: Bad.Input): void;
+    cleanUp(input?: Bad.Input): void;
     exit(input?: Bad.Input): void;
     update(input: Bad.Input): void;
 }
@@ -59,6 +60,8 @@ export abstract class PlayerState implements State {
     public set direction(value: Direction) {
         if (this._direction !== value) {
             this._direction = value;
+            this.animation.reset();
+            this.player.hitbox = this.direction === "right" ? this.hitbox : this.hitbox?.mirror ?? null;
             this.player.animator = this.animator;
         }
     }
@@ -74,9 +77,12 @@ export abstract class PlayerState implements State {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public init(input: Bad.Input): void {
         this.animation.reset();
-        this.player.hitbox = this.hitbox;
+        this.player.hitbox = this.direction === "right" ? this.hitbox : this.hitbox?.mirror ?? null;
         this.player.animator = this.animator;
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public cleanUp(input: Bad.Input): void { }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public exit(input: Bad.Input): void { }

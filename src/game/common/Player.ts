@@ -17,8 +17,8 @@ export default class Player extends Bad.GameObject {
     public stateManager: PlayerStateManager;
     public state: State;
 
-    public readonly maxVX = 10;
-    public readonly maxVY = 30;
+    public maxVX = 8;
+    public maxVY = 30;
 
     private _jumps = 0;
     private _onJump = false;
@@ -41,7 +41,7 @@ export default class Player extends Bad.GameObject {
         this.collider = new Bad.RectCollider(this, 10, 10, -20, -10);
         this.rigidBody = new Bad.RigidBody(2);
         this.stateManager = new PlayerStateManager(this);
-        this.state = this.stateManager.get("sitting");
+        this.state = this.stateManager.get("standing");
         this.state.init();
     }
 
@@ -84,7 +84,7 @@ export default class Player extends Bad.GameObject {
         super.update(frame);
         this.state.update(this.input());
 
-        if (!this.onGround && !this.noGravity) {
+        if (!this.onGround && !this.noGravity && this.vy < this.maxVY) {
             this.vy += this.weight;
         } else if (this.onGround && !this._onJump) {
             this._jumps = 0;
@@ -113,9 +113,10 @@ export default class Player extends Bad.GameObject {
 
     public setState(type: PlayerStateType): void {
         const direction = this.state.direction;
+        this.state.cleanUp();
         this.state = this.stateManager.get(type);
-        this.state.init(this.input());
         this.state.direction = direction;
+        this.state.init(this.input());
     }
 
     public jump(): void {

@@ -6,6 +6,9 @@ import Player from "../../Player";
 import { PlayerState, Animations } from "../PlayerState";
 
 export class Diving extends PlayerState {
+    private readonly delay = 300;
+    private readonly speedModifier = 1.5;
+
     constructor(player: Player) {
         super("diving", player, Animations.Rolling);
         this.hitbox = new Bad.Hitbox();
@@ -15,7 +18,9 @@ export class Diving extends PlayerState {
     public override init(input: Bad.Input): void {
         super.init(input);
         this.player.vx = 0;
-        this.player.vy = 15;
+        this.player.vy = 0;
+        this.player.noGravity = true;
+        setTimeout(() => { this.player.vy = this.player.maxVY * this.speedModifier; }, this.delay);
     }
 
     public update(input: Bad.Input): void {
@@ -32,5 +37,9 @@ export class Diving extends PlayerState {
                 this.player.scene.add(new Splash(this.player.scene, this.player.cx, this.player.y + this.player.height));
             }
         }
+    }
+
+    public override cleanUp(): void {
+        this.player.noGravity = false;
     }
 }

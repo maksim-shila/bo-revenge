@@ -40,7 +40,7 @@ export class Dash extends PlayerState {
                 this.player.vx = 0;
             }
         } else {
-            this.player.vx = this.speedX;
+            this.player.vx = this.direction === "left" ? -this.speedX : this.speedX;
             this.player.vy = 0;
         }
     }
@@ -56,9 +56,12 @@ export class Dash extends PlayerState {
         }
     }
 
-    public override exit() {
+    public override cleanUp() {
         this.player.noGravity = false;
         this.player.vy = this.player.weight;
+    }
+
+    public override exit() {
         if (this.player.onGround) {
             this.player.setState("running");
         } else {
