@@ -40,7 +40,7 @@ export default class Game {
 
     public start(): void {
         this.canvas.show();
-        this.startScene2();
+        this.startScene1();
         this._running = true;
     }
 
