@@ -45,15 +45,17 @@ class Layer {
     }
 
     public update(): void {
-        if (this.x <= -this.width) {
-            this.x += this.width;
-        }
-        this.x += this.scene.vx * this.speedModifier;
+        this.x = -1 * (this.scene.camera.x % (this.width / this.speedModifier)) * this.speedModifier;
     }
 
     public draw(context: CanvasRenderingContext2D): void {
         for (let i = 0; i < Math.ceil(this.scene.width / this.width) + 1; ++i) {
-            context.drawImage(this.image, this.x + this.width * i - i, this.y, this.width, this.height);
+            context.drawImage(
+                this.image,
+                this.x + this.width * i - i,
+                this.y,
+                this.width,
+                this.height);
         }
     }
 }

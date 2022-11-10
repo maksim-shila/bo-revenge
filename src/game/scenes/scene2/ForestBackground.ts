@@ -60,6 +60,5 @@ class Layer {
                 this.width,
                 this.height);
         }
-
     }
 }

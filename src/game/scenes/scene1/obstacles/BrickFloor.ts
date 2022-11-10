@@ -11,7 +11,7 @@ export default class BrickFloor extends Bad.GameObjectContainer {
     public override update(frame: Bad.Frame): void {
         super.update(frame);
         // add '+ (this.lastBlock?.width ?? 0)' to add additional offscreen platform for enemies spawn
-        while ((this.lastBlock?.rx ?? 0) < this.scene.width + (this.lastBlock?.width ?? 0)) {
+        while ((this.lastBlock?.rx ?? 0) < this.scene.camera.rx + (this.lastBlock?.width ?? 0)) {
             const block = new BrickFloorBlock(this.scene);
             block.x = this.lastBlock?.rx ?? 0;
             block.y = this.scene.height - block.height;
@@ -36,8 +36,7 @@ class BrickFloorBlock extends Bad.GameObject {
 
     public override update(frame: Bad.Frame): void {
         super.update(frame);
-        this.x += this.scene.vx;
-        if (this.rx < 0) {
+        if (this.rx < this.scene.camera.x - 50) {
             this.destroy();
         }
     }

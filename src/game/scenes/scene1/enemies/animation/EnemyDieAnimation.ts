@@ -20,7 +20,6 @@ export default class EnemyDieAnimation extends Bad.GameObject {
 
     public override update(frame: Bad.Frame): void {
         super.update(frame);
-        this.x += this.scene.vx;
         if (this.animator?.animation?.isMaxFrame) {
             this.destroy();
         }

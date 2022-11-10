@@ -10,13 +10,13 @@ export class BrickWallSpawner extends Bad.GameObjectContainer {
     constructor(scene: Bad.Scene) {
         super(scene);
         this.lastWall = this.createWall();
-        while (this.lastWall.x < this.scene.width) {
+        while (this.lastWall.x < this.scene.camera.rx) {
             this.spawn();
         }
     }
 
     public override update(): void {
-        if (this.lastWall!.x < this.scene.width) {
+        if (this.lastWall!.x < this.scene.camera.rx) {
             this.spawn();
         }
     }
@@ -69,8 +69,7 @@ export class BrickWall extends Bad.GameObject {
 
     public override update(frame: Bad.Frame): void {
         super.update(frame);
-        this.x += this.scene.vx;
-        if (this.rx < -50) {
+        if (this.rx < this.scene.camera.x - 50) {
             this.destroy();
         }
     }

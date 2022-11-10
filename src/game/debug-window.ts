@@ -47,7 +47,7 @@ export default class DebugWindow {
         context.textAlign = "left";
         context.fillStyle = "white";
 
-        this.show(context, "SceneVX", `${this.scene.vx}`, 1, 1);
+        this.show(context, "CameraVX", `${this.scene.camera.vx}`, 1, 1);
         this.show(context, "PlayerX", `${this.player.x}`, 1, 2);
         this.show(context, "PlayerY", `${this.player.y}`, 1, 3);
         this.show(context, "PlayerVX", `${this.player.vx}`, 1, 4);

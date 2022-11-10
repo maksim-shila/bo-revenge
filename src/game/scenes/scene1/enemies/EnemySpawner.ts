@@ -20,9 +20,8 @@ export default class EnemySpawner extends Bad.GameObjectContainer {
         ];
     }
 
-    public override update(frame: Bad.Frame): void {
+    public override update(): void {
         this.spawners.forEach(spawner => {
-            spawner.update(frame);
             if (spawner.shouldSpawn && !Bad.Global.cheats.preventEnemiesSpawn) {
                 const enemy = spawner.spawn();
                 this.scene.addObject(enemy);
@@ -34,6 +33,5 @@ export default class EnemySpawner extends Bad.GameObjectContainer {
 
 export interface Spawner {
     shouldSpawn: boolean;
-    update(frameTimer: Bad.Frame): void;
     spawn(): Enemy;
 }

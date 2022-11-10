@@ -3,21 +3,16 @@ import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
 
 export default class PlantSpawner implements Spawner {
-    private spawnFrames = 300;
-    private nextSpawnFrame = this.spawnFrames;
-    private totalFrames = 0;
+
+    private readonly spawnDistance = 500;
+    private nextSpawnTriggerX = this.spawnDistance;
 
     constructor(private readonly scene: Bad.Scene) { }
 
-    public update(): void {
-        this.totalFrames += -this.scene.vx;
-    }
-
     public get shouldSpawn(): boolean {
-        const shouldSpawn = this.totalFrames > this.nextSpawnFrame;
+        const shouldSpawn = this.scene.camera.x >= this.nextSpawnTriggerX;
         if (shouldSpawn) {
-            const salt = Math.random() * 500 + 0;
-            this.nextSpawnFrame = this.totalFrames + this.spawnFrames + salt;
+            this.nextSpawnTriggerX = this.scene.camera.x + this.spawnDistance + Math.random() * 500 + 0;
         }
         return shouldSpawn;
     }
@@ -41,7 +36,7 @@ class Plant extends Enemy {
         this.collider = new Bad.RectCollider(this);
         this.hitbox = new Bad.Hitbox(this);
 
-        this.x = this.scene.width + 200; // move spawn offscreen to have time until plant falls
+        this.x = this.scene.camera.rx + 200; // move spawn offscreen to have time until plant falls
         this.y = this.scene.height - this.height - 90;
         this.vx = 0;
         this.vy = 0;
@@ -52,7 +47,6 @@ class Plant extends Enemy {
         if (!this.onGround) {
             this.vy += this.weight;
         }
-        this.x += this.scene.vx;
         this.y += this.vy;
         if (this.isOffscreen(["left", "bottom"])) {
             this.destroy();

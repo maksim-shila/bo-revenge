@@ -26,8 +26,6 @@ export default class Game {
 
     public onStop: () => unknown = () => { };
 
-    private _totalFrames = 0;
-
     constructor(width: number, height: number, input: () => Bad.Input) {
         this.width = width;
         this.height = height;
@@ -38,10 +36,6 @@ export default class Game {
 
     public get running(): boolean {
         return this._running;
-    }
-
-    public get totalFrames(): number {
-        return this._totalFrames;
     }
 
     public start(): void {
@@ -92,7 +86,6 @@ export default class Game {
             this.menu.update(input);
             return;
         }
-        this._totalFrames += Math.abs(this.scene.vx); // Used as condition for enemies spawn. Not good place for it
         this.scene.update(frame);
         if (Bad.Global.debug) {
             this.debugWindow.update(input, frame);

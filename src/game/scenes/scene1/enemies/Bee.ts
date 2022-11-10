@@ -3,23 +3,15 @@ import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
 
 export default class BeeSpawner implements Spawner {
-    private readonly spawnFrames = 150;
-    private totalFrames = 0;
-    private nextSpawnFrame = this.spawnFrames;
+    private readonly spawnDistance = 50;
+    private nextSpawnTriggerX = this.spawnDistance;
 
     constructor(private readonly scene: Bad.Scene) { }
 
-    public update(): void {
-        this.totalFrames += -this.scene.vx;
-    }
-
     public get shouldSpawn(): boolean {
-        const shouldSpawn = this.totalFrames > this.nextSpawnFrame;
+        const shouldSpawn = this.scene.camera.x >= this.nextSpawnTriggerX;
         if (shouldSpawn) {
-            const salt = Math.random() * 200 + 100;
-            this.nextSpawnFrame = this.totalFrames + this.spawnFrames + salt;
-        } else {
-            this.nextSpawnFrame -= Math.random() + 1; // Affected by bee speed
+            this.nextSpawnTriggerX = this.scene.camera.x + this.spawnDistance + Math.random() * 200 + 100;
         }
         return shouldSpawn;
     }
@@ -46,7 +38,7 @@ class Bee extends Enemy {
         this.collider = new Bad.RectCollider(this);
         this.hitbox = new Bad.Hitbox(this);
 
-        this.x = this.scene.width + Math.random() * this.scene.width * 0.5 + 100;
+        this.x = this.scene.camera.rx + Math.random() * this.scene.camera.rx * 0.5 + 100;
         this.y = Math.random() * this.scene.height * 0.5;
         this.vx = -(Math.random() + 1);
         this.angle = 0;
@@ -56,7 +48,7 @@ class Bee extends Enemy {
     public override update(frame: Bad.Frame): void {
         super.update(frame);
         this.angle += this.va;
-        this.x += this.vx + this.scene.vx;
+        this.x += this.vx;
         this.y += Math.sin(this.angle) + this.vy;
         if (this.isOffscreen(["left"])) {
             this.destroy();

@@ -5,6 +5,7 @@ import EnemySpawner from "./enemies/EnemySpawner";
 import BrickFloor from "./obstacles/BrickFloor";
 import { BrickWallSpawner } from "./obstacles/BrickWall";
 import Player from "../../common/Player";
+import { FollowStrategy } from "bad-engine";
 
 export default class Scene1 extends Bad.Scene {
 
@@ -16,13 +17,15 @@ export default class Scene1 extends Bad.Scene {
     constructor(game: Game, input: () => Bad.Input) {
         super(game.width, game.height);
 
-        this.vx_default = -3;
-        this.vx = this.vx_default;
-
         this.player = new Player(game, this, input);
         this.player.x = 0;
         this.player.y = this.height - this.player.height - 200;
         this.add(this.player);
+
+        this.camera = new Bad.Camera(0, 0, this.width, this.height);
+        this.camera.vx = 3;
+        this.camera.followStrategy = FollowStrategy.Static;
+        this.camera.follow(this.player);
 
         this.add(new BrickFloor(this));
         this.add(new BrickWallSpawner(this));

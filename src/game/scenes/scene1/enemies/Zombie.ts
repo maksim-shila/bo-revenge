@@ -3,22 +3,15 @@ import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
 
 export default class ZombieSpawner implements Spawner {
-    private nextSpawnFrame = 2000;
-    private totalFrames = 0;
+    private readonly spawnDistance = 2000;
+    private nextSpawnTriggerX = this.spawnDistance;
 
     constructor(private readonly scene: Bad.Scene) { }
 
-    public update(): void {
-        this.totalFrames += -this.scene.vx;
-    }
-
     public get shouldSpawn(): boolean {
-        const shouldSpawn = this.totalFrames > this.nextSpawnFrame;
+        const shouldSpawn = this.scene.camera.x >= this.nextSpawnTriggerX;
         if (shouldSpawn) {
-            const spawnFrames = Math.random() * 3000 + 1000;
-            this.nextSpawnFrame = this.totalFrames + spawnFrames;
-        } else {
-            this.nextSpawnFrame -= Math.random() * 1 + 1; // Affected by zombie speed
+            this.nextSpawnTriggerX = this.scene.camera.x + this.spawnDistance + Math.random() * 3000 + 1000;
         }
         return shouldSpawn;
     }
@@ -45,7 +38,7 @@ class Zombie extends Enemy {
         this.rigidBody = new Bad.RigidBody(0.8);
         this.collider = new Bad.RectCollider(this, 10, 0, -20, 0);
 
-        this.x = this.scene.width + 200; // move spawn offscreen to have time until plant falls
+        this.x = this.scene.camera.rx + 200; // move spawn offscreen to have time until plant falls
         this.y = this.scene.height - this.height - 90;
         this.vx = -(Math.random() * 1 + 1);
         this.vy = 0;
@@ -56,7 +49,7 @@ class Zombie extends Enemy {
         if (!this.onGround) {
             this.vy += this.weight;
         }
-        this.x += this.vx + this.scene.vx;
+        this.x += this.vx;
         this.y += this.vy;
 
         if (this.isOffscreen(["left", "bottom"])) {

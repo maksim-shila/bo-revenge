@@ -3,21 +3,16 @@ import { Spawner } from "./EnemySpawner";
 import { Enemy } from "./Enemy";
 
 export default class SpiderSpawner implements Spawner {
-    private spawnFrames = 200;
-    private nextSpawnFrame = this.spawnFrames;
-    private totalFrames = 0;
+
+    private readonly spawnDistance = 600;
+    private nextSpawnTriggerX = this.spawnDistance;
 
     constructor(private readonly scene: Bad.Scene) { }
 
-    public update(): void {
-        this.totalFrames += -this.scene.vx;
-    }
-
     public get shouldSpawn(): boolean {
-        const shouldSpawn = this.totalFrames > this.nextSpawnFrame;
+        const shouldSpawn = this.scene.camera.x >= this.nextSpawnTriggerX;
         if (shouldSpawn) {
-            const salt = Math.random() * 500 + 0;
-            this.nextSpawnFrame = this.totalFrames + this.spawnFrames + salt;
+            this.nextSpawnTriggerX = this.scene.camera.x + this.spawnDistance + Math.random() * 500 + 0;
         }
         return shouldSpawn;
     }
@@ -45,7 +40,7 @@ class Spider extends Enemy {
         this.hitbox = new Bad.Hitbox();
         this.hitbox.add(new Bad.RectCollider(this, 30, 30, -60, -60));
 
-        this.x = this.scene.width + 200;
+        this.x = this.scene.camera.rx + 200;
         this.y = Math.random() * this.scene.height * 0.5;
         this.vx = 0;
         this.maxVY = Math.random() > 0.5 ? 1 : -1;
@@ -57,7 +52,6 @@ class Spider extends Enemy {
         if (this.onGround) {
             this.vy = -Math.abs(this.maxVY);
         }
-        this.x += this.scene.vx;
         this.y += this.vy;
         if (this.isOffscreen(["left", "top"])) {
             this.destroy();
