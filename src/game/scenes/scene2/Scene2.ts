@@ -25,7 +25,7 @@ export default class Scene2 extends Bad.Scene {
 
         this.background = new ForestBackground(this);
 
-        for (let i = 0; i < 10; ++i) {
+        for (let i = 0; i < 20; ++i) {
             this.add(new Ground(this, i * Ground.Width - i));
         }
         this.add(this.player);

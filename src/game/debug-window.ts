@@ -47,15 +47,17 @@ export default class DebugWindow {
         context.textAlign = "left";
         context.fillStyle = "white";
 
-        this.show(context, "CameraVX", `${this.scene.camera.vx}`, 1, 1);
-        this.show(context, "PlayerX", `${this.player.x}`, 1, 2);
-        this.show(context, "PlayerY", `${this.player.y}`, 1, 3);
-        this.show(context, "PlayerVX", `${this.player.vx}`, 1, 4);
-        this.show(context, "PlayerVY", `${this.player.vy}`, 1, 5);
-        this.show(context, "PlayerWeight", `${this.player.weight}`, 1, 6);
-        this.show(context, "PlayerOnGround", `${this.player.onGround}`, 1, 7);
-        this.show(context, "Player State", `${this.player.state.type}`, 1, 8);
-        this.show(context, "Player Direction", `${this.player.state.direction}`, 1, 9);
+        this.show(context, "PlayerX", `${this.player.x}`, 1, 1);
+        this.show(context, "PlayerY", `${this.player.y}`, 1, 2);
+        this.show(context, "PlayerVX", `${this.player.vx}`, 1, 3);
+        this.show(context, "PlayerVY", `${this.player.vy}`, 1, 4);
+        this.show(context, "PlayerWeight", `${this.player.weight}`, 1, 5);
+        this.show(context, "PlayerOnGround", `${this.player.onGround}`, 1, 6);
+        this.show(context, "Player State", `${this.player.state.type}`, 1, 7);
+        this.show(context, "Player Direction", `${this.player.state.direction}`, 1, 8);
+
+        this.show(context, "CameraVX", `${this.scene.camera.vx}`, 1, 10);
+        this.show(context, "CameraOffset", `${this.player.cx - this.scene.camera.cx}`, 1, 11);
 
         this.show(context, "Keys", this.keysPressed.join(), 2, 1);
         this.show(context, "FPS", `${Math.round(this.fps * 100) / 100}`, 2, 5);
